@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    android:id="@+id/sentence_word_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="32dp"
+    android:layout_width="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/rounded_button2"
+    android:layout_margin="4dp">
+
+    <TextView
+        android:id="@+id/sentence_part"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="word"
+        android:gravity="center"
+        android:fontFamily="@font/corbel_bold"
+        android:textStyle="bold"
+        android:textSize="16sp"/>
+
+</LinearLayout>

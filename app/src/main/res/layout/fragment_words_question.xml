@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_91"
+    android:layout_marginBottom="2dp">
+
+
+    <ImageButton
+        android:id="@+id/words_close_btn"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:background="@color/gray_91"
+        android:src="@drawable/close"
+        app:layout_constraintBottom_toTopOf="@+id/words_level_ll"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.915"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/words_level_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/skip_voice_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.081">
+
+        <TextView
+            android:id="@+id/words_level_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/concrete"
+            android:text="Уровень"
+            android:textColor="@color/orange"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <com.anton46.stepsview.StepsView
+            android:id="@+id/words_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/words_task_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:fontFamily="@font/pt_sans_bold"
+            android:text="Наберите\nУслышанную фразу:"
+            android:textColor="@color/black"
+            android:textSize="22sp" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/messageField"
+        android:layout_width="240dp"
+        android:layout_height="200dp"
+        android:background="@drawable/klipart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.568"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.425">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/answer_rec_view"
+            android:layout_width="match_parent"
+            android:layout_height="122dp"
+            android:layout_gravity="center|left"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="30dp"
+            app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+            tools:listitem="@layout/sentence_item" />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/happyManIcon"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/happy_man"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.54" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/words_rec_view"
+        android:layout_width="210dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="272dp"
+        android:orientation="horizontal"
+        app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/words_bottom_user_state_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.912"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.557"
+        tools:listitem="@layout/sentence_item" />
+
+    <Button
+        android:id="@+id/words_get_answer_button"
+        android:layout_width="348dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="@font/concrete"
+        android:gravity="center"
+        android:shadowColor="@color/black"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:text="Ответить"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/words_bottom_user_state_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/words_rec_view" />
+
+    <TextView
+        android:id="@+id/skip_voice_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Не могу сейчас слушать"
+        app:layout_constraintBottom_toTopOf="@+id/words_bottom_user_state_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/words_get_answer_button"
+        android:fontFamily="@font/corbel_bold"
+        android:textSize="20dp"
+        android:textColor="@color/gray"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:id="@+id/words_bottom_user_state_bar"
+        android:background="@color/gray_91"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/skip_voice_tv">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:id="@+id/words_user_avatar"
+            android:src="@drawable/user_avatar_white_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.047"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/words_user_hp_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="223dp"
+            android:layout_height="29dp"
+            android:max="100"
+            android:progress="70"
+            android:progressDrawable="@drawable/user_progress_bar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.654"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.388" />
+
+        <ProgressBar
+            android:id="@+id/words_user_exp_bar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:progressDrawable="@drawable/user_progress_experience"
+            android:layout_width="223dp"
+            android:layout_height="29dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/words_user_hp_bar"
+            app:layout_constraintStart_toStartOf="@+id/words_user_hp_bar"
+            app:layout_constraintTop_toBottomOf="@+id/words_user_hp_bar"
+            app:layout_constraintVertical_bias="0.23"
+            android:max="100"
+            android:progress="40"/>
+
+        <TextView
+            android:id="@+id/words_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/corbel_bold"
+            android:text="Username"
+            android:textColor="@color/pink2"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/words_user_hp_bar"
+            app:layout_constraintEnd_toEndOf="@+id/words_user_hp_bar"
+            app:layout_constraintStart_toStartOf="@+id/words_user_hp_bar"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/hp_icon2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/words_user_hp_bar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.372" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/cup_icon2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/words_user_exp_bar"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="46dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
