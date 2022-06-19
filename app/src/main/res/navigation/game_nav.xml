@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/game_nav"
+    app:startDestination="@id/authorize">
+
+    <fragment
+        android:id="@+id/authorize"
+        android:name="com.example.adygall2.presentation.fragments.Authorize"
+        android:label="fragment_authorize"
+        tools:layout="@layout/fragment_authorize" >
+        <action
+            android:id="@+id/action_authorize_to_homePage"
+            app:destination="@id/homePage" />
+    </fragment>
+    <fragment
+        android:id="@+id/homePage"
+        android:name="com.example.adygall2.presentation.fragments.HomePage"
+        android:label="fragment_home_page"
+        tools:layout="@layout/fragment_home_page" >
+        <action
+            android:id="@+id/action_homePage_to_taskContainer"
+            app:destination="@id/taskContainer" />
+        <argument
+            android:name="hp"
+            app:argType="integer"
+            app:nullable="false"
+            android:defaultValue="100"/>
+        <argument
+            android:name="exp"
+            app:argType="integer"
+            app:nullable="false"
+            android:defaultValue="0"/>
+    </fragment>
+    <fragment
+        android:id="@+id/taskContainer"
+        android:name="com.example.adygall2.presentation.fragments.TaskContainer"
+        android:label="TaskContainer" >
+        <action
+            android:id="@+id/action_taskContainer_to_homePage"
+            app:destination="@id/homePage" />
+        <argument
+            android:name="hp"
+            app:argType="integer"
+            app:nullable="false"
+            android:defaultValue="100"/>
+        <argument
+            android:name="exp"
+            app:argType="integer"
+            app:nullable="false"
+            android:defaultValue="0"/>
+    </fragment>
+</navigation>

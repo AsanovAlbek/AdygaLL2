@@ -1,0 +1,20 @@
+package com.example.adygall2.data.db_models
+
+data class Answer(
+    val id : Int,
+
+    val taskId : Int,
+
+    val answer : String,
+
+    val pictureId : Int,
+
+    val isCorrectAnswer : Boolean,
+
+    val authorOfChanges : String,
+
+    val dateOfChange : String
+) {
+    constructor() : this(0, 0, "", 0,
+        false, "", "")
+}

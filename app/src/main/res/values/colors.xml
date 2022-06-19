@@ -22,4 +22,6 @@
     <color name="yellow">#FFDA3B</color>
     <color name="purple">#9453C7</color>
     <color name="gray">#C4C4C4</color>
+
+    <color name="colorSecondary">#bdbdbd</color>
 </resources>

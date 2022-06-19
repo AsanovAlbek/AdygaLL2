@@ -22,4 +22,14 @@
         <item name="android:shadowDy">2</item>
         <item name="android:shadowRadius">2</item>
     </style>
+
+    <style name="Theme.AdygaLL2.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.AdygaLL2.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.AdygaLL2.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 </resources>

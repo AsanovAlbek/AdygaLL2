@@ -9,17 +9,24 @@
         <entry key="..\:/AdygaLL2.0/app/src/main/res/drawable-v24/user_progress_bar.xml" value="0.16" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/drawable-v24/user_progress_experience.xml" value="0.16" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/drawable-xxxhdpi/my_drawable.xml" value="0.1815" />
-        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/activity_main.xml" value="0.22826086956521738" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/bottom_bar.xml" value="0.253125" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/content_task_container.xml" value="0.2542991141219385" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/flag_item.xml" value="0.22826086956521738" />
-        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_authorize.xml" value="0.22826086956521738" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_authorize.xml" value="0.264" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_four_image_question.xml" value="0.264" />
-        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_home_page.xml" value="0.22826086956521738" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_home_page.xml" value="0.264" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_phrase_complete.xml" value="0.264" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_second.xml" value="0.24010416666666667" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_three_words_question.xml" value="0.22826086956521738" />
-        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_words_question.xml" value="0.22826086956521738" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_words_question.xml" value="0.264" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/get_answer_button.xml" value="0.253125" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/image_question_item.xml" value="0.22826086956521738" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/sentence_item.xml" value="0.22826086956521738" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/simple_word_item.xml" value="0.22826086956521738" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/task_container.xml" value="0.253125" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/task_container_activity.xml" value="0.25416666666666665" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/top_bar.xml" value="0.253125" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1815" />
       </map>
     </option>
