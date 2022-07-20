@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">AdygaLL2</string>
+    <string name="version_name_1">1.0</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_task_container">TaskContainerActivity</string>
@@ -8,7 +9,24 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="results">Результаты</string>
+    <string name="to_complete">Завершить</string>
+    <string name="task_number">Задание №</string>
+    <string name="question">Вопрос:</string>
+    <string name="right_answer">Правильный ответ:</string>
+    <string name="your_answer">Ваш ответ:</string>
+    <string name="username">Username</string>
+    <string name="task_title">Задание</string>
+    <string name="logo">LOGO</string>
+    <string name="username_field">Имя пользователя</string>
+    <string name="password_field">Пароль</string>
+    <string name="sign_in">Войти</string>
+    <string name="complete_the_phrase">Дополните фразу:</string>
+    <string name="i_cant_listen_now">Не могу сейчас слушать</string>
+    <string name="get_answer">Ответить</string>
+    <string name="level_title">Уровень</string>
+    <string name="translate_into_adyga">Переведите на адыгейский:</string>
+    <string name="fill_the_pass">Заполните пропуск:</string>
 </resources>

@@ -6,9 +6,5 @@ import com.example.adygall2.domain.repository.Repository
 class PictureUseCase(
     private val repository: Repository
 ) {
-    //fun getPictureById(pictureId : Int) = repository.getPictureById(pictureId)
-
-    fun getAllPictures() = repository.getAllPictures()
-
     fun getPicturesByAnswers(answers : List<Answer>) = repository.getPicturesByAnswers(answers)
 }

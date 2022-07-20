@@ -8,6 +8,4 @@ class OrderUseCase(
 
     fun getAllOrders() = repository.getAllOrders()
 
-    fun getOrderById(orderId : Int) = repository.getOrderById(orderId)
-
 }

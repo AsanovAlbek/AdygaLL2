@@ -58,7 +58,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/corbel_bold"
-        android:text="Username"
+        android:text="@string/username"
         android:textColor="@color/pink2"
         android:textSize="18sp"
         android:textStyle="bold"

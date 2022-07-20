@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:text="Задание"
+        android:text="@string/task_title"
         android:textSize="12sp"
         android:background="@color/purple"/>
 

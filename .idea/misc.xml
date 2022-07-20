@@ -16,18 +16,56 @@
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_authorize.xml" value="0.264" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_four_image_question.xml" value="0.264" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_home_page.xml" value="0.264" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_lesson_results.xml" value="0.253125" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_pairs_of_words.xml" value="0.264" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_phrase_complete.xml" value="0.264" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_second.xml" value="0.24010416666666667" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_three_words_question.xml" value="0.22826086956521738" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/fragment_words_question.xml" value="0.264" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/get_answer_button.xml" value="0.253125" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/image_question_item.xml" value="0.22826086956521738" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/pair_word_item.xml" value="0.72" />
+        <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/results_item.xml" value="0.253125" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/sentence_item.xml" value="0.22826086956521738" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/simple_word_item.xml" value="0.22826086956521738" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/task_container.xml" value="0.253125" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/task_container_activity.xml" value="0.25416666666666665" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/layout/top_bar.xml" value="0.253125" />
         <entry key="..\:/AdygaLL2.0/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1815" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/drawable-v24/edit_text_corners.xml" value="0.1475" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/drawable-v24/edit_text_shape.xml" value="0.1475" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/drawable-v24/rounded_button.xml" value="0.1475" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/drawable-v24/rounded_button2.xml" value="0.1455" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/drawable/edit_text_corners.xml" value="0.1475" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/activity_main.xml" value="0.12360688956433637" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/bottom_bar.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/edit_text_corners.xml" value="0.253125" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/flag_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_authorize.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_fill_gaps.xml" value="0.264" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_fill_in_the_pass.xml" value="0.190625" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_four_image_question.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_home_page.xml" value="0.264" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_lesson_results.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_level_page.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_pairs_of_words.xml" value="0.2" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_phrase_complete.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_three_words_question.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_translate_the_text.xml" value="0.264" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_type_that_heard.xml" value="0.264" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/fragment_words_question.xml" value="0.264" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/get_answer_button.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/image_question_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/level_page.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/pair_word_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/results_item.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/right_column_pair_word_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/sentence_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/simple_word_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/task_container.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/three_sound_button.xml" value="0.4" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/three_sound_buttons.xml" value="0.4" />
+        <entry key="..\:/Users/Ill_be_back/Desktop/AdygaLL2.0/app/src/main/res/layout/top_bar.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>

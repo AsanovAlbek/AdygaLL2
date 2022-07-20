@@ -7,14 +7,9 @@ data class Answer(
 
     val answer : String,
 
-    val pictureId : Int,
+    val correctAnswer : String,
 
-    val isCorrectAnswer : Boolean,
-
-    val authorOfChanges : String,
-
-    val dateOfChange : String
+    val pictureId : Int
 ) {
-    constructor() : this(0, 0, "", 0,
-        false, "", "")
+    constructor() : this(0, 0, "", "false", 0)
 }

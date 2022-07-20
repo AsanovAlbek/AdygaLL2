@@ -77,6 +77,7 @@ class ImageAdapter(
                     selectItemPosition = adapterPosition
                     notifyItemChanged(selectItemPosition)
                 }
+                listener.onSelect(adapterPosition, picture)
                 Log.i(MY_LOG_TAG, "select = $selectItemPosition, adapterPos = $adapterPosition")
             }
         }
@@ -101,9 +102,6 @@ class ImageAdapter(
     // Метод для заполнения ViewHolder
     override fun onBindViewHolder(holder: ImageQueHolder, position: Int) {
         holder.binding(pictures[position])
-        if (selectItemPosition != -1) {
-            listener.onSelect(position, pictures[position])
-        }
 
         Log.i(MY_LOG_TAG, pictures.toString())
 

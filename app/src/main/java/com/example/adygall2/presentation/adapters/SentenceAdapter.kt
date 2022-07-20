@@ -26,6 +26,12 @@ class SentenceAdapter(
 
     var observerAdapter : SecondSentenceAdapter? = null
 
+    var clickListener : ((word : String) -> Unit)? = null
+
+    fun setListener(listener : ((word : String) -> Unit)) {
+        clickListener = listener
+    }
+
     fun registerObserverAdapter(adapter : SecondSentenceAdapter) {
         observerAdapter = adapter
     }
@@ -50,6 +56,9 @@ class SentenceAdapter(
                     notifyItemChanged(selectedItemPos)
                 }
                 sendWord(answer)
+                if (clickListener != null) {
+                    clickListener?.invoke(answer.answer)
+                }
                 Log.i("SentenceAdapter", "Нажато слово ${answer.answer}")
             }
         }

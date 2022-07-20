@@ -8,6 +8,5 @@ val domainModule = module {
     factory { OrderUseCase(get()) }
     factory { PictureUseCase(get()) }
     factory { TaskUseCase(get()) }
-    factory { UserUseCase(get()) }
     factory { SoundUseCase(get()) }
 }

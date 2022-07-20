@@ -6,9 +6,6 @@ import com.example.adygall2.domain.repository.Repository
 class TaskUseCase(
     private val repository: Repository
 ) {
-
     fun getTasksFromOrders(orders : List<Order>) =
         repository.getTasksFromOrder(orders)
-
-
 }

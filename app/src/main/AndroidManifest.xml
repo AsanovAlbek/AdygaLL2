@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.adygall2">
+    package="com.example.adygall2"
+    android:versionName="@string/version_name_1"
+    android:versionCode="1">
 
     <application
         android:name=".di.DiApp"
@@ -12,7 +14,8 @@
         android:theme="@style/Theme.AdygaLL2">
         <activity
             android:name=".presentation.activities.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,5 +23,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

@@ -23,7 +23,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="28dp"
             android:fontFamily="@font/pt_sans_bold"
-            android:text="Наберите\nУслышанную фразу:"
             android:textColor="@color/black"
             android:textSize="22sp" />
 
@@ -45,7 +44,7 @@
             android:id="@+id/answerRecView"
             android:layout_width="match_parent"
             android:layout_height="122dp"
-            android:layout_gravity="center|left"
+            android:layout_gravity="center|start"
             android:layout_marginStart="14dp"
             android:layout_marginEnd="14dp"
             android:layout_marginBottom="30dp"
@@ -59,13 +58,25 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginTop="100dp"
-        android:src="@drawable/happy_man"
+        android:src="@drawable/happy_woman_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.625" />
+
+    <include
+        android:id="@+id/soundButtons"
+        layout="@layout/three_sound_button"
+        android:layout_width="148dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.007"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/happyManIcon"
+        app:layout_constraintVertical_bias="0.873" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/wordsRecView"
@@ -87,7 +98,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/corbel_bold"
-        android:text="Не могу сейчас слушать"
+        android:text="@string/i_cant_listen_now"
         android:textColor="@color/gray"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"

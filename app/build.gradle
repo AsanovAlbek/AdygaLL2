@@ -3,6 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
 }
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-parcelize'
 
 android {
     compileSdk 32
@@ -34,6 +36,7 @@ android {
     viewBinding {
         enabled = true
     }
+
     buildFeatures {
         viewBinding true
     }
@@ -89,4 +92,10 @@ dependencies {
 
     // View pager 2
     implementation "androidx.viewpager2:viewpager2:1.0.0"
+    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }

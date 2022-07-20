@@ -1,5 +1,9 @@
 package com.example.adygall2.data.db_models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Task(
     val id : Int,
 
@@ -7,7 +11,5 @@ data class Task(
 
     val task : String,
 
-    val authorOfChanges : String,
-
-    val dateOfChange : String
-)
+    val soundId : Int
+    ) : Parcelable

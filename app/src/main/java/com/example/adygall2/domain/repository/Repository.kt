@@ -1,6 +1,5 @@
 package com.example.adygall2.domain.repository
 
-import android.graphics.Bitmap
 import com.example.adygall2.data.db_models.*
 
 interface Repository {
@@ -31,17 +30,13 @@ interface Repository {
 
     fun getAllAnswers() : List<Answer>
 
-    // Users
-
-    fun getUserById(userId : Int) : User
-
-    fun getAllUsers() : List<User>
-
     // Sounds
 
-    fun getSoundsByTaskId(taskId : Int) : List<Sound>
+    //fun getSoundsByTaskId(taskId : Int) : List<Sound>
 
     fun getAllSounds() : List<Sound>
 
-    fun getSoundByTaskId(taskId : Int) : Sound
+    //fun getSoundByTaskId(taskId : Int) : Sound
+
+    fun getSoundById(soundId : Int) : Sound
 }

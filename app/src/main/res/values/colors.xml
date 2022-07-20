@@ -24,4 +24,8 @@
     <color name="gray">#C4C4C4</color>
 
     <color name="colorSecondary">#bdbdbd</color>
+    <color name="light_purple">#EDDFF9</color>
+    <color name="amethyst">#A371C8</color>
+    <color name="unbleached_silk">#FFDDC9</color>
+    <color name="persian_orange">#E09656</color>
 </resources>

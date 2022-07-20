@@ -14,7 +14,6 @@ val dataModule = module {
     single { get<GameBase>().getOrderDao() }
     single { get<GameBase>().getPictureDao() }
     single { get<GameBase>().getTaskDao() }
-    single { get<GameBase>().getUserDao() }
     single { get<GameBase>().getSoundsDao() }
 
     factory<Repository> {
@@ -23,7 +22,6 @@ val dataModule = module {
             orderDao = get() as OrderDao,
             pictureDao = get() as PictureDao,
             taskDao = get() as TaskDao,
-            userDao = get() as UserDao,
             soundsDao = get() as SoundsDao
         )
     }

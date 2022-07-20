@@ -2,7 +2,9 @@ package com.example.adygall2.data.room.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import com.example.adygall2.data.db_models.Sound
 import com.example.adygall2.data.room.consts.RoomConst.TASKS_TABLE_NAME
+import com.example.adygall2.data.room.entities.SoundEntity
 import com.example.adygall2.data.room.entities.TaskEntity
 
 @Dao

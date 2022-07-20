@@ -19,7 +19,8 @@ import com.example.adygall2.databinding.SimpleWordItemBinding
 
 class ThreeWordsAdapter(
     // Лист со словами
-    private val itemsList : List <Answer>
+    private val itemsList : List <Answer>,
+    private val listener : ((Answer) -> Unit)
 ) : RecyclerView.Adapter<ThreeWordsAdapter.ThreeWordsHolder>() {
 
     private var selectItemPosition = -1
@@ -54,6 +55,7 @@ class ThreeWordsAdapter(
                     notifyItemChanged(selectItemPosition)
                     selectItemPosition = adapterPosition
                     notifyItemChanged(selectItemPosition)
+                    listener.invoke(answer)
                 }
             }
         }

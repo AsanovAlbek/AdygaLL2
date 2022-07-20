@@ -12,14 +12,12 @@
         android:layout_width="match_parent"
         android:id="@+id/pictureInCard"
         android:layout_height="112dp"
-        android:layout_margin="4dp"
-        android:src="@drawable/horse2" />
+        android:layout_margin="4dp" />
 
     <TextView
         android:id="@+id/wordInCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Лошадь"
         android:layout_gravity="center|bottom"
         android:layout_marginBottom="4dp"
         android:fontFamily="@font/corbel_bold"

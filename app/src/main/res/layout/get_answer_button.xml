@@ -2,6 +2,7 @@
 <Button
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/answerBtn"
+    android:text="@string/get_answer"
     android:layout_width="match_parent"
     android:layout_height="40dp"
     android:background="@drawable/rounded_button"
@@ -9,7 +10,6 @@
     android:shadowColor="@color/black"
     android:shadowDx="2"
     android:shadowDy="2"
-    android:text="Ответить"
     android:textColor="@color/white"
     android:textSize="18sp"
     android:textStyle="bold" />

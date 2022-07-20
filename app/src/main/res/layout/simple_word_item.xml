@@ -11,7 +11,6 @@
         android:id="@+id/simple_word"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Слово"
         android:fontFamily="@font/concrete"
         android:textColor="@color/black"
         android:layout_gravity="center"

@@ -6,10 +6,8 @@ class SoundUseCase(
     private val repository: Repository
 ) {
 
-    fun getSoundsByTaskId(taskId : Int) = repository.getSoundsByTaskId(taskId)
+    //fun getSoundById(taskId : Int) = repository.getSoundByTaskId(taskId)
 
-    fun getAllSounds() = repository.getAllSounds()
-
-    fun getSoundById(taskId : Int) = repository.getSoundByTaskId(taskId)
+    fun getSoundById(soundId : Int) = repository.getSoundById(soundId)
 
 }

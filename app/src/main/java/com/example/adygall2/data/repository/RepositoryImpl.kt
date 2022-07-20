@@ -1,7 +1,5 @@
 package com.example.adygall2.data.repository
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import com.example.adygall2.data.*
 import com.example.adygall2.data.db_models.*
 import com.example.adygall2.data.room.dao.*
@@ -12,7 +10,6 @@ class RepositoryImpl(
     private val orderDao: OrderDao,
     private val pictureDao: PictureDao,
     private val taskDao: TaskDao,
-    private val userDao: UserDao,
     private val soundsDao: SoundsDao
 ) : Repository {
 
@@ -46,31 +43,17 @@ class RepositoryImpl(
     override fun getTaskById(taskId : Int): Task =
         taskDao.getTaskById(taskId).toTask()
 
-    override fun getTasksFromOrder(orders: List<Order>): List<Task> {
-        val tasksList = mutableListOf<Task>()
-        orders.forEach {
-            tasksList.add(getTaskById(it.taskNum))
-        }
-
-        return tasksList.toList()
-    }
-
-    //User
-    override fun getUserById(userId: Int): User = userDao.getUserById(userId).toUser()
-
-    override fun getAllUsers(): List<User> =
-        userDao.getAllUsers().map { it.toUser() }
+    override fun getTasksFromOrder(orders: List<Order>): List<Task> =
+        orders.map { getTaskById(it.taskNum) }
 
     // Sound
-
-    override fun getSoundsByTaskId(taskId: Int): List<Sound> =
-        soundsDao.getSoundsByTaskId(taskId).map {
-            it.toSound()
-        }
 
     override fun getAllSounds(): List<Sound> =
         soundsDao.getAllSounds().map { it.toSound() }
 
-    override fun getSoundByTaskId(taskId: Int): Sound =
-        soundsDao.getSoundById(taskId).toSound()
+    /*override fun getSoundByTaskId(taskId: Int): Sound =
+        soundsDao.getSoundByTaskId(taskId).toSound()*/
+
+    override fun getSoundById(soundId: Int) =
+        soundsDao.getSoundById(soundId).toSound()
 }

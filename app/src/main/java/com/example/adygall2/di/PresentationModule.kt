@@ -11,7 +11,6 @@ val presentationModule = module {
         orderUseCase = get(),
         pictureUseCase = get(),
         taskUseCase = get(),
-        userUseCase = get(),
         soundUseCase = get()
         )
     }

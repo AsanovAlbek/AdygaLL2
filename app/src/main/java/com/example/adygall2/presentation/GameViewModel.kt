@@ -12,7 +12,6 @@ class GameViewModel(
     private val orderUseCase: OrderUseCase,
     private val pictureUseCase: PictureUseCase,
     private val taskUseCase: TaskUseCase,
-    private val userUseCase: UserUseCase,
     private val soundUseCase: SoundUseCase
 ) : ViewModel() {
 
@@ -31,21 +30,10 @@ class GameViewModel(
     private var _soundFromDb = MutableLiveData<Sound>()
     val soundFromDb : LiveData<Sound> get() = _soundFromDb
 
-    fun getSoundsByTaskId(taskId : Int) {
+    fun getSoundById(soundId: Int) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val sounds = soundUseCase.getSoundsByTaskId(taskId)
-                withContext(Dispatchers.Main) {
-                    _soundsListByTaskIdFromDb.value = sounds
-                }
-            }
-        }
-    }
-
-    fun getSoundById(taskId: Int) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val sound = soundUseCase.getSoundById(taskId)
+                val sound = soundUseCase.getSoundById(soundId)
                 withContext(Dispatchers.Main) {
                     _soundFromDb.value = sound
                 }
@@ -85,5 +73,4 @@ class GameViewModel(
             }
         }
     }
-
 }

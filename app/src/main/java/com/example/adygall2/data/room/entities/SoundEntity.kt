@@ -3,10 +3,10 @@ package com.example.adygall2.data.room.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.adygall2.data.room.consts.RoomConst.FILE_NAME
 import com.example.adygall2.data.room.consts.RoomConst.ID
+import com.example.adygall2.data.room.consts.RoomConst.NAME
+import com.example.adygall2.data.room.consts.RoomConst.SOUND
 import com.example.adygall2.data.room.consts.RoomConst.SOUNDS_TABLE_NAME
-import com.example.adygall2.data.room.consts.RoomConst.TASK_ID
 
 @Entity(tableName = SOUNDS_TABLE_NAME)
 data class SoundEntity (
@@ -14,9 +14,29 @@ data class SoundEntity (
     @ColumnInfo(name = ID)
     val id : Int,
 
-    @ColumnInfo(name = TASK_ID)
-    val taskId : Int,
+    @ColumnInfo(name = NAME)
+    val name : String,
 
-    @ColumnInfo(name = FILE_NAME)
-    val filePath : String
-)
+    @ColumnInfo(name = SOUND)
+    val audioByteArray : ByteArray
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as SoundEntity
+
+        if (id != other.id) return false
+        if (name != other.name) return false
+        if (!audioByteArray.contentEquals(other.audioByteArray)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + name.hashCode()
+        result = 31 * result + audioByteArray.contentHashCode()
+        return result
+    }
+}
