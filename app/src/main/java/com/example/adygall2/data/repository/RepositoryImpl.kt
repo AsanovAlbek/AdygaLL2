@@ -10,7 +10,8 @@ class RepositoryImpl(
     private val orderDao: OrderDao,
     private val pictureDao: PictureDao,
     private val taskDao: TaskDao,
-    private val soundsDao: SoundsDao
+    private val soundsDao: SoundsDao,
+    private val soundEffectDao: SoundEffectDao
 ) : Repository {
 
     // Answer
@@ -51,9 +52,16 @@ class RepositoryImpl(
     override fun getAllSounds(): List<Sound> =
         soundsDao.getAllSounds().map { it.toSound() }
 
-    /*override fun getSoundByTaskId(taskId: Int): Sound =
-        soundsDao.getSoundByTaskId(taskId).toSound()*/
-
     override fun getSoundById(soundId: Int) =
         soundsDao.getSoundById(soundId).toSound()
+
+    override fun getSoundsByAnswers(answers: List<Answer>): List<Sound> =
+        answers.map { getSoundById(it.soundId) }
+
+    // SoundEffect
+    override fun rightAnswerSoundEffect(): SoundEffect =
+        soundEffectDao.rightAnswerSoundEffect().toSoundEffect()
+
+    override fun wrongAnswerSoundEffect(): SoundEffect =
+        soundEffectDao.wrongAnswerSoundEffect().toSoundEffect()
 }

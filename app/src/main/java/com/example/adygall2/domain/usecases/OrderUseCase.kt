@@ -5,7 +5,5 @@ import com.example.adygall2.domain.repository.Repository
 class OrderUseCase(
     private val repository: Repository
 ) {
-
     fun getAllOrders() = repository.getAllOrders()
-
 }

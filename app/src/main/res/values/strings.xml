@@ -27,6 +27,7 @@
     <string name="i_cant_listen_now">Не могу сейчас слушать</string>
     <string name="get_answer">Ответить</string>
     <string name="level_title">Уровень</string>
+    <string name="lesson_title">Урок</string>
     <string name="translate_into_adyga">Переведите на адыгейский:</string>
     <string name="fill_the_pass">Заполните пропуск:</string>
 </resources>

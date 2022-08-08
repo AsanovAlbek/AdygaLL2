@@ -8,6 +8,7 @@ import com.example.adygall2.data.room.consts.RoomConst.ANSWER_TABLE_NAME
 import com.example.adygall2.data.room.consts.RoomConst.CORRECT_ANSWER
 import com.example.adygall2.data.room.consts.RoomConst.ID
 import com.example.adygall2.data.room.consts.RoomConst.PIC
+import com.example.adygall2.data.room.consts.RoomConst.SOUND
 import com.example.adygall2.data.room.consts.RoomConst.TASK_ID
 
 @Entity(tableName = ANSWER_TABLE_NAME)
@@ -26,5 +27,8 @@ data class AnswerEntity(
     val isCorrectAnswer : String,
 
     @ColumnInfo(name = PIC)
-    val pictureId : Int
+    val pictureId : Int,
+
+    @ColumnInfo(name = SOUND)
+    val soundId : Int
 )

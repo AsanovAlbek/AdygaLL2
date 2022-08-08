@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Picture
+import com.example.adygall2.data.db_models.Answer
 import com.example.adygall2.databinding.FragmentFourImageQuestionBinding
 import com.example.adygall2.presentation.GameViewModel
 import com.example.adygall2.presentation.adapters.ImageAdapter
@@ -16,11 +16,12 @@ import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.MY_LOG_TAG
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.reflect.KFunction
 
 /**
  * Класс, имплементирующий интерфейс фрагмента
  * Предназначен для взаимодействия с экраном (окном) верификации данных
- * Экран для вопросов с картинками
+ * Экран для вопросов с картинками (1 тип заданий)
  */
 
 class FourImageQuestion : Fragment(R.layout.fragment_four_image_question) {
@@ -47,8 +48,6 @@ class FourImageQuestion : Fragment(R.layout.fragment_four_image_question) {
 
         binding.fourImageTaskEt.text = arguments?.getString(TASK_KEY)
 
-        viewModel.getAnswers(arguments?.getInt(ID_KEY)!!)
-
         setObservers()
         saveBundle()
 
@@ -56,35 +55,34 @@ class FourImageQuestion : Fragment(R.layout.fragment_four_image_question) {
     }
 
     private fun setObservers() {
-        viewModel.answersListFromDb.observe(viewLifecycleOwner) {dbAnswers ->
+        viewModel.getAnswers(arguments?.getInt(ID_KEY)!!)
+        viewModel.answersListFromDb.observe(viewLifecycleOwner) { dbAnswers ->
             viewModel.getPicturesByAnswers(dbAnswers)
-
             viewModel.picturesListByAnswersFromDb.observe(viewLifecycleOwner) { dbPics ->
-                val adapter = ImageAdapter(dbPics, object : ImageAdapter.OnSelectClickListener {
-                    override fun onSelect(position: Int, picture: Picture) {
-                        _userAnswer = picture.name
-                    }
-                })
-                binding.fourImageContainer.adapter = adapter
-                binding.fourImageContainer.layoutManager = GridLayoutManager(requireActivity(), 2)
+                viewModel.getSoundsByAnswers(dbAnswers)
+                viewModel.soundsListByAnswersFromDb.observe(viewLifecycleOwner) { dbSounds ->
+                    val adapter = ImageAdapter(
+                        context = requireActivity(),
+                        answers = dbAnswers,
+                        pictures = dbPics,
+                        sounds = dbSounds,
+                        listener = object : ImageAdapter.OnSelectClickListener {
+                            override fun onSelect(position: Int, answer: Answer) {
+                                _userAnswer = answer.answer
+                            }
+                        }
+                    )
 
-                // Получение правильного ответа
-                _rightAnswer = dbAnswers.firstOrNull {
-                        answer -> answer.correctAnswer.toBoolean() }?.answer ?: "Правильный ответ не найден"
+                    binding.fourImageContainer.adapter = adapter
+                    binding.fourImageContainer.layoutManager = GridLayoutManager(requireActivity(), 2)
 
-                Log.i(MY_LOG_TAG, "Вопрос с картинками: userAnswer = $userAnswer" +
-                        "rightAnswer = $rightAnswer, currentItem = " +
-                        adapter.getSelectedItem().toString()
-                )
+                    _rightAnswer = dbAnswers.first { it.correctAnswer.toBoolean() }.answer
+
+                }
             }
+
         }
 
-        val bundle = Bundle()
-        bundle.apply {
-            putString("rightAnswer", rightAnswer)
-            putString("userAnswer", userAnswer)
-        }
-        this.arguments = bundle
     }
 
     private fun saveBundle() {

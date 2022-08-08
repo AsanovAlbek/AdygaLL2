@@ -11,5 +11,11 @@ data class Task(
 
     val task : String,
 
-    val soundId : Int
+    val soundId : Int,
+
+    val levelId : Int,
+
+    val lessonId : Int,
+
+    val exerciseId : Int
     ) : Parcelable

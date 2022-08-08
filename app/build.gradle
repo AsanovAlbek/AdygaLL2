@@ -44,10 +44,10 @@ android {
 
 dependencies {
 
-    def roomVersion = "2.4.2"
-    def lifecycle = "2.4.1"
-    def nav_version = "2.4.2"
-    def fragment_version = "1.4.1"
+    def roomVersion = "2.4.3"
+    def lifecycle = "2.5.1"
+    def nav_version = "2.5.1"
+    def fragment_version = "1.5.1"
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
@@ -93,8 +93,13 @@ dependencies {
     // View pager 2
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     implementation "androidx.core:core-ktx:+"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.7.0"
 }
 repositories {
     mavenCentral()

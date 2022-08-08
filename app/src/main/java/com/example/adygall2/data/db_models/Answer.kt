@@ -9,7 +9,9 @@ data class Answer(
 
     val correctAnswer : String,
 
-    val pictureId : Int
+    val pictureId : Int,
+
+    val soundId : Int
 ) {
-    constructor() : this(0, 0, "", "false", 0)
+    constructor() : this(0, 0, "", "false", 0, 0)
 }

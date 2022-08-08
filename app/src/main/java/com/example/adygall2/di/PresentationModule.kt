@@ -7,11 +7,12 @@ import org.koin.dsl.module
 val presentationModule = module {
     viewModel{
         GameViewModel (
-        answerUseCase = get(),
-        orderUseCase = get(),
-        pictureUseCase = get(),
-        taskUseCase = get(),
-        soundUseCase = get()
+            answerUseCase = get(),
+            orderUseCase = get(),
+            pictureUseCase = get(),
+            taskUseCase = get(),
+            soundUseCase = get(),
+            soundEffectUseCase = get()
         )
     }
 }

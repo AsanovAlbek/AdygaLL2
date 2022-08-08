@@ -10,9 +10,6 @@ abstract class SoundsDao {
     @Query("SELECT * FROM $SOUNDS_TABLE_NAME")
     abstract fun getAllSounds() : List<SoundEntity>
 
-    /*@Query("SELECT * FROM $TASKS_TABLE_NAME WHERE sound = :taskId")
-    abstract fun getSoundByTaskId(taskId: Int) : SoundEntity*/
-
     @Query("SELECT * FROM $SOUNDS_TABLE_NAME WHERE id = :soundId")
     abstract fun getSoundById(soundId : Int) : SoundEntity
 }

@@ -1,14 +1,10 @@
 package com.example.adygall2.data.room.consts
 
 object RoomConst {
+    private const val DATABASE_DIRECTORY = "game_db_alpha"
     // Название базы данных
-    private const val DATABASE_5_NAME = "game_v5.db"
-    private const val DATABASE_7_NAME = "game_v7.db"
-    private const val LITE_DATABASE_NAME = "lite_base.db"
-    const val PATH_TO_DATABASE_5 = "game_db_alpha/$DATABASE_5_NAME"
-    const val PATH_TO_DATABASE_7 = "game_db_alpha/$DATABASE_7_NAME"
-    const val PATH_TO_LITE_DATABASE = "game_db_alpha/$LITE_DATABASE_NAME"
-
+    const val FULL_DATABASE_3_PATH = "$DATABASE_DIRECTORY/full_base3.db"
+    const val GAME_BASE_PATH = "$DATABASE_DIRECTORY/game_base2.db"
 
     // Названия таблиц
     const val ANSWER_TABLE_NAME = "answers"
@@ -16,6 +12,7 @@ object RoomConst {
     const val PICTURES_TABLE_NAME = "pictures"
     const val TASKS_TABLE_NAME = "tasks"
     const val SOUNDS_TABLE_NAME = "sounds"
+    const val SOUND_EFFECT_TABLE_NAME = "sound_effect"
 
     // Названия полей
     const val ID = "id"
@@ -28,4 +25,8 @@ object RoomConst {
     const val NAME = "name"
     const val TASK_TYPE = "task_type"
     const val SOUND = "sound"
+    const val EFFECT = "effect"
+    const val LEVEL = "level"
+    const val LESSON = "lesson"
+    const val EXERCISE = "exercise"
 }

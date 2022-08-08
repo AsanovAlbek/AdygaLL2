@@ -3,7 +3,10 @@ package com.example.adygall2.data.room.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.adygall2.data.room.consts.RoomConst.EXERCISE
 import com.example.adygall2.data.room.consts.RoomConst.ID
+import com.example.adygall2.data.room.consts.RoomConst.LESSON
+import com.example.adygall2.data.room.consts.RoomConst.LEVEL
 import com.example.adygall2.data.room.consts.RoomConst.SOUND
 import com.example.adygall2.data.room.consts.RoomConst.TASK
 import com.example.adygall2.data.room.consts.RoomConst.TASKS_TABLE_NAME
@@ -22,5 +25,14 @@ data class TaskEntity(
     val task : String,
 
     @ColumnInfo(name = SOUND)
-    val soundId : Int
+    val soundId : Int,
+
+    @ColumnInfo(name = LEVEL)
+    val levelId : Int,
+
+    @ColumnInfo(name = LESSON)
+    val lessonId : Int,
+
+    @ColumnInfo(name = EXERCISE)
+    val exerciseId : Int
 )

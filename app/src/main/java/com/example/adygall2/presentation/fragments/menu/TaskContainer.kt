@@ -10,7 +10,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.adygall2.R
+import com.example.adygall2.data.db_models.SoundEffect
 import com.example.adygall2.data.db_models.Task
+import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.databinding.TaskContainerBinding
 import com.example.adygall2.presentation.GameViewModel
 import com.example.adygall2.presentation.adapters.TasksAdapter
@@ -32,6 +34,19 @@ class TaskContainer : Fragment(R.layout.task_container) {
     private lateinit var _binding : TaskContainerBinding
     private val binding get() = _binding
     private val viewModel by viewModel<GameViewModel>()
+    private lateinit var soundsPlayer: SoundsPlayer
+
+    /** Счётчик ошибок */
+    private var mistakesCounter = 0
+    /** Количество монет, получаемое за один правильный ответ
+     * Вычисляется по формуле: количество заданий / 100
+     * Если откажемся от прогресс бара, то формула будет не нужна*/
+    private var moneyIncrementValue = 0f
+
+    companion object {
+        /** Максимальное количество ошибок */
+        private const val mistakesLimit = 3
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,10 +55,11 @@ class TaskContainer : Fragment(R.layout.task_container) {
     ): View {
         _binding = TaskContainerBinding.inflate(inflater, container, false)
 
-        binding.taskTopBar.LevelNumber.text = "Уровень 1"
+        soundsPlayer = SoundsPlayer(requireContext())
+        binding.taskTopBar.LevelNumber.text = "Урок 1"
         getUserStates()
+        customizeStepViewBar(14)
         setObservers()
-        customizeStepViewBar(16)
         setListeners()
 
         return binding.root
@@ -57,9 +73,18 @@ class TaskContainer : Fragment(R.layout.task_container) {
         binding.taskBottomBar.userExperienceBar.progress = requireArguments().getInt("exp")
     }
 
+    /** Метод для подписки на слушателей из ViewModel */
+
     private fun setObservers() {
         viewModel.getTasksFromOrder()
-        viewModel.tasksListFromDb.observe(viewLifecycleOwner, ::setViewPager)
+        viewModel.tasksListFromDb.observe(viewLifecycleOwner) {
+            val tasksSize = viewModel.tasksListFromDb.value?.size
+            //customizeStepViewBar(tasksSize!!)
+            setViewPager(it)
+            moneyIncrementValue = (it.size / 100).toFloat()
+        }
+        viewModel.okEffect()
+        viewModel.wrongEffect()
     }
 
     /**
@@ -72,8 +97,6 @@ class TaskContainer : Fragment(R.layout.task_container) {
         binding.getAnswerButton.answerBtn.setOnClickListener {
             val currentFragment = (binding.taskViewPager.adapter as TasksAdapter)
                 .getTaskFragment(binding.taskViewPager.currentItem)
-
-            Log.i("TaskContainer---setListeners", currentFragment.toString())
 
             when(currentFragment) {
                 is FourImageQuestion -> {
@@ -124,7 +147,14 @@ class TaskContainer : Fragment(R.layout.task_container) {
                 if (userAnswer != "") {
                     showRightAnswer(userAnswer, rightAnswer)
                     binding.taskViewPager.currentItem += 1
+
+                    // Если ответил неправильно
                     if (userAnswer.compareTo(rightAnswer) != 0) {
+                        // Если игрок ошибся 5 раз, то его прогресс аннулируется
+                        mistakesCounter++
+                        if (mistakesCounter >= mistakesLimit) {
+                            restartLesson()
+                        }
                         // Если игрок ошибся, то у него отнимается 10 очков здоровья
                         binding.taskBottomBar.userHealthBar.progress -= 10
                         // Если у игрока закончилось здоровье
@@ -132,6 +162,15 @@ class TaskContainer : Fragment(R.layout.task_container) {
                             dialog("Провал")
                             exitIntoLvl()
                         }
+
+                        val badSoundEffect = viewModel.badSoundEffect.value
+                        badSoundEffect?.let { soundsPlayer.playSound(it) }
+
+                        // Если ответил правильно
+                    } else {
+                        binding.taskBottomBar.userExperienceBar.progress += 10
+                        val goodSoundEffect = viewModel.goodSoundEffect.value
+                        goodSoundEffect?.let { soundsPlayer.playSound(it) }
                     }
 
                     // Изменение (шаг) шкалы прогресса
@@ -150,7 +189,7 @@ class TaskContainer : Fragment(R.layout.task_container) {
                     dialog("Пройдено")
                     // Пока что возвращается на главный экран
                     // Если пройдено успешно, то +20 очков опыта
-                    binding.taskBottomBar.userExperienceBar.progress += 20
+                    binding.taskBottomBar.userExperienceBar.progress += moneyIncrementValue.toInt()
                     exitIntoLvl()
                 }
             }
@@ -158,23 +197,37 @@ class TaskContainer : Fragment(R.layout.task_container) {
         // Присвоение нажатия кнопке выхода
         binding.taskTopBar.closeButton.setOnClickListener {
             // Создание диалога для выхода
-            AlertDialog.Builder(requireActivity()).apply {
-                setMessage("Вы точно хотите выйти?")
-                setPositiveButton("Да")
-                // Обработчик нажатия на кнопку
-                { _, _ ->
-                    // Закрытие диалога и выход из урока
-                    //exitIntoLvl()
-                    exitToHomePage()
-                }
-                setNegativeButton("Нет") { dialog, _ ->
-                    // Отказ от выхода - закрытие диалогового окна
-                    dialog.dismiss()
-                }
-                show()
-            }
+            exitIntoLevelDialog()
         }
 
+    }
+
+    /**
+     * Метод для перезапуска уровня
+     * Используется если пользователь достиг [mistakesLimit]
+     */
+    private fun restartLesson() {
+            binding.taskViewPager.currentItem = 0
+            binding.taskBottomBar.userExperienceBar.progress = 0
+            mistakesCounter = 0
+    }
+
+    /** Метод для показа диалогового окна для выхода */
+    private fun exitIntoLevelDialog() {
+        AlertDialog.Builder(requireActivity()).apply {
+            setMessage("Вы точно хотите выйти?")
+            setPositiveButton("Да")
+            // Обработчик нажатия на кнопку
+            { _, _ ->
+                // Закрытие диалога и выход из урока
+                exitToHomePage()
+            }
+            setNegativeButton("Нет") { dialog, _ ->
+                // Отказ от выхода - закрытие диалогового окна
+                dialog.dismiss()
+            }
+            show()
+        }
     }
 
     /**
@@ -203,6 +256,7 @@ class TaskContainer : Fragment(R.layout.task_container) {
         findNavController().navigate(R.id.homePage, hpAndExpProgress)
     }
 
+    // Допилю когда буду делать мног флажков и viewpager под них
     private fun setTasks() {
         val taskList = arguments?.getParcelableArray("taskList") as List<Task>
 
@@ -215,7 +269,11 @@ class TaskContainer : Fragment(R.layout.task_container) {
         binding.taskViewPager.isUserInputEnabled = false
     }
 
+    /**
+     * Метод для получения заданий из базы
+     */
     private fun setViewPager(tasks : List<Task>) {
+
         val fragmentAdapter = TasksAdapter(requireActivity(), tasks)
         fragmentAdapter.setTaskSkipListener {
             binding.taskViewPager.currentItem += 1
@@ -224,6 +282,10 @@ class TaskContainer : Fragment(R.layout.task_container) {
         binding.taskViewPager.isUserInputEnabled = false
     }
 
+    /**
+     * Метод для показа правильного ответа и ответа пользователя
+     * p.s. чтоб задизайнить окно надо будет заменить AlertDialog на DialogFragment
+     */
     private fun showRightAnswer(userAnswer : String, rightAnswer : String) {
 
         val explanation =
@@ -231,10 +293,13 @@ class TaskContainer : Fragment(R.layout.task_container) {
             else "Неверный ответ \n\n Правильный ответ: $rightAnswer " +
                     "\n Ваш ответ: $userAnswer \nВы теряете 10 ед. здоровья!"
 
-        Log.i(MY_LOG_TAG, "Контейнер заданий: userAnswer = $userAnswer, rightAnswer = $rightAnswer")
         dialog(explanation)
     }
 
+    /**
+     * Метод для вызова диалога с сообщением, в будущем заменить на
+     * задизайненный DialogFragment
+     */
     private fun dialog(message: String) {
         val alertDialog = AlertDialog.Builder(requireActivity())
         alertDialog
@@ -243,6 +308,9 @@ class TaskContainer : Fragment(R.layout.task_container) {
             .show()
     }
 
+    /**
+     * Метод для вызова SnackBar с сообщением
+     */
     private fun snackBar(message : String) {
         Snackbar.make(
             binding.gameTaskContainer,
@@ -251,6 +319,7 @@ class TaskContainer : Fragment(R.layout.task_container) {
         ).setTextColor(Color.GREEN).show()
     }
 
+    /** Метод для отрисовки линии  */
     private fun customizeStepViewBar(taskCount : Int) {
         // массив из элементов, заполненных пустой строкой
         val steps = Array(taskCount) { " " }

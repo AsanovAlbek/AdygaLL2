@@ -15,6 +15,7 @@ val dataModule = module {
     single { get<GameBase>().getPictureDao() }
     single { get<GameBase>().getTaskDao() }
     single { get<GameBase>().getSoundsDao() }
+    single { get<GameBase>().getSoundsEffectDao() }
 
     factory<Repository> {
         RepositoryImpl(
@@ -22,7 +23,8 @@ val dataModule = module {
             orderDao = get() as OrderDao,
             pictureDao = get() as PictureDao,
             taskDao = get() as TaskDao,
-            soundsDao = get() as SoundsDao
+            soundsDao = get() as SoundsDao,
+            soundEffectDao = get() as SoundEffectDao
         )
     }
 }

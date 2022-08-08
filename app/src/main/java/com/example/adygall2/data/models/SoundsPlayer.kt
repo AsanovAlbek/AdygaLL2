@@ -1,12 +1,11 @@
 package com.example.adygall2.data.models
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.media.PlaybackParams
-import android.os.Environment
 import android.util.Log
 import com.example.adygall2.data.db_models.Sound
+import com.example.adygall2.data.db_models.SoundEffect
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -17,19 +16,17 @@ import java.io.FileOutputStream
  * Обёртка над классом MediaPlayer
  */
 
-class SoundsPlayer(
-    private val context : Context
-) {
+class SoundsPlayer(private val context : Context) {
 
-    // Экземпляр класса для работы с аудиофайлами
+    /** Экземпляр класса для работы с аудиофайлами */
     val mediaPlayer = MediaPlayer()
-    // Переменная для регулирования скорости воспроизведения
+    /** Переменная для регулирования скорости воспроизведения */
     var playbackSpeed = NORMAL_PLAYBACK
         // Константы
         companion object {
-            // Медленное воспроизведение
+            /** Медленное воспроизведение */
             const val SLOW_PLAYBACK = 0.6f
-            // Обычное воспроизведение
+            /** Обычное воспроизведение */
             const val NORMAL_PLAYBACK = 1f
     }
 
@@ -43,6 +40,25 @@ class SoundsPlayer(
         try {
             FileOutputStream(audioFile).use {
                 it.write(sound.audioByteArray)
+            }
+        }
+        catch (ex : FileNotFoundException) {
+            Log.i("Sound", ex.message.toString())
+        }
+
+        return audioFile
+    }
+
+    /**
+     * Перегрузка метода получения аудиофайла из бд, но для звуковых эффектов
+     * @param soundEffect - звуковой эффект из базы
+     */
+    private fun getFileFromRoom(soundEffect : SoundEffect) : File {
+        val audioFile = File(context.filesDir, "sound_effect_${soundEffect.id}")
+
+        try {
+            FileOutputStream(audioFile).use {
+                it.write(soundEffect.effect)
             }
         }
         catch (ex : FileNotFoundException) {
@@ -70,6 +86,25 @@ class SoundsPlayer(
                 inputStream.close()
             }
         }
+
+    /** Метод для проигрывания звукового эффекта при ответе на вопрос
+     * @param soundEffect - звуковой эффект из базы*/
+    fun playSound(soundEffect : SoundEffect) {
+        val audioFile = getFileFromRoom(soundEffect)
+        if (audioFile.exists()) {
+            val inputStream = FileInputStream(audioFile)
+            mediaPlayer.apply {
+                setDataSource(inputStream.fd)
+                prepare()
+                seekTo(0)
+                start()
+            }
+            inputStream.close()
+        }
+        // Если воспроизведение завершилось, то очищаем ресурсы для поступления нового звука
+        // В mediaPlayer
+        mediaPlayer.setOnCompletionListener { mediaPlayer.reset() }
+    }
 
     /**
      * Метод для остановки воспроизведения

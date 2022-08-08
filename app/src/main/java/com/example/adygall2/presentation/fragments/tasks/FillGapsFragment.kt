@@ -16,6 +16,7 @@ import com.example.adygall2.data.db_models.Answer
 import com.example.adygall2.databinding.FragmentFillGapsBinding
 import com.example.adygall2.presentation.GameViewModel
 import com.example.adygall2.presentation.consts.ArgsKey
+import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FillGapsFragment : Fragment(R.layout.fragment_fill_gaps) {
@@ -41,6 +42,8 @@ class FillGapsFragment : Fragment(R.layout.fragment_fill_gaps) {
     ): View {
         _binding = FragmentFillGapsBinding.inflate(inflater, container, false)
 
+        //binding.phraseTaskTv.text = arguments?.getString(TASK_KEY)
+
         setObservers()
         setTaskText()
 
@@ -59,7 +62,7 @@ class FillGapsFragment : Fragment(R.layout.fragment_fill_gaps) {
     }
 
     private fun setTaskText() {
-        val task = arguments?.getString(ArgsKey.TASK_KEY)
+        val task = arguments?.getString(TASK_KEY)
         val textViews = task?.split("****")
         textViews?.forEachIndexed { index, it ->
             val addedTextView = TextView(requireActivity())

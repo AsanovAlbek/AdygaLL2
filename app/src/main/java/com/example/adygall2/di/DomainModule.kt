@@ -9,4 +9,5 @@ val domainModule = module {
     factory { PictureUseCase(get()) }
     factory { TaskUseCase(get()) }
     factory { SoundUseCase(get()) }
+    factory { SoundEffectUseCase(get()) }
 }

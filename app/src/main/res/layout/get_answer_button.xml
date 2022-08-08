@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="40dp"
     android:background="@drawable/rounded_button"
-    android:fontFamily="@font/concrete"
+    android:fontFamily="@font/pt_sans_regular"
     android:shadowColor="@color/black"
     android:shadowDx="2"
     android:shadowDy="2"

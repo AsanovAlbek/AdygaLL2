@@ -75,7 +75,7 @@ class TypeThatHeardTask : Fragment(R.layout.fragment_type_that_heard) {
         }
 
         binding.soundButtons.playSoundButton.setOnClickListener {
-            if (binding.soundButtons.playSoundButton.icon.equals(playSoundDrawable)) {
+            if (binding.soundButtons.playSoundButton.icon.current == playSoundDrawable) {
                 binding.soundButtons.playSoundButton.icon = stopSoundDrawable
                 soundsPlayer.playSound(sound)
             } else {

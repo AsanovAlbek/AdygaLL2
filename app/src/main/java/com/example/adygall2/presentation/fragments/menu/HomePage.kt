@@ -45,9 +45,9 @@ class HomePage : Fragment(R.layout.fragment_home_page) {
 
         return binding.root
     }
-
+    /** Получение шкалы здоровья и опыта */
     private fun getUserStates() {
-        // Получение шкалы здоровья и опыта
+
         binding.homeBottomBar.userHealthBar.progress = arguments!!.getInt("hp")
         binding.homeBottomBar.userExperienceBar.progress = arguments!!.getInt("exp")
     }

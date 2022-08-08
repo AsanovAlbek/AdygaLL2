@@ -1,6 +1,12 @@
 package com.example.adygall2.domain.repository
 
-import com.example.adygall2.data.db_models.*
+import com.example.adygall2.data.db_models.Answer
+import com.example.adygall2.data.db_models.Order
+import com.example.adygall2.data.db_models.Picture
+import com.example.adygall2.data.db_models.Sound
+import com.example.adygall2.data.db_models.SoundEffect
+import com.example.adygall2.data.db_models.Task
+import com.example.adygall2.data.room.dao.SoundEffectDao
 
 interface Repository {
 
@@ -31,12 +37,14 @@ interface Repository {
     fun getAllAnswers() : List<Answer>
 
     // Sounds
-
-    //fun getSoundsByTaskId(taskId : Int) : List<Sound>
-
     fun getAllSounds() : List<Sound>
 
-    //fun getSoundByTaskId(taskId : Int) : Sound
-
     fun getSoundById(soundId : Int) : Sound
+
+    fun getSoundsByAnswers(answers : List<Answer>) : List<Sound>
+
+    // SoundEffects
+    fun rightAnswerSoundEffect() : SoundEffect
+
+    fun wrongAnswerSoundEffect() : SoundEffect
 }
