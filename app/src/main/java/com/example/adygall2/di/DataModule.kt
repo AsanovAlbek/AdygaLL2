@@ -1,5 +1,7 @@
 package com.example.adygall2.di
 
+import com.example.adygall2.data.delegate.AnswerHelper
+import com.example.adygall2.data.delegate.AnswerHelperImpl
 import com.example.adygall2.data.repository.RepositoryImpl
 import com.example.adygall2.data.room.dao.*
 import com.example.adygall2.data.room.database.GameBase
@@ -27,4 +29,6 @@ val dataModule = module {
             soundEffectDao = get() as SoundEffectDao
         )
     }
+
+    factory<AnswerHelper> { AnswerHelperImpl() }
 }

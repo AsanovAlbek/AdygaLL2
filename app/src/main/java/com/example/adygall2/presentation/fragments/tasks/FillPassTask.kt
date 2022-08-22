@@ -11,8 +11,9 @@ import androidx.fragment.app.Fragment
 import com.example.adygall2.R
 import com.example.adygall2.data.db_models.Answer
 import com.example.adygall2.databinding.FragmentFillInThePassBinding
-import com.example.adygall2.presentation.GameViewModel
+import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.SentenceAdapter
+import com.example.adygall2.presentation.adapters.SimpleSentenceAdapter
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
 import com.google.android.flexbox.FlexDirection
@@ -21,15 +22,17 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FillPassTask : Fragment(R.layout.fragment_fill_in_the_pass) {
 
-    private lateinit var _binding : FragmentFillInThePassBinding
+    private lateinit var _binding: FragmentFillInThePassBinding
     private val binding get() = _binding
     private val viewModel by viewModel<GameViewModel>()
 
-    private lateinit var textViewFiled : TextView
+    private lateinit var textViewFiled: TextView
     private var _userAnswer = ""
     val userAnswer get() = _userAnswer
     private var _rightAnswer = ""
     val rightAnswer get() = _rightAnswer
+
+    private lateinit var userAdapter: SentenceAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,8 +54,9 @@ class FillPassTask : Fragment(R.layout.fragment_fill_in_the_pass) {
         viewModel.answersListFromDb.observe(viewLifecycleOwner, ::setAdapter)
     }
 
-    private fun setAdapter(answers : List<Answer>) {
-        val userAdapter = SentenceAdapter(answers)
+    private fun setAdapter(answers: MutableList<Answer>) {
+        val mutableList = answers.map { it.answer }.toMutableList()
+        val userAdapter = SimpleSentenceAdapter(mutableList)
         binding.userBarRecycler.adapter = userAdapter
         val layoutManager = FlexboxLayoutManager(requireActivity())
         layoutManager.flexDirection = FlexDirection.ROW
@@ -82,12 +86,14 @@ class FillPassTask : Fragment(R.layout.fragment_fill_in_the_pass) {
                     setTextColor(Color.BLACK)
                     typeface = resources.getFont(R.font.pt_sans_bold)
                     setPadding(0, 0, 10, 0)
-
                 }
                 addedTextViewFiled.setOnClickListener {
                     addedTextViewFiled.apply {
-                        text = ""
-                        setBackgroundColor(Color.WHITE)
+                        if (addedTextViewFiled.text.isNotEmpty()) {
+                            userAdapter.addAnswer(addedTextViewFiled.text.toString())
+                            setBackgroundColor(Color.WHITE)
+                            text = ""
+                        }
                     }
                 }
                 textViewFiled = addedTextViewFiled
@@ -96,12 +102,29 @@ class FillPassTask : Fragment(R.layout.fragment_fill_in_the_pass) {
         }
 
         userAdapter.setListener {
+            if (textViewFiled.text.isNotEmpty()) {
+                val textInFiled = textViewFiled.text.toString()
+                userAdapter.addAnswer(textInFiled)
+            }
             textViewFiled.text = it
             textViewFiled.background =
                 resources.getDrawable(R.drawable.rounded_button2, null)
-            _userAnswer = textViewFiled.text.toString()
+            userAdapter.removeAnswer(it)
+            _userAnswer = viewModel.transform(textViewFiled.text.toString())
         }
 
-        _rightAnswer = answers.first { it.correctAnswer.toBoolean() }.answer
+        val rightAnswerStroke = answers.first { it.correctAnswer.toBoolean() }.answer
+        _rightAnswer = viewModel.transform(rightAnswerStroke)
+    }
+
+    private fun setTextViewParams(textView: TextView, textInView: String) {
+        textView.apply {
+            text = textInView
+            textSize = 18F
+            typeface = resources.getFont(R.font.pt_sans_bold)
+            setBackgroundColor(requireActivity().resources.getColor(R.color.gray_91, null))
+            setPadding(0, 0, 10, 0)
+            setTextColor(Color.BLACK)
+        }
     }
 }

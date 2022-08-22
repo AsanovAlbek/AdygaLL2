@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="148dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/playSoundButton"
+        style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:backgroundTint="@color/white"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        android:padding="25dp"
+        app:cornerRadius="360dp"
+        app:icon="@drawable/play_sound"
+        app:iconTint="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.AdygaLL2.Button.Circle"
+        app:strokeColor="@color/black"
+        app:strokeWidth="0.3dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/slowPlayButton"
+        style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/white"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        app:cornerRadius="360dp"
+        app:icon="@drawable/slow_play"
+        app:iconTint="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.163"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.AdygaLL2.Button.Circle"
+        app:strokeColor="@color/black"
+        app:strokeWidth="0.3dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

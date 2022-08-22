@@ -3,8 +3,7 @@ package com.example.adygall2.data.room.consts
 object RoomConst {
     private const val DATABASE_DIRECTORY = "game_db_alpha"
     // Название базы данных
-    const val FULL_DATABASE_3_PATH = "$DATABASE_DIRECTORY/full_base3.db"
-    const val GAME_BASE_PATH = "$DATABASE_DIRECTORY/game_base2.db"
+    const val DEMO_BASE = "$DATABASE_DIRECTORY/demo.db"
 
     // Названия таблиц
     const val ANSWER_TABLE_NAME = "answers"

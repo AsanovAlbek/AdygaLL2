@@ -57,7 +57,7 @@
         android:id="@+id/userNameTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/corbel_bold"
+        android:fontFamily="@font/pt_sans_regular"
         android:text="@string/username"
         android:textColor="@color/pink2"
         android:textSize="18sp"

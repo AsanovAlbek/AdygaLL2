@@ -4,8 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.adygall2.data.room.consts.RoomConst.FULL_DATABASE_3_PATH
-import com.example.adygall2.data.room.consts.RoomConst.GAME_BASE_PATH
+import com.example.adygall2.data.room.consts.RoomConst.DEMO_BASE
 import com.example.adygall2.data.room.dao.AnswerDao
 import com.example.adygall2.data.room.dao.OrderDao
 import com.example.adygall2.data.room.dao.PictureDao
@@ -34,7 +33,7 @@ abstract class GameBase : RoomDatabase() {
     companion object {
         fun buildDatabase(context : Context) =
             Room.databaseBuilder(context, GameBase::class.java, "game_database").
-                    fallbackToDestructiveMigration().createFromAsset(GAME_BASE_PATH).build()
+                    fallbackToDestructiveMigration().createFromAsset(DEMO_BASE).build()
     }
 
     abstract fun getAnswerDao() : AnswerDao

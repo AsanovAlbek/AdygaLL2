@@ -15,8 +15,8 @@ class RepositoryImpl(
 ) : Repository {
 
     // Answer
-    override fun getAnswersByTaskId(taskId: Int): List<Answer> =
-        answerDao.getTaskAnswers(taskId).map { it.toAnswer() }
+    override fun getAnswersByTaskId(taskId: Int): MutableList<Answer> =
+        answerDao.getTaskAnswers(taskId).map { it.toAnswer() }.toMutableList()
 
     override fun getAllAnswers(): List<Answer> =
         answerDao.getAllAnswers().map { it.toAnswer() }

@@ -8,10 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Task
 import com.example.adygall2.databinding.FragmentHomePageBinding
-import com.example.adygall2.presentation.GameViewModel
-import com.example.adygall2.presentation.adapters.LevelsAdapter
+import com.example.adygall2.presentation.view_model.GameViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -21,8 +19,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomePage : Fragment(R.layout.fragment_home_page) {
 
-    private lateinit var _binding : FragmentHomePageBinding
-    private val binding get() = _binding
+    private lateinit var _homePageBinding : FragmentHomePageBinding
+    private val homePageBinding get() = _homePageBinding
     private val viewModel by viewModel<GameViewModel>()
 
     // метод жизненного цикла, вызывается при создании фрагмента (при открытии окна)
@@ -31,11 +29,11 @@ class HomePage : Fragment(R.layout.fragment_home_page) {
         savedInstanceState: Bundle?,
     ): View {
 
-        _binding = FragmentHomePageBinding.inflate(inflater, container, false)
+        _homePageBinding = FragmentHomePageBinding.inflate(inflater, container, false)
 
         getUserStates()
-        binding.testFlag.flag.setOnClickListener {
-            if (binding.homeBottomBar.userHealthBar.progress > 0) {
+        homePageBinding.testFlag.flag.setOnClickListener {
+            if (homePageBinding.homeBottomBar.userHealthBar.progress > 0) {
                 startLesson()
             }
             else {
@@ -43,13 +41,13 @@ class HomePage : Fragment(R.layout.fragment_home_page) {
             }
         }
 
-        return binding.root
+        return homePageBinding.root
     }
     /** Получение шкалы здоровья и опыта */
     private fun getUserStates() {
 
-        binding.homeBottomBar.userHealthBar.progress = arguments!!.getInt("hp")
-        binding.homeBottomBar.userExperienceBar.progress = arguments!!.getInt("exp")
+        homePageBinding.homeBottomBar.userHealthBar.progress = arguments!!.getInt("hp")
+        homePageBinding.homeBottomBar.userExperienceBar.progress = arguments!!.getInt("exp")
     }
 
     private fun setListeners() {
@@ -85,8 +83,8 @@ class HomePage : Fragment(R.layout.fragment_home_page) {
      */
     private fun startLesson() {
         val userHpAndExp = Bundle()
-        userHpAndExp.putInt("hp", binding.homeBottomBar.userHealthBar.progress)
-        userHpAndExp.putInt("exp", binding.homeBottomBar.userExperienceBar.progress)
+        userHpAndExp.putInt("hp", homePageBinding.homeBottomBar.userHealthBar.progress)
+        userHpAndExp.putInt("exp", homePageBinding.homeBottomBar.userExperienceBar.progress)
         findNavController().navigate(R.id.action_homePage_to_taskContainer, userHpAndExp)
     }
 }

@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/gameTaskContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/gray_91">
 
     <LinearLayout
@@ -13,38 +11,61 @@
         android:orientation="vertical">
 
         <include
-            layout="@layout/top_bar"
             android:id="@+id/taskTopBar"
+            layout="@layout/top_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/taskViewPager"
             android:layout_width="match_parent"
-            android:layout_height="370dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="10dp" />
+
     </LinearLayout>
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="bottom">
-        <include
-            layout="@layout/get_answer_button"
-            android:id="@+id/getAnswerButton"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginBottom="20dp"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/taskExplanationContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp" />
+            android:layout_marginEnd="32dp">
+
+            <include
+                android:id="@+id/incorrectAnswerWindow"
+                layout="@layout/fragment_incorrect_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <include
+                android:id="@+id/correctAnswerWindow"
+                layout="@layout/fragment_correct_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </FrameLayout>
 
         <include
+            android:id="@+id/getAnswerButton"
+            layout="@layout/get_answer_button"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="20dp" />
+
+        <include
+            android:id="@+id/taskBottomBar"
             layout="@layout/bottom_bar"
             android:layout_width="match_parent"
-            android:id="@+id/taskBottomBar"
             android:layout_height="120dp" />
     </LinearLayout>
 

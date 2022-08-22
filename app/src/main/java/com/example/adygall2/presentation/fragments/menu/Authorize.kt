@@ -16,18 +16,18 @@ import com.example.adygall2.databinding.FragmentAuthorizeBinding
 
 class Authorize : Fragment(R.layout.fragment_authorize) {
 
-    private lateinit var _binding: FragmentAuthorizeBinding
-    private val binding get() = _binding
+    private lateinit var _authBinding: FragmentAuthorizeBinding
+    private val authBinding get() = _authBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentAuthorizeBinding.inflate(inflater, container, false)
+        _authBinding = FragmentAuthorizeBinding.inflate(inflater, container, false)
 
-        binding.authSingInButton.setOnClickListener {
+        authBinding.authSingInButton.setOnClickListener {
                 findNavController().navigate(R.id.action_authorize_to_homePage)
         }
-        return binding.root
+        return authBinding.root
     }
 }

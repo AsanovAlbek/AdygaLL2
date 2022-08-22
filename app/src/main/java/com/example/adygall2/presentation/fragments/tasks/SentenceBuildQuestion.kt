@@ -12,9 +12,10 @@ import com.example.adygall2.data.db_models.Answer
 import com.example.adygall2.data.db_models.Sound
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.databinding.FragmentWordsQuestionBinding
-import com.example.adygall2.presentation.GameViewModel
-import com.example.adygall2.presentation.adapters.SecondSentenceAdapter
 import com.example.adygall2.presentation.adapters.SentenceAdapter
+import com.example.adygall2.presentation.adapters.adapter_handles.AdapterCallback
+import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
+import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.MY_LOG_TAG
 import com.example.adygall2.presentation.consts.ArgsKey.SOUND_KEY
@@ -24,17 +25,20 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SentenceBuildQuestion(
-    private val skipListener : (() -> Unit)
-) : Fragment(R.layout.fragment_words_question) {
+    private val skipListener: (() -> Unit)
+) : Fragment(R.layout.fragment_words_question), AdapterCallback {
 
-    private lateinit var _binding: FragmentWordsQuestionBinding
-    private val binding get() = _binding
+    private lateinit var _sentenceBuildBinding: FragmentWordsQuestionBinding
+    private val sentenceBuildBinding get() = _sentenceBuildBinding
     private val viewModel by viewModel<GameViewModel>()
 
-    private var _userAnswer = listOf<Answer>()
+    private var _userAnswer = String()
     val userAnswer get() = _userAnswer
-    private var _rightAnswer = listOf<String>()
+    private var _rightAnswer = String()
     val rightAnswer get() = _rightAnswer
+
+    private lateinit var userAdapter : SentenceAdapter
+    private lateinit var answerAdapter : SentenceAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -47,14 +51,14 @@ class SentenceBuildQuestion(
         savedInstanceState: Bundle?,
     ): View {
 
-        _binding = FragmentWordsQuestionBinding.inflate(inflater, container, false)
+        _sentenceBuildBinding = FragmentWordsQuestionBinding.inflate(inflater, container, false)
 
-        binding.wordsTaskText.text = arguments?.getString(TASK_KEY)
+        sentenceBuildBinding.wordsTaskText.text = arguments?.getString(TASK_KEY)
 
         setObservers()
         saveBundle()
 
-        return binding.root
+        return sentenceBuildBinding.root
     }
 
     private fun setObservers() {
@@ -80,49 +84,77 @@ class SentenceBuildQuestion(
             ResourcesCompat.getDrawable(resources, R.drawable.stop_play, null)
         // Как воспроизведение заканчивается, иконка меняется
         soundsPlayer.mediaPlayer.setOnCompletionListener {
-            binding.soundButtons.playSoundButton.icon = playSoundDrawable
+            sentenceBuildBinding.soundButtons.playSoundButton.icon = playSoundDrawable
             soundsPlayer.mediaPlayer.reset()
         }
 
-        binding.soundButtons.playSoundButton.setOnClickListener {
-            if (binding.soundButtons.playSoundButton.icon.equals(playSoundDrawable)) {
-                binding.soundButtons.playSoundButton.icon = stopSoundDrawable
-                soundsPlayer.playSound(sound)
-            } else {
-                binding.soundButtons.playSoundButton.icon = playSoundDrawable
+        sentenceBuildBinding.soundButtons.playSoundButton.setOnClickListener {
+            if (sentenceBuildBinding.soundButtons.playSoundButton.icon.equals(stopSoundDrawable)) {
+                sentenceBuildBinding.soundButtons.playSoundButton.icon = playSoundDrawable
                 soundsPlayer.stopPlay()
+            }
+            else {
+                soundsPlayer.playbackSpeed = SoundsPlayer.NORMAL_PLAYBACK
+                sentenceBuildBinding.soundButtons.playSoundButton.icon = stopSoundDrawable
+                soundsPlayer.playSound(sound)
             }
         }
 
-        binding.soundButtons.slowPlayButton.setOnClickListener {
-            soundsPlayer.playbackSpeed = SoundsPlayer.SLOW_PLAYBACK
+        sentenceBuildBinding.soundButtons.slowPlayButton.setOnClickListener {
+            if (soundsPlayer.mediaPlayer.isPlaying) {
+                soundsPlayer.stopPlay()
+            }
+            else {
+                soundsPlayer.playbackSpeed = SoundsPlayer.SLOW_PLAYBACK
+                soundsPlayer.playSound(sound)
+            }
         }
 
-        binding.soundButtons.normalPlayButton.setOnClickListener {
-            soundsPlayer.playbackSpeed = SoundsPlayer.NORMAL_PLAYBACK
-        }
-
-        binding.soundTaskSkip.setOnClickListener { skipListener.invoke() }
+        sentenceBuildBinding.soundTaskSkip.setOnClickListener { skipListener.invoke() }
     }
 
-    private fun setAdapter(answers: List<Answer>) {
+    private fun setAdapter(answers: MutableList<Answer>) {
+        val mutableAnswers = answers.map { it.answer }.toMutableList()
+        userAdapter = SentenceAdapter(requireContext(), true, mutableAnswers, this)
+        answerAdapter = SentenceAdapter(requireContext(), false, mutableListOf(), this)
 
-        Log.i(MY_LOG_TAG, "answerCount = ${answers.size}, answers = $answers")
+        val answerLayoutManager = FlexboxLayoutManager(requireContext())
+        answerLayoutManager.apply {
+            flexDirection = FlexDirection.ROW
+        }
 
-        val userAdapter = SentenceAdapter(answers)
-        val answerAdapter = SecondSentenceAdapter(mutableListOf(), userAdapter)
+        sentenceBuildBinding.answerRecView.layoutManager = answerLayoutManager
 
-        (binding.answerRecView.layoutManager as FlexboxLayoutManager)
-            .flexDirection = FlexDirection.ROW
+        sentenceBuildBinding.answerRecView.adapter = answerAdapter
+        sentenceBuildBinding.wordsRecView.adapter = userAdapter
 
-        binding.wordsRecView.adapter = userAdapter
-        binding.answerRecView.adapter = answerAdapter
+        sentenceBuildBinding.wordsRecView.setOnDragListener { _, dragEvent ->
+            HandleDragAndDropEvent(dragEvent).handle(this, true, -1)
+            true
+        }
 
-        _userAnswer = answerAdapter.answerList
-        _rightAnswer = answers.first().correctAnswer.split(" ", ",")
+        sentenceBuildBinding.answerRecView.setOnDragListener { _, dragEvent ->
+            HandleDragAndDropEvent(dragEvent).handle(this, false, -1)
+            true
+        }
+
+        val rightAnswerStroke = answers.first().correctAnswer
+        _rightAnswer = viewModel.transform(rightAnswerStroke)
     }
 
     private fun saveBundle() {
 
+    }
+
+    override fun change(isFirstAdapter: Boolean, item: String, position: Int) {
+        if (isFirstAdapter) {
+            userAdapter.addAnswer(item, position)
+            answerAdapter.removeAnswer(item)
+        }
+        else {
+            answerAdapter.addAnswer(item, position)
+            userAdapter.removeAnswer(item)
+        }
+        _userAnswer = viewModel.transform(answerAdapter.adapterItems.joinToString())
     }
 }

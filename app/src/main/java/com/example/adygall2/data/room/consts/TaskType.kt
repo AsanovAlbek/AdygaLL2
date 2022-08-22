@@ -9,4 +9,5 @@ object TaskType {
     const val SELECT_PAIRS_OF_WORDS = 6
     const val FILL_IN_THE_PASS = 7
     const val FILL_IN_THE_GAPS = 8
+    const val TYPE_TRANSLATE = 10
 }

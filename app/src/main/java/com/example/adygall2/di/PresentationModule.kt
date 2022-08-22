@@ -1,6 +1,6 @@
 package com.example.adygall2.di
 
-import com.example.adygall2.presentation.GameViewModel
+import com.example.adygall2.presentation.view_model.GameViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -12,7 +12,8 @@ val presentationModule = module {
             pictureUseCase = get(),
             taskUseCase = get(),
             soundUseCase = get(),
-            soundEffectUseCase = get()
+            soundEffectUseCase = get(),
+            answerHelperDelegate = get()
         )
     }
 }

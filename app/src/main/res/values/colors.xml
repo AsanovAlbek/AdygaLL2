@@ -29,4 +29,7 @@
     <color name="unbleached_silk">#FFDDC9</color>
     <color name="persian_orange">#E09656</color>
     <color name="lavender_blue">#D1D0FF</color>
+    
+    <color name="lime_green">#6EC66D</color>
+    <color name="soft_red">#F9595F</color>
 </resources>

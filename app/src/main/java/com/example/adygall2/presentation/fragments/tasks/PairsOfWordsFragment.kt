@@ -6,37 +6,50 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.adygall2.R
 import com.example.adygall2.data.db_models.Answer
 import com.example.adygall2.databinding.FragmentPairsOfWordsBinding
-import com.example.adygall2.presentation.GameViewModel
+import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.PairsAdapter
+import com.example.adygall2.presentation.adapters.StaticPairsAdapter
+import com.example.adygall2.presentation.adapters.adapter_handles.AdapterCallback
+import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
 import com.example.adygall2.presentation.consts.ArgsKey
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PairsOfWordsFragment : Fragment(R.layout.fragment_pairs_of_words) {
+class PairsOfWordsFragment : Fragment(R.layout.fragment_pairs_of_words), AdapterCallback {
 
-    private lateinit var _binding : FragmentPairsOfWordsBinding
-    private val binding get() = _binding
+    private lateinit var _pairsBinding : FragmentPairsOfWordsBinding
+    private val pairsBinding get() = _pairsBinding
     private val viewModel by viewModel<GameViewModel>()
     private var _userAnswerPairsCheckList = mutableListOf<String>()
     val userAnswerPairsCheckList get() = _userAnswerPairsCheckList
     private var _rightAnswerPairsCheckList = listOf<String>()
     val rightAnswerPairsCheckList get() = _rightAnswerPairsCheckList
+    private var _userAnswer = ""
+    val userAnswer get() = _userAnswer
+    private var _rightAnswer = ""
+    val rightAnswer get() = _rightAnswer
+
+    private lateinit var leftAdapter : StaticPairsAdapter
+    private lateinit var rightAdapter : PairsAdapter
+    private lateinit var bottomAdapter : PairsAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentPairsOfWordsBinding.inflate(inflater, container, false)
+        _pairsBinding = FragmentPairsOfWordsBinding.inflate(inflater, container, false)
 
-        binding.taskText.text = arguments?.getString(TASK_KEY)
+        pairsBinding.taskText.text = arguments?.getString(TASK_KEY)
 
         setObservers()
 
-        return binding.root
+        return pairsBinding.root
     }
 
     private fun setAdapters(answers : List<Answer>) {
@@ -48,39 +61,32 @@ class PairsOfWordsFragment : Fragment(R.layout.fragment_pairs_of_words) {
             answerPairs.add( Pair( twoWords[0], twoWords[1]) )
         }
 
-        var leftIndex = 0
-        var rightIndex = 0
-
         val leftColumnWords = answerPairs.map { it.first }.toMutableList()
         val rightColumnWords = answerPairs.map { it.second }.toMutableList()
-        val leftAdapter = PairsAdapter(leftColumnWords)
-        val rightAdapter = PairsAdapter(rightColumnWords)
 
-        binding.leftWordsList.adapter = leftAdapter
-        binding.rightWordsList.adapter = rightAdapter
+        leftAdapter = StaticPairsAdapter(leftColumnWords)
+        rightAdapter = PairsAdapter(requireContext(),true, mutableListOf(), this)
+        bottomAdapter = PairsAdapter(requireContext(),false, rightColumnWords, this)
 
-        leftAdapter.onItemClick { word ->
-            if (leftIndex < rightIndex) {
-                _userAnswerPairsCheckList[leftIndex] = "$word*${_userAnswerPairsCheckList[leftIndex]}"
-            }
-            else {
-                _userAnswerPairsCheckList.add(leftIndex, "$word*")
-            }
-            leftIndex++
+        val bottomGridLayoutManager = GridLayoutManager(requireContext(), 2)
+        pairsBinding.bottomWordsList.layoutManager = bottomGridLayoutManager
+
+        pairsBinding.leftWordsList.adapter = leftAdapter
+        pairsBinding.rightWordsList.adapter = rightAdapter
+        pairsBinding.bottomWordsList.adapter = bottomAdapter
+
+        pairsBinding.bottomWordsList.setOnDragListener { _, dragEvent ->
+            HandleDragAndDropEvent(dragEvent).handle(this, false, -1)
+            true
         }
 
-        rightAdapter.onItemClick { word ->
-            if (rightIndex < leftIndex) {
-                _userAnswerPairsCheckList[rightIndex] += word
-            }
-            else {
-                _userAnswerPairsCheckList.add(rightIndex, word)
-            }
-
-            rightIndex++
+        pairsBinding.rightWordsList.setOnDragListener { _, dragEvent ->
+            HandleDragAndDropEvent(dragEvent).handle(this, true, -1)
+            true
         }
 
-        _rightAnswerPairsCheckList = answers.map { it.answer }
+        _userAnswerPairsCheckList = rightAdapter.adapterItems
+        _rightAnswerPairsCheckList = answers.map { it.answer.split("*")[1] }
     }
 
     private fun setObservers() {
@@ -88,5 +94,18 @@ class PairsOfWordsFragment : Fragment(R.layout.fragment_pairs_of_words) {
 
         viewModel.getAnswers(taskId!!)
         viewModel.answersListFromDb.observe(viewLifecycleOwner, ::setAdapters)
+    }
+
+    override fun change(isFirstAdapter: Boolean, item: String, position: Int) {
+        if (isFirstAdapter) {
+            bottomAdapter.removeAnswer(item)
+            rightAdapter.addAnswer(item, position)
+        }
+        else {
+            bottomAdapter.addAnswer(item, position)
+            rightAdapter.removeAnswer(item)
+        }
+        _userAnswer = viewModel.transform(_userAnswerPairsCheckList.joinToString())
+        _rightAnswer = viewModel.transform(_rightAnswerPairsCheckList.joinToString())
     }
 }

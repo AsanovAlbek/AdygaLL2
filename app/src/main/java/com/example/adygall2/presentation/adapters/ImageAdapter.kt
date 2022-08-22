@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.adygall2.R
 import com.example.adygall2.data.db_models.Answer
@@ -35,9 +36,6 @@ class ImageAdapter(
 
     // Переменная для хранения позиции выбранного элемента
     private var selectItemPosition = -1
-    // Обратный вызов выбора ответа
-    lateinit var getAnswerListener : ((String, String) -> Unit)
-    var itemsClickable = true
 
     interface OnSelectClickListener {
         fun onSelect(position : Int, answer : Answer)
@@ -63,6 +61,7 @@ class ImageAdapter(
                 .load(answerPicture.picture)
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .skipMemoryCache(false)
+                .dontAnimate()
                 .into(itemBinding.pictureInCard)
 
             // Ставим слово к картинке
@@ -93,7 +92,6 @@ class ImageAdapter(
 
             // Присваиваем root элементу обработчик нажатий
             itemBinding.pictureCard.setOnClickListener {
-                if (itemsClickable) {
                     // Если позиция адаптера не равна выбранной, то оповещаем об этом адаптер,
                     // после чего меняем выбранную позицию на позицию адаптера
                     notifyItemChanged(selectItemPosition)
@@ -101,9 +99,11 @@ class ImageAdapter(
                         selectItemPosition = adapterPosition
                         notifyItemChanged(selectItemPosition)
                     }
+                    if (soundsPlayer.mediaPlayer.isPlaying) {
+                        soundsPlayer.stopPlay()
+                    }
                     soundsPlayer.playSound(answerSound)
                     listener.onSelect(adapterPosition, answer)
-                }
 
             }
         }

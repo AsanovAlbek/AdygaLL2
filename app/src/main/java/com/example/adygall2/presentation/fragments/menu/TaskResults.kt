@@ -11,22 +11,22 @@ import com.example.adygall2.databinding.FragmentLessonResultsBinding
 
 class TaskResults : Fragment(R.layout.fragment_lesson_results) {
 
-    private lateinit var _binding : FragmentLessonResultsBinding
-    private val binding get() = _binding
+    private lateinit var _lessonResultBinding : FragmentLessonResultsBinding
+    private val lessonResultsBinding get() = _lessonResultBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentLessonResultsBinding.inflate(inflater, container, false)
+        _lessonResultBinding = FragmentLessonResultsBinding.inflate(inflater, container, false)
 
         // Слушатель на нажатие кнопки
-        binding.completeLessonBtn.setOnClickListener {
+        lessonResultsBinding.completeLessonBtn.setOnClickListener {
             exitIntoLevel()
         }
 
-        return binding.root
+        return lessonResultsBinding.root
     }
 
     /**

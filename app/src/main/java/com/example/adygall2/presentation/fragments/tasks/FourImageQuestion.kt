@@ -10,13 +10,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.adygall2.R
 import com.example.adygall2.data.db_models.Answer
 import com.example.adygall2.databinding.FragmentFourImageQuestionBinding
-import com.example.adygall2.presentation.GameViewModel
+import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.ImageAdapter
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.MY_LOG_TAG
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlin.reflect.KFunction
 
 /**
  * Класс, имплементирующий интерфейс фрагмента

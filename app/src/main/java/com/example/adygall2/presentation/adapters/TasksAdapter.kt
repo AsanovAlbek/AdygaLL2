@@ -14,6 +14,7 @@ import com.example.adygall2.data.room.consts.TaskType.SENTENCE_BUILD
 import com.example.adygall2.data.room.consts.TaskType.THREE_WORDS
 import com.example.adygall2.data.room.consts.TaskType.TRANSLATE_SENTENCE
 import com.example.adygall2.data.room.consts.TaskType.TYPE_THAT_YOUR_HEARD
+import com.example.adygall2.data.room.consts.TaskType.TYPE_TRANSLATE
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.SOUND_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
@@ -72,6 +73,8 @@ class TasksAdapter(
         FILL_IN_THE_PASS -> FillPassTask()
 
         FILL_IN_THE_GAPS -> FillGapsFragment()
+
+        TYPE_TRANSLATE -> TypeTranslateTask()
 
         else -> Fragment()
     }

@@ -30,4 +30,8 @@
     <string name="lesson_title">Урок</string>
     <string name="translate_into_adyga">Переведите на адыгейский:</string>
     <string name="fill_the_pass">Заполните пропуск:</string>
+    <string name="correct_answer">Правильный ответ:</string>
+    <string name="you_right">ВСЁ ВЕРНО! МОЛОДЕЦ!</string>
+    <string name="you_not_right">НЕПРАВИЛЬНЫЙ ОТВЕТ</string>ng
+    <string name="next_text">Следующий</string>
 </resources>

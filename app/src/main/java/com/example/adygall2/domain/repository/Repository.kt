@@ -32,7 +32,7 @@ interface Repository {
 
     // Answers
 
-    fun getAnswersByTaskId(taskId : Int) : List<Answer>
+    fun getAnswersByTaskId(taskId : Int) : MutableList<Answer>
 
     fun getAllAnswers() : List<Answer>
 

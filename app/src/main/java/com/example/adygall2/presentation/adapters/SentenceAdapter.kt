@@ -1,18 +1,17 @@
 package com.example.adygall2.presentation.adapters
 
-import android.os.Bundle
-import android.util.Log
+import android.content.ClipData
+import android.content.ClipDescription
+import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
 import com.example.adygall2.data.db_models.Answer
-import com.example.adygall2.data.db_models.Picture
 import com.example.adygall2.databinding.SentenceItemBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.adygall2.presentation.adapters.adapter_handles.AdapterCallback
+import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
 
 /**
  * Класс - Адаптер, наследуемый от класса Adapter из класса RecyclerView
@@ -21,60 +20,80 @@ import kotlinx.coroutines.withContext
  */
 
 class SentenceAdapter(
-    private val answers : List<Answer>,
+    private val context : Context,
+    private val isFirstAdapter : Boolean,
+    private val answers : MutableList<String>,
+    private val callback: AdapterCallback
 ) : RecyclerView.Adapter<SentenceAdapter.SentenceHolder>() {
 
-    var observerAdapter : SecondSentenceAdapter? = null
+    val adapterItems get() = answers
 
-    var clickListener : ((word : String) -> Unit)? = null
-
-    fun setListener(listener : ((word : String) -> Unit)) {
-        clickListener = listener
+    fun addAnswer(addedAnswer : String, position: Int) {
+        if (!answers.contains(addedAnswer)) {
+            if (position == -1) {
+                val index = answers.size
+                answers.add(addedAnswer)
+                notifyItemInserted(index)
+            }
+            else {
+                answers.add(position, addedAnswer)
+                notifyItemInserted(position)
+            }
+        }
     }
 
-    fun registerObserverAdapter(adapter : SecondSentenceAdapter) {
-        observerAdapter = adapter
+    fun removeAnswer(removedAnswer : String) {
+        val index = answers.indexOf(removedAnswer)
+        if (index != -1) {
+            answers.removeAt(index)
+            notifyItemRemoved(index)
+        }
     }
-
-    fun sendWord(answer: Answer) {
-        observerAdapter?.updateAnswers(answer)
-    }
-
-    private var selectedItemPos = -1
 
     inner class SentenceHolder(
-        private val itemBinding: SentenceItemBinding
+        private val context : Context,
+        private val isFirstAdapter : Boolean,
+        private val itemBinding: SentenceItemBinding,
+        private val callback: AdapterCallback
     ) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        fun binding(position: Int, answer : Answer) {
+        fun binding(answer : String) {
+            with(itemBinding) {
+                sentenceWord.text = answer
+                with(root) {
+                    setOnLongClickListener {
+                        val item = ClipData.Item(answer)
+                        val dragData = ClipData(
+                            answer, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item
+                        )
+                        val shadowDrag = View.DragShadowBuilder(this)
+                        startDragAndDrop(dragData, shadowDrag, null, 0)
+                        true
+                    }
 
-            itemBinding.sentencePart.text = answer.answer
-            itemBinding.sentenceWordContainer.setOnClickListener {
-                if (selectedItemPos != adapterPosition) {
-                    notifyItemChanged(selectedItemPos)
-                    selectedItemPos = adapterPosition
-                    notifyItemChanged(selectedItemPos)
+                    setOnDragListener { _, dragEvent ->
+                        HandleDragAndDropEvent(dragEvent).handle(callback, isFirstAdapter, layoutPosition)
+                        true
+                    }
                 }
-                sendWord(answer)
-                if (clickListener != null) {
-                    clickListener?.invoke(answer.answer)
-                }
-                Log.i("SentenceAdapter", "Нажато слово ${answer.answer}")
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SentenceHolder =
         SentenceHolder(
+            context,
+            isFirstAdapter,
             SentenceItemBinding.bind(
                 LayoutInflater.from(parent.context).inflate(
                     R.layout.sentence_item, parent, false
                 )
-            )
+            ),
+            callback
         )
 
     override fun onBindViewHolder(holder: SentenceHolder, position: Int) {
-        holder.binding(position, answers[position])
+        holder.binding(answers[position])
     }
 
     override fun getItemCount() = answers.size
