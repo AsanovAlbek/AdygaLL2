@@ -87,7 +87,7 @@ class FillGapsFragment : Fragment(R.layout.fragment_fill_gaps) {
                     isSingleLine = true
                 }
                 _userAnswer.add(addedFiled)
-                binding.flexbox.addView(addedFiled
+                binding.flexbox.addView(addedFiled)
             }
         }
 

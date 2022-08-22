@@ -170,7 +170,7 @@ class TaskContainer : Fragment(R.layout.task_container) {
                         // Если ответил неправильно
                         if (userAnswer.compareTo(rightAnswer) != 0) {
                             // Если игрок ошибся 5 раз, то его прогресс аннулируется
-                            //mistakesCounter++
+                            mistakesCounter++
                             if (mistakesCounter >= MISTAKES_LIMIT) {
                                 restartLesson()
                             }
