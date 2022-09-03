@@ -16,11 +16,13 @@ import com.example.adygall2.presentation.adapters.SentenceAdapter
 import com.example.adygall2.presentation.adapters.SimpleSentenceAdapter
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
+import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FillPassTask : Fragment(R.layout.fragment_fill_in_the_pass) {
+/** Задание с заполнением ячейки словами из кнопок */
+class FillPassTask : BaseTaskFragment(R.layout.fragment_fill_in_the_pass) {
 
     private lateinit var _binding: FragmentFillInThePassBinding
     private val binding get() = _binding
@@ -28,9 +30,9 @@ class FillPassTask : Fragment(R.layout.fragment_fill_in_the_pass) {
 
     private lateinit var textViewFiled: TextView
     private var _userAnswer = ""
-    val userAnswer get() = _userAnswer
+    override val userAnswer get() = _userAnswer
     private var _rightAnswer = ""
-    val rightAnswer get() = _rightAnswer
+    override val rightAnswer get() = _rightAnswer
 
     private lateinit var userAdapter: SentenceAdapter
 
@@ -117,6 +119,7 @@ class FillPassTask : Fragment(R.layout.fragment_fill_in_the_pass) {
         _rightAnswer = viewModel.transform(rightAnswerStroke)
     }
 
+    /** настройка параметров [TextView] */
     private fun setTextViewParams(textView: TextView, textInView: String) {
         textView.apply {
             text = textInView

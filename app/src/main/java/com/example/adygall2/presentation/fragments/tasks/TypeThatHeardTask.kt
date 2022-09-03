@@ -15,17 +15,19 @@ import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.SOUND_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
+import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class TypeThatHeardTask : Fragment(R.layout.fragment_type_that_heard) {
+/** Фрагмент для задания с написанием услышанного */
+class TypeThatHeardTask : BaseTaskFragment(R.layout.fragment_type_that_heard) {
 
     private lateinit var _typeThatHeardBinding : FragmentTypeThatHeardBinding
     private val typeThatHeardBinding get() = _typeThatHeardBinding
     private val viewModel by viewModel<GameViewModel>()
     private var _rightAnswer = ""
-    val rightAnswer get() = _rightAnswer
+    override val rightAnswer get() = _rightAnswer
     private var _userAnswer = ""
-    val userAnswer get() = _userAnswer
+    override val userAnswer get() = _userAnswer
 
     override fun onCreateView(
         inflater: LayoutInflater,

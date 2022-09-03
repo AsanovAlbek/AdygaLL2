@@ -12,6 +12,15 @@ import com.example.adygall2.data.room.consts.RoomConst.TASK
 import com.example.adygall2.data.room.consts.RoomConst.TASKS_TABLE_NAME
 import com.example.adygall2.data.room.consts.RoomConst.TASK_TYPE
 
+/**
+ * Entity класс для хранения данных из таблицы 'tasks'
+ * @param id - id задания
+ * @param taskType - тип задания (типы приведены в [TaskType])
+ * @param task - текст вопроса
+ * @param levelId - id уровня
+ * @param lessonId - id урока
+ * @param exerciseId - id внутри одного урока из 15 вопросов
+ */
 @Entity(tableName = TASKS_TABLE_NAME)
 data class TaskEntity(
     @PrimaryKey(autoGenerate = true)

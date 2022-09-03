@@ -13,6 +13,9 @@ import com.example.adygall2.data.room.entities.SoundEffectEntity
 import com.example.adygall2.data.room.entities.SoundEntity
 import com.example.adygall2.data.room.entities.TaskEntity
 
+/**
+ * Модуль для маппинга Entity классов в модели
+ */
 
 fun AnswerEntity.toAnswer() =
     Answer(id, taskId, answer, isCorrectAnswer.lowercase(), pictureId, soundId)

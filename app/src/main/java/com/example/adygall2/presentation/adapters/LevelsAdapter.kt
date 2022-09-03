@@ -7,6 +7,10 @@ import com.example.adygall2.R
 import com.example.adygall2.data.db_models.Task
 import com.example.adygall2.databinding.FragmentLevelPageBinding
 
+/**
+ * Адаптер для флажков, в которых будут по 15 заданий
+ * Пока не реализованно, возможно откажусь от адаптера
+ * */
 class LevelsAdapter(
     private val tasks : List<Task>,
     private val flagClickEvent : ((List<Task>) -> Unit)

@@ -8,6 +8,7 @@ import com.example.adygall2.databinding.PairWordItemBinding
 
 /**
  * Адаптер для статичного Recycler View в задании с парами слов
+ * @param answers - список ответов
  */
 class StaticPairsAdapter(
     private val answers : MutableList<String>

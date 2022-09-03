@@ -21,6 +21,7 @@ val dataModule = module {
 
     factory<Repository> {
         RepositoryImpl(
+            context = androidApplication(),
             answerDao = get() as AnswerDao,
             orderDao = get() as OrderDao,
             pictureDao = get() as PictureDao,

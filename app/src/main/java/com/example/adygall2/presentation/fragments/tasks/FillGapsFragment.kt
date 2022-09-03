@@ -17,22 +17,25 @@ import com.example.adygall2.databinding.FragmentFillGapsBinding
 import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.consts.ArgsKey
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
+import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FillGapsFragment : Fragment(R.layout.fragment_fill_gaps) {
+/**
+ * Задание с заполнением пропусков с клавиатуры
+ */
+class FillGapsFragment : BaseTaskFragment(R.layout.fragment_fill_gaps) {
 
     private lateinit var _binding : FragmentFillGapsBinding
     private val binding get() = _binding
     private val viewModel by viewModel<GameViewModel>()
 
     private var _rightAnswer = ""
-    val rightAnswer get() = _rightAnswer
+    override val rightAnswer get() = _rightAnswer
     private var _userAnswer = mutableListOf<EditText>()
-    val userAnswer get() = viewModel.transform(_userAnswer.joinToString { it.text })
+    override val userAnswer get() = viewModel.transform(_userAnswer.joinToString { it.text })
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.i(ArgsKey.MY_LOG_TAG, "Задание с заполнением пропусков создано")
     }
 
     override fun onCreateView(
@@ -59,6 +62,7 @@ class FillGapsFragment : Fragment(R.layout.fragment_fill_gaps) {
         }
     }
 
+    /** Метод для динамического заполнения текста задания */
     private fun setTaskText() {
         val userAnswerList = mutableListOf<EditText>()
         val task = arguments?.getString(TASK_KEY)

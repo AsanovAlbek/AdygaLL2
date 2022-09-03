@@ -9,6 +9,10 @@ import androidx.navigation.fragment.findNavController
 import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentLessonResultsBinding
 
+/**
+ * Фрагмент для показа результатов урока
+ * Пока что не проработано
+ */
 class TaskResults : Fragment(R.layout.fragment_lesson_results) {
 
     private lateinit var _lessonResultBinding : FragmentLessonResultsBinding

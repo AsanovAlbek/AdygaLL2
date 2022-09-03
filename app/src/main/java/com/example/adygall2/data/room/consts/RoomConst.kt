@@ -1,9 +1,13 @@
 package com.example.adygall2.data.room.consts
 
+/**
+ * Константные значения, связанные с бд
+ */
 object RoomConst {
     private const val DATABASE_DIRECTORY = "game_db_alpha"
     // Название базы данных
     const val DEMO_BASE = "$DATABASE_DIRECTORY/demo.db"
+    const val FULL_BASE = "$DATABASE_DIRECTORY/game_db_full.db"
 
     // Названия таблиц
     const val ANSWER_TABLE_NAME = "answers"

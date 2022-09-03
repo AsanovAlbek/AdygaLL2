@@ -3,6 +3,9 @@ package com.example.adygall2.presentation.adapters.adapter_handles
 import android.content.ClipData
 import android.view.DragEvent
 
+/**
+ * Вспомогательный класс для перетаскивания элемента
+ */
 class HandleDragAndDropEvent(private val event : DragEvent) {
     fun handle(callback: AdapterCallback, isFirstAdapter: Boolean, position: Int) {
         if (event.action == DragEvent.ACTION_DROP) {

@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.adygall2.data.room.consts.RoomConst.DEMO_BASE
+import com.example.adygall2.data.room.consts.RoomConst.FULL_BASE
 import com.example.adygall2.data.room.dao.AnswerDao
 import com.example.adygall2.data.room.dao.OrderDao
 import com.example.adygall2.data.room.dao.PictureDao
@@ -18,6 +19,9 @@ import com.example.adygall2.data.room.entities.SoundEffectEntity
 import com.example.adygall2.data.room.entities.SoundEntity
 import com.example.adygall2.data.room.entities.TaskEntity
 
+/**
+ * Реализация базы данных Room
+ * */
 @Database(
     entities = [
         AnswerEntity::class,
@@ -33,7 +37,7 @@ abstract class GameBase : RoomDatabase() {
     companion object {
         fun buildDatabase(context : Context) =
             Room.databaseBuilder(context, GameBase::class.java, "game_database").
-                    fallbackToDestructiveMigration().createFromAsset(DEMO_BASE).build()
+                    fallbackToDestructiveMigration().createFromAsset(FULL_BASE).build()
     }
 
     abstract fun getAnswerDao() : AnswerDao

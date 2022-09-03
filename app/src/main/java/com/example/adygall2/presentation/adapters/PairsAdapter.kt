@@ -14,6 +14,13 @@ import com.example.adygall2.databinding.PairWordItemBinding
 import com.example.adygall2.presentation.adapters.adapter_handles.AdapterCallback
 import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
 
+/**
+ * Адаптер для пар ответов
+ * @param context - контекст фрагмента
+ * @param isFirstAdapter - переменная для разделения адаптеров
+ * @param answers - список ответов
+ * @param callback - обратный вызов для изменения элементов в адаптере
+ */
 class PairsAdapter(
     private val context: Context,
     private val isFirstAdapter : Boolean,
@@ -21,6 +28,7 @@ class PairsAdapter(
     private val callback : AdapterCallback
 ) : RecyclerView.Adapter<PairsAdapter.PairsHolder>() {
 
+    /** Переменная для получения всех элементов */
     val adapterItems get() = answers
 
     /**
@@ -91,6 +99,7 @@ class PairsAdapter(
             }
         }
 
+        /** Метод для смены параметров карточки */
         private fun setCardParams() {
             with(itemBinding) {
                 pairWordContainer.setCardBackgroundColor(context.resources.getColor(R.color.unbleached_silk, null))

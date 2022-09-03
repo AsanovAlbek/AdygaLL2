@@ -8,6 +8,12 @@ import com.example.adygall2.data.room.consts.RoomConst.ID
 import com.example.adygall2.data.room.consts.RoomConst.NAME
 import com.example.adygall2.data.room.consts.RoomConst.SOUND_EFFECT_TABLE_NAME
 
+/**
+ * Entity класс для хранения данных из таблицы 'sound_effect'
+ * @param id - id эффекта
+ * @param name - название эффекта
+ * @param effect - звуковой эффект в массиве байтов
+ */
 @Entity(tableName = SOUND_EFFECT_TABLE_NAME)
 data class SoundEffectEntity (
     @PrimaryKey(autoGenerate = true)

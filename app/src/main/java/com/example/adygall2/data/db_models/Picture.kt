@@ -1,5 +1,14 @@
 package com.example.adygall2.data.db_models
 
+/**
+ * Модель картинок ответов
+ * @param id - id картинки
+ * @param name - название картинки
+ * @param picture - PNG картинка в байтовом представлении
+ *
+ * Так же класс переопределяет методы equals() и hashCode()
+ * для корректного сравнения картинок
+ */
 data class Picture(
     val id : Int,
 

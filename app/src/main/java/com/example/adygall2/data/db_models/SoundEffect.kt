@@ -1,5 +1,11 @@
 package com.example.adygall2.data.db_models
 
+/**
+ * Модель для звукщвых эффектов при ответе на задание
+ * @param id - id эффекта
+ * @param name - название эффекта
+ * @param effect - звуковой эффект в массиве байтов
+ */
 data class SoundEffect(
     val id : Int,
     val name : String,

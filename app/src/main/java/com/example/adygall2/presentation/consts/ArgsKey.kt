@@ -1,5 +1,8 @@
 package com.example.adygall2.presentation.consts
 
+/**
+ * Класс - объект для хранения константных значений аргументов
+ */
 object ArgsKey {
     const val ID_KEY = "id"
     const val TYPE_KEY = "taskType"
@@ -8,6 +11,4 @@ object ArgsKey {
 
     const val CURRENT_ANSWER = "currentAnswer"
     const val USER_ANSWER = "userAnswer"
-
-    const val MY_LOG_TAG = "my log"
 }

@@ -17,33 +17,29 @@ import com.example.adygall2.presentation.adapters.adapter_handles.AdapterCallbac
 import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
 import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
-import com.example.adygall2.presentation.consts.ArgsKey.MY_LOG_TAG
 import com.example.adygall2.presentation.consts.ArgsKey.SOUND_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
+import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+/** Фрагмент для задания с построением предложения по услышанному */
 class SentenceBuildQuestion(
     private val skipListener: (() -> Unit)
-) : Fragment(R.layout.fragment_words_question), AdapterCallback {
+) : BaseTaskFragment(R.layout.fragment_words_question), AdapterCallback {
 
     private lateinit var _sentenceBuildBinding: FragmentWordsQuestionBinding
     private val sentenceBuildBinding get() = _sentenceBuildBinding
     private val viewModel by viewModel<GameViewModel>()
 
     private var _userAnswer = String()
-    val userAnswer get() = _userAnswer
+    override val userAnswer get() = _userAnswer
     private var _rightAnswer = String()
-    val rightAnswer get() = _rightAnswer
+    override val rightAnswer get() = _rightAnswer
 
     private lateinit var userAdapter : SentenceAdapter
     private lateinit var answerAdapter : SentenceAdapter
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Log.i(MY_LOG_TAG, "Задание с построением предложения создано")
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,7 +52,6 @@ class SentenceBuildQuestion(
         sentenceBuildBinding.wordsTaskText.text = arguments?.getString(TASK_KEY)
 
         setObservers()
-        saveBundle()
 
         return sentenceBuildBinding.root
     }
@@ -88,6 +83,8 @@ class SentenceBuildQuestion(
             soundsPlayer.mediaPlayer.reset()
         }
 
+        // Слушатель нажатий на кнопку проигрывания озвучки
+        // При нажатиях меняется картинка
         sentenceBuildBinding.soundButtons.playSoundButton.setOnClickListener {
             if (sentenceBuildBinding.soundButtons.playSoundButton.icon.equals(stopSoundDrawable)) {
                 sentenceBuildBinding.soundButtons.playSoundButton.icon = playSoundDrawable
@@ -100,6 +97,7 @@ class SentenceBuildQuestion(
             }
         }
 
+        // Слушатель нажатия медленного проигрывания озвучки
         sentenceBuildBinding.soundButtons.slowPlayButton.setOnClickListener {
             if (soundsPlayer.mediaPlayer.isPlaying) {
                 soundsPlayer.stopPlay()
@@ -142,10 +140,7 @@ class SentenceBuildQuestion(
         _rightAnswer = viewModel.transform(rightAnswerStroke)
     }
 
-    private fun saveBundle() {
-
-    }
-
+    /** Метод для изменения содержимого адаптеров */
     override fun change(isFirstAdapter: Boolean, item: String, position: Int) {
         if (isFirstAdapter) {
             userAdapter.addAnswer(item, position)

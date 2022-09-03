@@ -1,12 +1,13 @@
 package com.example.adygall2.data.delegate
 
 class AnswerHelperImpl : AnswerHelper {
-    // отрицание всех русские буквы
+    /** отрицание всех русских букв */
     private val notRusLetters = "[^а-яА-ЯЁё]+"
-    // Все пунктуационные знаки
+    /** Все пунктуационные знаки */
     private val punct = "\"W+"
+    /** Знак пробела */
     private val whiteSpace = "\"s"
-    // Находит в строке все не буквы и все не цифры
+    /** Находит в строке все не буквы и все не цифры */
     private val complexSplit = "$punct$whiteSpace|$notRusLetters".toRegex()
 
     /**
@@ -14,5 +15,5 @@ class AnswerHelperImpl : AnswerHelper {
      * @param str - строка, подаваемая для деления
      */
     override fun transform(str: String): String =
-        str.lowercase().split(complexSplit).joinToString()
+        str.lowercase().trim().split(complexSplit).joinToString()
 }

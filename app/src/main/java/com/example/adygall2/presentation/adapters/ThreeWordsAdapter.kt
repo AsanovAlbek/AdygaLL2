@@ -1,5 +1,6 @@
 package com.example.adygall2.presentation.adapters
 
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -15,14 +16,19 @@ import com.example.adygall2.databinding.SimpleWordItemBinding
  * Класс - Адаптер, наследуемый от класса Adapter из класса RecyclerView
  * Нужен для взаимодействия с данными в списках (в нашем случае с 3 словами, из которых
  * надо выбрать подходящий перевод)
+ *
+ * @param context - контекст фрагмента
+ * @param itemsList - список ответов
+ * @param listener - слушатель выбора элемента
  */
 
 class ThreeWordsAdapter(
-    // Лист со словами
+    private val context : Context,
     private val itemsList : List <Answer>,
     private val listener : ((Answer) -> Unit)
 ) : RecyclerView.Adapter<ThreeWordsAdapter.ThreeWordsHolder>() {
 
+    /** Позиция выбранного элемента */
     private var selectItemPosition = -1
 
     inner class ThreeWordsHolder (
@@ -40,7 +46,7 @@ class ThreeWordsAdapter(
                 if (selectItemPosition == adapterPosition) {
                     // Если позиция выбранного элемента совпала с позицией адаптера, то меняем цвет
                     // на зелённый
-                    itemBinding.simpleWordContainer.setCardBackgroundColor(Color.GREEN)
+                    itemBinding.simpleWordContainer.setCardBackgroundColor(context.resources.getColor(R.color.lavender_blue, null))
                 }
                 else {
                     // Иначе снова белый

@@ -18,12 +18,17 @@ import com.example.adygall2.data.db_models.Picture
 import com.example.adygall2.data.db_models.Sound
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.databinding.ImageQuestionItemBinding
-import com.example.adygall2.presentation.consts.ArgsKey.MY_LOG_TAG
 import kotlin.reflect.KFunction
 
 /**
  * Класс - Адаптер, наследуемый от класса Adapter из класса RecyclerView
  * Нужен для взаимодействия с данными в списках (в нашем случае с картинками вариантов ответов)
+ *
+ * @param context - контекст фрагмента
+ * @param answers - список ответов
+ * @param pictures - список картинок
+ * @param sounds - список озвучек
+ * @param listener - слушатель выбора карточки с картинкой
  */
 
 class ImageAdapter(
@@ -34,12 +39,16 @@ class ImageAdapter(
     private val listener : OnSelectClickListener
 ) : RecyclerView.Adapter<ImageAdapter.ImageQueHolder>() {
 
-    // Переменная для хранения позиции выбранного элемента
+    /** Переменная для хранения позиции выбранного элемента */
     private var selectItemPosition = -1
 
+    /** Интерфейс для обратного вызова выбора элемента */
     interface OnSelectClickListener {
         fun onSelect(position : Int, answer : Answer)
     }
+
+    /** Обратный вызов при уничтожении фрагмента, нужен для своевременной очистки кэша [Glide] */
+    private var onDestroyCallback : (() -> Unit)? = null
 
     /**
      * inner class - вложенный класс, имеющий доступ к переменным и методам внешнего класса
@@ -128,4 +137,9 @@ class ImageAdapter(
 
     // Получение количества элементов в адаптере
     override fun getItemCount() = pictures.size
+
+    fun onDestroy(callback : (() -> Unit)) {
+        onDestroyCallback = callback
+        onDestroyCallback?.invoke()
+    }
 }

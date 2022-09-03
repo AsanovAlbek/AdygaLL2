@@ -13,30 +13,27 @@ import com.example.adygall2.databinding.FragmentFourImageQuestionBinding
 import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.ImageAdapter
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
-import com.example.adygall2.presentation.consts.ArgsKey.MY_LOG_TAG
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
+import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
- * Класс, имплементирующий интерфейс фрагмента
+ * Класс, наследующийся от [BaseTaskFragment]
  * Предназначен для взаимодействия с экраном (окном) верификации данных
  * Экран для вопросов с картинками (1 тип заданий)
  */
 
-class FourImageQuestion : Fragment(R.layout.fragment_four_image_question) {
+class FourImageQuestion : BaseTaskFragment(R.layout.fragment_four_image_question) {
     private lateinit var _binding : FragmentFourImageQuestionBinding
     private val binding get() = _binding
     private val viewModel by viewModel<GameViewModel>()
 
     private var _userAnswer = ""
-    val userAnswer get() = _userAnswer
+    override val userAnswer get() = _userAnswer
     private var _rightAnswer = ""
-    val rightAnswer get() = _rightAnswer
+    override val rightAnswer get() = _rightAnswer
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Log.i(MY_LOG_TAG, "Задание с картинками создано")
-    }
+    lateinit var imageAdapter : ImageAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,7 +45,6 @@ class FourImageQuestion : Fragment(R.layout.fragment_four_image_question) {
         binding.fourImageTaskEt.text = arguments?.getString(TASK_KEY)
 
         setObservers()
-        saveBundle()
 
         return binding.root
     }
@@ -60,7 +56,7 @@ class FourImageQuestion : Fragment(R.layout.fragment_four_image_question) {
             viewModel.picturesListByAnswersFromDb.observe(viewLifecycleOwner) { dbPics ->
                 viewModel.getSoundsByAnswers(dbAnswers)
                 viewModel.soundsListByAnswersFromDb.observe(viewLifecycleOwner) { dbSounds ->
-                    val adapter = ImageAdapter(
+                    imageAdapter = ImageAdapter(
                         context = requireActivity(),
                         answers = dbAnswers,
                         pictures = dbPics,
@@ -72,7 +68,7 @@ class FourImageQuestion : Fragment(R.layout.fragment_four_image_question) {
                         }
                     )
 
-                    binding.fourImageContainer.adapter = adapter
+                    binding.fourImageContainer.adapter = imageAdapter
                     binding.fourImageContainer.layoutManager = GridLayoutManager(requireActivity(), 2)
 
                     _rightAnswer = dbAnswers.first { it.correctAnswer.toBoolean() }.answer
@@ -84,8 +80,13 @@ class FourImageQuestion : Fragment(R.layout.fragment_four_image_question) {
 
     }
 
-    private fun saveBundle() {
-
+    /**
+     * Чистим кэш Glide для корректной работы адаптера
+     */
+    override fun onPause() {
+        super.onPause()
+        imageAdapter.onDestroy {
+            viewModel.clearGlideCache()
+        }
     }
-
 }

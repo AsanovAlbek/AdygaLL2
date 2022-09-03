@@ -8,6 +8,15 @@ import com.example.adygall2.data.room.consts.RoomConst.NAME
 import com.example.adygall2.data.room.consts.RoomConst.PIC
 import com.example.adygall2.data.room.consts.RoomConst.PICTURES_TABLE_NAME
 
+/**
+ * Entity класс для хранения данных из таблицы 'pictures'
+ * @param id - id картинки
+ * @param name - название картинки
+ * @param picture - PNG картинка в байтовом представлении
+ *
+ * Так же класс переопределяет методы equals() и hashCode()
+ * для корректного сравнения картинок
+ */
 @Entity(tableName = PICTURES_TABLE_NAME)
 data class PictureEntity(
     @PrimaryKey(autoGenerate = true)

@@ -1,5 +1,13 @@
 package com.example.adygall2.data.db_models
 
+/**
+ * Модель для хранения аудиофайлов (озвучек)
+ * @param id - id аудиофайла
+ * @param name - название аудиофайла
+ * @param audioByteArray - аудиофайл в байтовом представлении
+ *
+ * Так же, как и класс [Picture] переопределяет методы equals() и hashCode()
+ */
 data class Sound (
     val id : Int,
     val name : String,

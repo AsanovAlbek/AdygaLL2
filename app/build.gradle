@@ -102,7 +102,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     // Шкала прогресса
-    implementation 'com.anton46:stepsview:0.0.2'
+    implementation 'com.github.shuhart:stepview:1.5.1'
 
     // Флексбокс
     implementation 'com.google.android.flexbox:flexbox:3.0.0'

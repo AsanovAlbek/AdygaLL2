@@ -17,9 +17,13 @@ import com.example.adygall2.presentation.adapters.adapter_handles.AdapterCallbac
 import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
 import com.example.adygall2.presentation.consts.ArgsKey
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
+import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PairsOfWordsFragment : Fragment(R.layout.fragment_pairs_of_words), AdapterCallback {
+/**
+ * Фрагмент для заданий с парами ответов
+ */
+class PairsOfWordsFragment : BaseTaskFragment(R.layout.fragment_pairs_of_words), AdapterCallback {
 
     private lateinit var _pairsBinding : FragmentPairsOfWordsBinding
     private val pairsBinding get() = _pairsBinding
@@ -29,9 +33,9 @@ class PairsOfWordsFragment : Fragment(R.layout.fragment_pairs_of_words), Adapter
     private var _rightAnswerPairsCheckList = listOf<String>()
     val rightAnswerPairsCheckList get() = _rightAnswerPairsCheckList
     private var _userAnswer = ""
-    val userAnswer get() = _userAnswer
+    override val userAnswer get() = _userAnswer
     private var _rightAnswer = ""
-    val rightAnswer get() = _rightAnswer
+    override val rightAnswer get() = _rightAnswer
 
     private lateinit var leftAdapter : StaticPairsAdapter
     private lateinit var rightAdapter : PairsAdapter
@@ -64,17 +68,19 @@ class PairsOfWordsFragment : Fragment(R.layout.fragment_pairs_of_words), Adapter
         val leftColumnWords = answerPairs.map { it.first }.toMutableList()
         val rightColumnWords = answerPairs.map { it.second }.toMutableList()
 
+        val bottomGridLayoutManager = GridLayoutManager(requireContext(), 2)
+        pairsBinding.bottomWordsList.layoutManager = bottomGridLayoutManager
+
+        // Один адаптер статичен
         leftAdapter = StaticPairsAdapter(leftColumnWords)
         rightAdapter = PairsAdapter(requireContext(),true, mutableListOf(), this)
         bottomAdapter = PairsAdapter(requireContext(),false, rightColumnWords, this)
-
-        val bottomGridLayoutManager = GridLayoutManager(requireContext(), 2)
-        pairsBinding.bottomWordsList.layoutManager = bottomGridLayoutManager
 
         pairsBinding.leftWordsList.adapter = leftAdapter
         pairsBinding.rightWordsList.adapter = rightAdapter
         pairsBinding.bottomWordsList.adapter = bottomAdapter
 
+        // Перетаскивание
         pairsBinding.bottomWordsList.setOnDragListener { _, dragEvent ->
             HandleDragAndDropEvent(dragEvent).handle(this, false, -1)
             true
@@ -96,6 +102,7 @@ class PairsOfWordsFragment : Fragment(R.layout.fragment_pairs_of_words), Adapter
         viewModel.answersListFromDb.observe(viewLifecycleOwner, ::setAdapters)
     }
 
+    /** Метод для изменения содержимого адаптеров */
     override fun change(isFirstAdapter: Boolean, item: String, position: Int) {
         if (isFirstAdapter) {
             bottomAdapter.removeAnswer(item)

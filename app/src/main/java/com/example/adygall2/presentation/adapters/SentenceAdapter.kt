@@ -17,6 +17,11 @@ import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndD
  * Класс - Адаптер, наследуемый от класса Adapter из класса RecyclerView
  * Нужен для взаимодействия с данными в списках (в нашем случае со словами, из которых надо
  * составить предложение)
+ *
+ * @param context - контекст фрагмента
+ * @param isFirstAdapter - переменная для разделения двух адаптеров
+ * @param answers - список ответов
+ * @param callback - интерфейс для обратного вызова изменения элементов
  */
 
 class SentenceAdapter(
@@ -26,8 +31,13 @@ class SentenceAdapter(
     private val callback: AdapterCallback
 ) : RecyclerView.Adapter<SentenceAdapter.SentenceHolder>() {
 
+    /** Получение элементов адаптера */
     val adapterItems get() = answers
 
+    /** Добавление элемента ответа в адаптер
+     *  @param addedAnswer - добавляемый элемент ответа
+     *  @param position - позиция добавляемого элемента ответа
+     */
     fun addAnswer(addedAnswer : String, position: Int) {
         if (!answers.contains(addedAnswer)) {
             if (position == -1) {
@@ -42,6 +52,9 @@ class SentenceAdapter(
         }
     }
 
+    /** Удаление элемента ответа из адаптера
+     *  @param removedAnswer - удаляемый элемент ответа из адаптера
+     */
     fun removeAnswer(removedAnswer : String) {
         val index = answers.indexOf(removedAnswer)
         if (index != -1) {

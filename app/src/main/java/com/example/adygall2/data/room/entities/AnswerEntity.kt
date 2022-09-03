@@ -11,6 +11,15 @@ import com.example.adygall2.data.room.consts.RoomConst.PIC
 import com.example.adygall2.data.room.consts.RoomConst.SOUND
 import com.example.adygall2.data.room.consts.RoomConst.TASK_ID
 
+/**
+ * Entity класс для хранения данных из таблицы 'answers'
+ * @param id - id ответа
+ * @param taskId - id задания
+ * @param answer - текст ответа
+ * @param isCorrectAnswer - правильный ответ (в некоторых типах заданий преобразуется в [Boolean])
+ * @param pictureId - id картинки
+ * @param soundId - id озвучки
+ */
 @Entity(tableName = ANSWER_TABLE_NAME)
 data class AnswerEntity(
     @PrimaryKey(autoGenerate = true)

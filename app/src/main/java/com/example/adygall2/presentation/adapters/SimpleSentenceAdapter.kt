@@ -7,10 +7,15 @@ import com.example.adygall2.R
 import com.example.adygall2.data.db_models.Answer
 import com.example.adygall2.databinding.SentenceItemBinding
 
+/**
+ * Адаптер для помещения слова в ячейку
+ * @param answers - список ответов
+ */
 class SimpleSentenceAdapter(
     private val answers: MutableList<String>
 ) : RecyclerView.Adapter<SimpleSentenceAdapter.SimpleSentenceHolder>() {
 
+    /** Обратный вызов ответа */
     private var callback : ((String) -> Unit)? = null
 
     inner class SimpleSentenceHolder(

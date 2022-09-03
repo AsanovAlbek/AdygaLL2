@@ -13,19 +13,20 @@ import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentTypeTranslateBinding
 import com.example.adygall2.presentation.consts.ArgsKey
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
+import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
 import com.example.adygall2.presentation.view_model.GameViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
-class TypeTranslateTask : Fragment(R.layout.fragment_type_translate){
+/** Фрагмент для задания с  переводом текста через клавиатуру*/
+class TypeTranslateTask : BaseTaskFragment(R.layout.fragment_type_translate){
 
     private lateinit var _typeTranslateBinding : FragmentTypeTranslateBinding
     private val typeTranslateBinding get() = _typeTranslateBinding
     private val viewModel by viewModel<GameViewModel>()
 
     private var _rightAnswer = ""
-    val rightAnswer get() = _rightAnswer
+    override val rightAnswer get() = _rightAnswer
     private var _userAnswer = ""
-    val userAnswer get() = _userAnswer
+    override val userAnswer get() = _userAnswer
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -58,10 +59,9 @@ class TypeTranslateTask : Fragment(R.layout.fragment_type_translate){
             setTextViewParams(addedTextView, addedWord)
             typeTranslateBinding.wordsWithTooltip.addView(addedTextView)
         }
-        // Regex("\\p{Punct}") - регулярное выражение для обозначения символов препинания
-        _userAnswer = typeTranslateBinding.userInputEt.text.toString().split(Regex("\\p{Punct}")).joinToString()
     }
 
+    /** Слушатель изменения текста в текстовом поле */
     private fun editTextChangeListener() {
         typeTranslateBinding.userInputEt.addTextChangedListener {
             val userAnswerStroke = it.toString()
@@ -69,6 +69,7 @@ class TypeTranslateTask : Fragment(R.layout.fragment_type_translate){
         }
     }
 
+    /** Изменение параметров [textView] */
     private fun setTextViewParams(textView: TextView, textInView: SpannableString) =
         textView.apply {
             text = textInView

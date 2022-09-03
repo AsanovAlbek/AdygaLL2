@@ -1,11 +1,17 @@
 package com.example.adygall2.data.repository
 
+import android.content.Context
+import com.bumptech.glide.Glide
 import com.example.adygall2.data.*
 import com.example.adygall2.data.db_models.*
 import com.example.adygall2.data.room.dao.*
 import com.example.adygall2.domain.repository.Repository
 
+/**
+ * Репозиторий для взаимодействия с элементами из бд
+ */
 class RepositoryImpl(
+    private val context : Context,
     private val answerDao: AnswerDao,
     private val orderDao: OrderDao,
     private val pictureDao: PictureDao,
@@ -36,6 +42,9 @@ class RepositoryImpl(
     override fun getAllPictures(): List<Picture> =
         pictureDao.getAllPictures().map { it.toPicture() }
 
+    override fun clearPicturesInCache() {
+        Glide.get(context).clearDiskCache()
+    }
 
     //Task
     override fun getTasksByType(taskType : Int): List<Task> =
@@ -44,8 +53,10 @@ class RepositoryImpl(
     override fun getTaskById(taskId : Int): Task =
         taskDao.getTaskById(taskId).toTask()
 
-    override fun getTasksFromOrder(orders: List<Order>): List<Task> =
-        orders.map { getTaskById(it.taskNum) }
+    override fun getTasksFromOrder(orders: List<Order>): List<Task> {
+        return orders.map { getTaskById(it.taskNum) }
+    }
+
 
     // Sound
 

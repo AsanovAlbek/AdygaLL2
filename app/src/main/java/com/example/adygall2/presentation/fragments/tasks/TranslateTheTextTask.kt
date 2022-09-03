@@ -19,21 +19,25 @@ import com.example.adygall2.presentation.adapters.adapter_handles.AdapterCallbac
 import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
+import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.tomergoldst.tooltips.ToolTip
 import com.tomergoldst.tooltips.ToolTipsManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class TranslateTheTextTask : Fragment(R.layout.fragment_translate_the_text), AdapterCallback {
+/**
+ * Фрагмент для задания с переводом текста построением предложения из кнопок со словами
+ */
+class TranslateTheTextTask : BaseTaskFragment(R.layout.fragment_translate_the_text), AdapterCallback {
 
     private lateinit var _binding: FragmentTranslateTheTextBinding
     private val binding get() = _binding
     private val viewModel by viewModel<GameViewModel>()
     private var _userAnswer = String()
-    val userAnswer get() = _userAnswer
+    override val userAnswer get() = _userAnswer
     private var _rightAnswer = String()
-    val rightAnswer get() = _rightAnswer
+    override val rightAnswer get() = _rightAnswer
 
     private lateinit var userAdapter : SentenceAdapter
     private lateinit var answerAdapter : SentenceAdapter
@@ -146,6 +150,7 @@ class TranslateTheTextTask : Fragment(R.layout.fragment_translate_the_text), Ada
         return toolTipBuilder
     }
 
+    /** Метод для изменения содержимого адаптеров */
     override fun change(isFirstAdapter: Boolean, item: String, position: Int) {
         if (isFirstAdapter) {
             userAdapter.addAnswer(item, position)

@@ -1,5 +1,14 @@
 package com.example.adygall2.data.db_models
 
+/**
+ * Модель вариантов ответов из бд
+ * @param id - id варианта ответа
+ * @param taskId - id задания
+ * @param answer - текст варианта ответа
+ * @param correctAnswer - правильный ответ (в некоторых заданиях приводится к Boolean)
+ * @param pictureId - id картинки, соответсвующей варианту ответа (при отсутсвии картинки id = 0)
+ * @param soundId - id озвучки ответа (при отсутствии озвучки id = 0)
+ */
 data class Answer(
     val id : Int,
 

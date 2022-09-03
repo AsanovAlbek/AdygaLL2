@@ -12,7 +12,8 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 
 /**
- * Класс созданный для управления проигрыванием аудиозаписей
+ * Класс созданный для управления проигрыванием аудиозаписей из
+ * Экземпляров классов [Sound] и [SoundEffect]
  * Обёртка над классом MediaPlayer
  */
 
@@ -31,8 +32,9 @@ class SoundsPlayer(private val context : Context) {
     }
 
     /**
-     * Метод для получения аудиофайла из базы данных и записи его в память телефона
+     * Метод для получения аудиофайла из базы данных и записи его в память телефона (внутреннее хранилище)
      * @param sound - получаемый из бд экземпляр аудиозаписи
+     * @return файл, в который записанны данные из sound.audioByteArray
      */
     private fun getFileFromRoom(sound : Sound) : File {
         val audioFile = File(context.filesDir, "sound_${sound.id}")
