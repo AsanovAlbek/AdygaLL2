@@ -1,13 +1,11 @@
 package com.example.adygall2.presentation.fragments.tasks
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Answer
+import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.databinding.FragmentThreeWordsQuestionBinding
 import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.ThreeWordsAdapter
@@ -17,7 +15,7 @@ import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /** Фрагмент для задания с тремя вариантами ответов */
-class ThreeWordsQuestion : BaseTaskFragment(R.layout.fragment_three_words_question) {
+class ThreeWordsFragment : BaseTaskFragment(R.layout.fragment_three_words_question) {
 
     private lateinit var _binding : FragmentThreeWordsQuestionBinding
     private val binding get() = _binding
@@ -39,16 +37,15 @@ class ThreeWordsQuestion : BaseTaskFragment(R.layout.fragment_three_words_questi
         binding.threeWordsTaskTv.text = fullTask
 
         setObservers()
+        viewModel.getAnswers(
+            arguments?.getInt(ArgsKey.ID_KEY)!!
+        )
 
         return binding.root
     }
 
     private fun setObservers() {
-        viewModel.getAnswers(
-            arguments?.getInt(ArgsKey.ID_KEY)!!
-        )
         viewModel.answersListFromDb.observe(viewLifecycleOwner, ::setAdapter)
-
     }
 
     private fun setAdapter(answers : List<Answer>) {

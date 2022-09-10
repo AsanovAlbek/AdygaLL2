@@ -1,11 +1,10 @@
 package com.example.adygall2.domain.repository
 
-import com.example.adygall2.data.db_models.Answer
-import com.example.adygall2.data.db_models.Order
-import com.example.adygall2.data.db_models.Picture
-import com.example.adygall2.data.db_models.Sound
-import com.example.adygall2.data.db_models.SoundEffect
-import com.example.adygall2.data.db_models.Task
+import com.example.adygall2.domain.model.Answer
+import com.example.adygall2.domain.model.ComplexAnswer
+import com.example.adygall2.domain.model.Order
+import com.example.adygall2.domain.model.Source
+import com.example.adygall2.domain.model.Task
 
 /**
  * Репозиторий для работы с бд
@@ -15,55 +14,59 @@ interface Repository {
     // Orders
 
     /** Получение Order по id */
-    fun getOrderById(orderId : Int) : Order
+    suspend fun getOrderById(orderId : Int) : Order
 
     /** Получение всех Order */
-    fun getAllOrders() : List<Order>
+    suspend fun getAllOrders() : List<Order>
 
     // Tasks
 
     /** Получение [Task] по [TaskType] */
-    fun getTasksByType(taskType : Int) : List<Task>
+    suspend fun getTasksByType(taskType : Int) : List<Task>
 
     /** Получение [Task] по id */
-    fun getTaskById(taskId : Int) : Task
+    suspend fun getTaskById(taskId : Int) : Task
 
     /** Получение списка [Task] из списка [Order] */
-    fun getTasksFromOrder(orders : List<Order>) : List<Task>
+    suspend fun getTasksFromOrder(orders : List<Order>) : List<Task>
 
-    // Pictures
+    // Source
 
-    /** Получение всех [Picture] */
-    fun getAllPictures() : List<Picture>
+    /** Получение всех [Source] картинок */
+    suspend fun getAllPictures() : List<Source>
 
-    /** Получение всех [Picture] по соответствующим [Answer] */
-    fun getPicturesByAnswers(answers : List<Answer>) : List<Picture>
+    suspend fun getPictureById(pictureSourceId : Int) : Source
+
+    /** Получение всех [Source] по соответствующим [Answer] */
+    suspend fun getPictureSourcesByAnswers(answers : List<Answer>) : List<Source>
+
+    suspend fun getSoundSourcesByAnswers(answers: List<Answer>) : List<Source>
 
     /** Очистка кэша Glide */
-    fun clearPicturesInCache()
+    suspend fun clearPicturesInCache()
+
+    /** Получить [Source] озвучку по id */
+    suspend fun getSourceSoundById(sourceId : Int) : Source
+
+    /** Получить все озвучки */
+    suspend fun getAllSourceSounds() : List<Source>
+
+    /** Получить аудиофайл для правильного ответа */
+    suspend fun rightAnswerSource() : Source
+
+    /** Получить аудиофайл для неправильного ответа */
+    suspend fun wrongAnswerSource() : Source
 
     // Answers
 
     /** Получение [Answer] по id задания */
-    fun getAnswersByTaskId(taskId : Int) : MutableList<Answer>
+    suspend fun getAnswersByTaskId(taskId : Int) : MutableList<Answer>
 
     /** Получить все [Answer] */
-    fun getAllAnswers() : List<Answer>
+    suspend fun getAllAnswers() : List<Answer>
 
-    // Sounds
-    /** Получить все [Sound] */
-    fun getAllSounds() : List<Sound>
+    // ComplexAnswer
+    /** Получение модели ответа с озвучкой и картинкой */
+    suspend fun answerToComplexAnswer(answer : Answer) : ComplexAnswer
 
-    /** Получить [Sound] по id */
-    fun getSoundById(soundId : Int) : Sound
-
-    /** Получить [Sound] из списка [Answer] */
-    fun getSoundsByAnswers(answers : List<Answer>) : List<Sound>
-
-    // SoundEffects
-    /** Получить аудиофайл для правильного ответа */
-    fun rightAnswerSoundEffect() : SoundEffect
-
-    /** Получить аудиофайл для неправильного ответа */
-    fun wrongAnswerSoundEffect() : SoundEffect
 }

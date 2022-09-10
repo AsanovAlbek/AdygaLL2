@@ -2,18 +2,15 @@ package com.example.adygall2.presentation.fragments.tasks
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
-import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Answer
 import com.example.adygall2.databinding.FragmentFillGapsBinding
+import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.consts.ArgsKey
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
@@ -46,20 +43,25 @@ class FillGapsFragment : BaseTaskFragment(R.layout.fragment_fill_gaps) {
         _binding = FragmentFillGapsBinding.inflate(inflater, container, false)
 
         setObservers()
+        getDataFromViewModel()
         setTaskText()
 
         return binding.root
     }
 
     private fun setObservers() {
-        val taskId = arguments?.getInt(ArgsKey.ID_KEY)
+        viewModel.answersListFromDb.observe(viewLifecycleOwner, ::answerSettings)
+    }
 
+    private fun answerSettings(answers : List<Answer>) {
+        val rightAnswerStroke = answers.first().answer
+        _rightAnswer = viewModel.transform(rightAnswerStroke)
+        binding.phraseTaskTv.text = answers.first().correctAnswer
+    }
+
+    private fun getDataFromViewModel() {
+        val taskId = arguments?.getInt(ArgsKey.ID_KEY)
         viewModel.getAnswers(taskId!!)
-        viewModel.answersListFromDb.observe(viewLifecycleOwner) { answers ->
-            val rightAnswerStroke = answers.first().answer
-            _rightAnswer = viewModel.transform(rightAnswerStroke)
-            binding.phraseTaskTv.text = answers.first().correctAnswer
-        }
     }
 
     /** Метод для динамического заполнения текста задания */

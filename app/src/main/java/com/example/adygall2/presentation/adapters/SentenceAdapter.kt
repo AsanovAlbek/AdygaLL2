@@ -8,9 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Answer
 import com.example.adygall2.databinding.SentenceItemBinding
-import com.example.adygall2.presentation.adapters.adapter_handles.AdapterCallback
+import com.example.adygall2.presentation.adapters.adapter_handles.AdapterHandleDragAndDropCallback
 import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
 
 /**
@@ -28,7 +27,7 @@ class SentenceAdapter(
     private val context : Context,
     private val isFirstAdapter : Boolean,
     private val answers : MutableList<String>,
-    private val callback: AdapterCallback
+    private val callback: AdapterHandleDragAndDropCallback
 ) : RecyclerView.Adapter<SentenceAdapter.SentenceHolder>() {
 
     /** Получение элементов адаптера */
@@ -67,7 +66,7 @@ class SentenceAdapter(
         private val context : Context,
         private val isFirstAdapter : Boolean,
         private val itemBinding: SentenceItemBinding,
-        private val callback: AdapterCallback
+        private val callback: AdapterHandleDragAndDropCallback
     ) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun binding(answer : String) {

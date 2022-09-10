@@ -3,13 +3,10 @@ package com.example.adygall2.presentation.adapters
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Answer
+import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.databinding.SimpleWordItemBinding
 
 /**

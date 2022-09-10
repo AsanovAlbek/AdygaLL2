@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/authorize"
-        android:name="com.example.adygall2.presentation.fragments.menu.Authorize"
+        android:name="com.example.adygall2.presentation.fragments.menu.FragmentAuth"
         android:label="fragment_authorize"
         tools:layout="@layout/fragment_authorize" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/homePage"
-        android:name="com.example.adygall2.presentation.fragments.menu.HomePage"
+        android:name="com.example.adygall2.presentation.fragments.menu.FragmentHomePage"
         android:label="fragment_home_page"
         tools:layout="@layout/fragment_home_page" >
         <action
@@ -35,7 +35,7 @@
     </fragment>
     <fragment
         android:id="@+id/taskContainer"
-        android:name="com.example.adygall2.presentation.fragments.menu.TaskContainer"
+        android:name="com.example.adygall2.presentation.fragments.menu.FragmentGamePage"
         android:label="TaskContainer" >
 
         <argument
@@ -54,7 +54,7 @@
     </fragment>
     <fragment
         android:id="@+id/taskResults"
-        android:name="com.example.adygall2.presentation.fragments.menu.TaskResults"
+        android:name="com.example.adygall2.presentation.fragments.menu.FragmentGameResults"
         android:label="TaskResults" >
         <action
             android:id="@+id/action_taskResults_to_homePage"

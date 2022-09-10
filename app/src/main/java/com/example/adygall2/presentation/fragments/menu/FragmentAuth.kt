@@ -14,7 +14,7 @@ import com.example.adygall2.databinding.FragmentAuthorizeBinding
  * Предназначен для взаимодействия с экраном (окном) ввода имени пользователя и пароля
  */
 
-class Authorize : Fragment(R.layout.fragment_authorize) {
+class FragmentAuth : Fragment(R.layout.fragment_authorize) {
 
     private lateinit var _authBinding: FragmentAuthorizeBinding
     private val authBinding get() = _authBinding

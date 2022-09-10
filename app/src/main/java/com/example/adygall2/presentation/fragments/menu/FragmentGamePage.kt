@@ -10,21 +10,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Task
+import com.example.adygall2.domain.model.Task
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.databinding.TaskContainerBinding
+import com.example.adygall2.domain.model.Source
 import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.TasksAdapter
-import com.example.adygall2.presentation.fragments.tasks.FillGapsFragment
-import com.example.adygall2.presentation.fragments.tasks.FillPassTask
-import com.example.adygall2.presentation.fragments.tasks.FourImageQuestion
-import com.example.adygall2.presentation.fragments.tasks.PairsOfWordsFragment
-import com.example.adygall2.presentation.fragments.tasks.SentenceBuildQuestion
-import com.example.adygall2.presentation.fragments.tasks.ThreeWordsQuestion
-import com.example.adygall2.presentation.fragments.tasks.TranslateTheTextTask
-import com.example.adygall2.presentation.fragments.tasks.TypeThatHeardTask
-import com.example.adygall2.presentation.fragments.tasks.TypeTranslateTask
-import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
+import com.example.adygall2.presentation.fragments.dialog
+import com.example.adygall2.presentation.fragments.snackBar
 import com.google.android.material.snackbar.Snackbar
 import com.shuhart.stepview.StepView
 
@@ -33,7 +26,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /**
  * Фрагмент для игрового процесса
  */
-class TaskContainer : Fragment(R.layout.task_container) {
+class FragmentGamePage : Fragment(R.layout.task_container) {
 
     private lateinit var _taskContainerBinding : TaskContainerBinding
     private val taskContainerBinding get() = _taskContainerBinding
@@ -45,7 +38,12 @@ class TaskContainer : Fragment(R.layout.task_container) {
     /** Количество монет, получаемое за один правильный ответ
      * Вычисляется по формуле: количество заданий / 100
      * Если откажемся от прогресс бара, то формула будет не нужна*/
-    private var moneyIncrementValue = 0
+    private var moneyIncrementValue = 1
+        set(value) {
+            if (value > 1) {
+                field = value
+            }
+        }
     /** Счётчик нажатий */
     private var clickCounter = 0
 
@@ -68,6 +66,10 @@ class TaskContainer : Fragment(R.layout.task_container) {
         setListeners()
         hideExplanations()
 
+        viewModel.getTasksFromOrder()
+        viewModel.okEffect()
+        viewModel.wrongEffect()
+
         return taskContainerBinding.root
     }
 
@@ -82,17 +84,34 @@ class TaskContainer : Fragment(R.layout.task_container) {
     /** Метод для подписки на слушателей из ViewModel */
 
     private fun setObservers() {
-        viewModel.getTasksFromOrder()
-        viewModel.tasksListFromDb.observe(viewLifecycleOwner) {
-            customizeStepViewBar(it.size)
-            Log.i("fff", "it size = ${it.size}")
-            setViewPager(it)
-            moneyIncrementValue = 100 / it.size
-            if (moneyIncrementValue < 1) moneyIncrementValue = 1
-            Log.i("ttt", " moneyInc = $moneyIncrementValue")
-        }
-        viewModel.okEffect()
-        viewModel.wrongEffect()
+        viewModel.tasksListFromDb.observe(viewLifecycleOwner, ::handleTasks)
+    }
+
+    private fun handleTasks(tasks: List<Task>) {
+        customizeStepViewBar(tasks.size)
+        setViewPager(tasks)
+        moneyIncrementValue = 100 / tasks.size
+    }
+
+    private fun soundEffect(source : Source) {
+        soundsPlayer.playSound(source)
+        soundsPlayer.setCompletionListener { soundsPlayer.stopPlay() }
+    }
+
+    private fun wrongEffect() {
+        viewModel.badSoundEffect.observe(viewLifecycleOwner, ::soundEffect)
+    }
+
+    private fun goodEffect() {
+        viewModel.goodSoundEffect.observe(viewLifecycleOwner, ::soundEffect)
+    }
+
+    private fun giveMoney() {
+        taskContainerBinding.taskBottomBar.userExperienceBar.progress += moneyIncrementValue
+    }
+
+    private fun takeAwayHp() {
+        taskContainerBinding.taskBottomBar.userHealthBar.progress -= 10
     }
 
     /**
@@ -113,9 +132,10 @@ class TaskContainer : Fragment(R.layout.task_container) {
             rightAnswer = currentFragment.rightAnswer
 
             // Пока не дошли до последнего элемента
-            if (taskContainerBinding.taskViewPager.currentItem < taskContainerBinding.taskViewPager.adapter!!.itemCount) {
+            if (taskContainerBinding.taskViewPager.currentItem <
+                taskContainerBinding.taskViewPager.adapter!!.itemCount) {
                 // Если ответ выбран и получен
-                if (userAnswer != "") {
+                if (userAnswer.isNotEmpty()) {
                     // Каждое второе нажатие
                     if (clickCounter % 2 == 0) {
                         // Прячем объяснения к ответам
@@ -128,7 +148,8 @@ class TaskContainer : Fragment(R.layout.task_container) {
                             append(taskContainerBinding.taskViewPager.currentItem + 1)
                         }
                         // Если дошли до последнего вопроса и нажали, то выходим
-                        if (taskContainerBinding.taskViewPager.currentItem == taskContainerBinding.taskViewPager.adapter!!.itemCount - 1) {
+                        if (taskContainerBinding.taskViewPager.currentItem ==
+                            taskContainerBinding.taskViewPager.adapter!!.itemCount - 1) {
                             exitIntoLvl()
                         }
                     }
@@ -144,7 +165,7 @@ class TaskContainer : Fragment(R.layout.task_container) {
                                 restartLesson()
                             }
                             // Если игрок ошибся, то у него отнимается 10 очков здоровья
-                            taskContainerBinding.taskBottomBar.userHealthBar.progress -= 10
+                            takeAwayHp()
                             // Если у игрока закончилось здоровье, то он выходит из уровня
                             if (taskContainerBinding.taskBottomBar.userHealthBar.progress <= 0) {
                                 dialog("Провал")
@@ -152,16 +173,14 @@ class TaskContainer : Fragment(R.layout.task_container) {
                             }
 
                             // Проигрывание звукового эффекта неправильного ответа
-                            val badSoundEffect = viewModel.badSoundEffect.value
-                            badSoundEffect?.let { soundsPlayer.playSound(it) }
+                            wrongEffect()
 
                             // Если ответил правильно
                         } else {
                             // Увеличиваем монетки
-                            taskContainerBinding.taskBottomBar.userExperienceBar.progress += moneyIncrementValue
+                            giveMoney()
                             // Проигрываем звуковой эффект правильного ответа
-                            val goodSoundEffect = viewModel.goodSoundEffect.value
-                            goodSoundEffect?.let { soundsPlayer.playSound(it) }
+                            goodEffect()
                         }
                     }
 
@@ -181,7 +200,7 @@ class TaskContainer : Fragment(R.layout.task_container) {
             else {
                     dialog("Пройдено")
                     // Даём ещё монет и выходим из уровня
-                    taskContainerBinding.taskBottomBar.userExperienceBar.progress += moneyIncrementValue.toInt()
+                    giveMoney()
                     exitIntoLvl()
                 }
             }
@@ -294,29 +313,6 @@ class TaskContainer : Fragment(R.layout.task_container) {
     private fun hideExplanations() {
         taskContainerBinding.incorrectAnswerWindow.root.visibility = View.GONE
         taskContainerBinding.correctAnswerWindow.root.visibility = View.GONE
-    }
-
-    /**
-     * Метод для вызова диалога с сообщением, в будущем заменить на
-     * задизайненный DialogFragment
-     */
-    private fun dialog(message: String) {
-        val alertDialog = AlertDialog.Builder(requireActivity())
-        alertDialog
-            .setMessage(message)
-            .create()
-            .show()
-    }
-
-    /**
-     * Метод для вызова SnackBar с сообщением
-     */
-    private fun snackBar(message : String) {
-        Snackbar.make(
-            taskContainerBinding.gameTaskContainer,
-            message,
-            Snackbar.LENGTH_SHORT
-        ).setTextColor(Color.GREEN).show()
     }
 
     /** Метод для отрисовки линии  */

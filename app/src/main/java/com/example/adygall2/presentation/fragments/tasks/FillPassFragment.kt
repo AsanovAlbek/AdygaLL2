@@ -7,9 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Answer
+import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.databinding.FragmentFillInThePassBinding
 import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.SentenceAdapter
@@ -22,7 +21,7 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /** Задание с заполнением ячейки словами из кнопок */
-class FillPassTask : BaseTaskFragment(R.layout.fragment_fill_in_the_pass) {
+class FillPassFragment : BaseTaskFragment(R.layout.fragment_fill_in_the_pass) {
 
     private lateinit var _binding: FragmentFillInThePassBinding
     private val binding get() = _binding
@@ -45,15 +44,18 @@ class FillPassTask : BaseTaskFragment(R.layout.fragment_fill_in_the_pass) {
 
         textViewFiled = TextView(requireActivity())
         setObservers()
+        getDataFromViewModel()
 
         return binding.root
     }
 
     private fun setObservers() {
-        val taskId = arguments?.getInt(ID_KEY)
-
-        viewModel.getAnswers(taskId!!)
         viewModel.answersListFromDb.observe(viewLifecycleOwner, ::setAdapter)
+    }
+
+    private fun getDataFromViewModel() {
+        val taskId = arguments?.getInt(ID_KEY)
+        viewModel.getAnswers(taskId!!)
     }
 
     private fun setAdapter(answers: MutableList<Answer>) {

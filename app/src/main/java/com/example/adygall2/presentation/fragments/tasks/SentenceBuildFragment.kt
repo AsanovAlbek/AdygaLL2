@@ -1,19 +1,17 @@
 package com.example.adygall2.presentation.fragments.tasks
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.Fragment
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Answer
-import com.example.adygall2.data.db_models.Sound
+import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.databinding.FragmentWordsQuestionBinding
+import com.example.adygall2.domain.model.Source
 import com.example.adygall2.presentation.adapters.SentenceAdapter
-import com.example.adygall2.presentation.adapters.adapter_handles.AdapterCallback
+import com.example.adygall2.presentation.adapters.adapter_handles.AdapterHandleDragAndDropCallback
 import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
 import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
@@ -22,16 +20,18 @@ import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
 import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /** Фрагмент для задания с построением предложения по услышанному */
-class SentenceBuildQuestion(
+class SentenceBuildFragment(
     private val skipListener: (() -> Unit)
-) : BaseTaskFragment(R.layout.fragment_words_question), AdapterCallback {
+) : BaseTaskFragment(R.layout.fragment_words_question), AdapterHandleDragAndDropCallback {
 
     private lateinit var _sentenceBuildBinding: FragmentWordsQuestionBinding
     private val sentenceBuildBinding get() = _sentenceBuildBinding
     private val viewModel by viewModel<GameViewModel>()
+    private val soundsPlayer : SoundsPlayer by inject()
 
     private var _userAnswer = String()
     override val userAnswer get() = _userAnswer
@@ -52,35 +52,34 @@ class SentenceBuildQuestion(
         sentenceBuildBinding.wordsTaskText.text = arguments?.getString(TASK_KEY)
 
         setObservers()
+        dataFromViewModel()
 
         return sentenceBuildBinding.root
     }
 
     private fun setObservers() {
-
-        val taskId = arguments?.getInt(ID_KEY)!!
-        val soundId = arguments?.getInt(SOUND_KEY)!!
-
-        viewModel.getAnswers(taskId)
         viewModel.answersListFromDb.observe(viewLifecycleOwner, ::setAdapter)
-
-        viewModel.getSoundById(soundId)
         viewModel.soundFromDb.observe(viewLifecycleOwner, ::setSoundButtonsListeners)
     }
 
-    private fun setSoundButtonsListeners(sound: Sound) {
-        // Экземпляр класса для работы с воспроизведением звука
-        val soundsPlayer = SoundsPlayer(requireActivity())
+    private fun dataFromViewModel() {
+        val soundId = arguments?.getInt(SOUND_KEY)!!
+        viewModel.getSoundById(soundId)
 
+        val taskId = arguments?.getInt(ID_KEY)!!
+        viewModel.getAnswers(taskId)
+    }
+
+    private fun setSoundButtonsListeners(source: Source) {
         // При нажатии меняем иконку на кнопке
         val playSoundDrawable =
             ResourcesCompat.getDrawable(resources, R.drawable.play_sound, null)
         val stopSoundDrawable =
             ResourcesCompat.getDrawable(resources, R.drawable.stop_play, null)
         // Как воспроизведение заканчивается, иконка меняется
-        soundsPlayer.mediaPlayer.setOnCompletionListener {
+        soundsPlayer.setCompletionListener {
             sentenceBuildBinding.soundButtons.playSoundButton.icon = playSoundDrawable
-            soundsPlayer.mediaPlayer.reset()
+            soundsPlayer.reset()
         }
 
         // Слушатель нажатий на кнопку проигрывания озвучки
@@ -91,20 +90,20 @@ class SentenceBuildQuestion(
                 soundsPlayer.stopPlay()
             }
             else {
-                soundsPlayer.playbackSpeed = SoundsPlayer.NORMAL_PLAYBACK
+                soundsPlayer.normalPlaybackSpeed()
                 sentenceBuildBinding.soundButtons.playSoundButton.icon = stopSoundDrawable
-                soundsPlayer.playSound(sound)
+                soundsPlayer.playSound(source)
             }
         }
 
         // Слушатель нажатия медленного проигрывания озвучки
         sentenceBuildBinding.soundButtons.slowPlayButton.setOnClickListener {
-            if (soundsPlayer.mediaPlayer.isPlaying) {
+            if (soundsPlayer.isPlayingNow) {
                 soundsPlayer.stopPlay()
             }
             else {
-                soundsPlayer.playbackSpeed = SoundsPlayer.SLOW_PLAYBACK
-                soundsPlayer.playSound(sound)
+                soundsPlayer.slowPlaybackSpeed()
+                soundsPlayer.playSound(source)
             }
         }
 
@@ -112,6 +111,8 @@ class SentenceBuildQuestion(
     }
 
     private fun setAdapter(answers: MutableList<Answer>) {
+
+
         val mutableAnswers = answers.map { it.answer }.toMutableList()
         userAdapter = SentenceAdapter(requireContext(), true, mutableAnswers, this)
         answerAdapter = SentenceAdapter(requireContext(), false, mutableListOf(), this)

@@ -11,13 +11,14 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentTypeTranslateBinding
+import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.presentation.consts.ArgsKey
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
 import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
 import com.example.adygall2.presentation.view_model.GameViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 /** Фрагмент для задания с  переводом текста через клавиатуру*/
-class TypeTranslateTask : BaseTaskFragment(R.layout.fragment_type_translate){
+class TypeTranslateFragment : BaseTaskFragment(R.layout.fragment_type_translate){
 
     private lateinit var _typeTranslateBinding : FragmentTypeTranslateBinding
     private val typeTranslateBinding get() = _typeTranslateBinding
@@ -33,16 +34,22 @@ class TypeTranslateTask : BaseTaskFragment(R.layout.fragment_type_translate){
         _typeTranslateBinding = FragmentTypeTranslateBinding.bind(view)
         setTaskText()
         setObservers()
+        getDataFromViewModel()
         editTextChangeListener()
     }
 
     private fun setObservers() {
+        viewModel.answersListFromDb.observe(viewLifecycleOwner, ::setupAnswers)
+    }
+
+    private fun setupAnswers(answers : List<Answer>) {
+        val answersStroke = answers.first().correctAnswer
+        _rightAnswer = viewModel.transform(answersStroke)
+    }
+
+    private fun getDataFromViewModel() {
         val taskId = arguments?.getInt(ID_KEY)
         viewModel.getAnswers(taskId!!)
-        viewModel.answersListFromDb.observe(viewLifecycleOwner) { answers ->
-            val answersStroke = answers.first().correctAnswer
-            _rightAnswer = viewModel.transform(answersStroke)
-        }
     }
 
     private fun setTaskText() {

@@ -1,11 +1,9 @@
 package com.example.adygall2.presentation.adapters
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.adygall2.data.db_models.Task
-import com.example.adygall2.data.room.consts.TaskType
+import com.example.adygall2.domain.model.Task
 import com.example.adygall2.data.room.consts.TaskType.FILL_IN_THE_GAPS
 import com.example.adygall2.data.room.consts.TaskType.FILL_IN_THE_PASS
 import com.example.adygall2.data.room.consts.TaskType.IMAGE
@@ -68,23 +66,23 @@ class TasksAdapter(
 
     private fun buildTask(taskType : Int) : BaseTaskFragment = when(taskType) {
 
-        IMAGE -> FourImageQuestion()
+        IMAGE -> FourImageFragment()
 
-        SENTENCE_BUILD -> SentenceBuildQuestion(taskSkipEvent!!)
+        SENTENCE_BUILD -> SentenceBuildFragment(taskSkipEvent!!)
 
-        THREE_WORDS -> ThreeWordsQuestion()
+        THREE_WORDS -> ThreeWordsFragment()
 
-        TRANSLATE_SENTENCE -> TranslateTheTextTask()
+        TRANSLATE_SENTENCE -> TranslateTheTextFragment()
 
         SELECT_PAIRS_OF_WORDS -> PairsOfWordsFragment()
 
-        TYPE_THAT_YOUR_HEARD -> TypeThatHeardTask()
+        TYPE_THAT_YOUR_HEARD -> TypeThatHeardFragment()
 
-        FILL_IN_THE_PASS -> FillPassTask()
+        FILL_IN_THE_PASS -> FillPassFragment()
 
         FILL_IN_THE_GAPS -> FillGapsFragment()
 
-        TYPE_TRANSLATE -> TypeTranslateTask()
+        TYPE_TRANSLATE -> TypeTranslateFragment()
 
         else -> BaseTaskFragment(0)
     }

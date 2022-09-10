@@ -3,15 +3,13 @@ package com.example.adygall2.presentation.adapters
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.Context
-import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
 import com.example.adygall2.databinding.PairWordItemBinding
-import com.example.adygall2.presentation.adapters.adapter_handles.AdapterCallback
+import com.example.adygall2.presentation.adapters.adapter_handles.AdapterHandleDragAndDropCallback
 import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
 
 /**
@@ -25,7 +23,7 @@ class PairsAdapter(
     private val context: Context,
     private val isFirstAdapter : Boolean,
     private val answers : MutableList<String>,
-    private val callback : AdapterCallback
+    private val callback : AdapterHandleDragAndDropCallback
 ) : RecyclerView.Adapter<PairsAdapter.PairsHolder>() {
 
     /** Переменная для получения всех элементов */
@@ -70,7 +68,7 @@ class PairsAdapter(
         private val context: Context,
         private val isFirstAdapter: Boolean,
         private val itemBinding : PairWordItemBinding,
-        private val callback: AdapterCallback
+        private val callback: AdapterHandleDragAndDropCallback
     ) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(word : String) {
             with(itemBinding) {

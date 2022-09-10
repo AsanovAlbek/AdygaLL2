@@ -17,7 +17,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * Предназначен для взаимодействия с экраном (окном) выбора селектора
  */
 
-class HomePage : Fragment(R.layout.fragment_home_page) {
+class FragmentHomePage : Fragment(R.layout.fragment_home_page) {
 
     private lateinit var _homePageBinding : FragmentHomePageBinding
     private val homePageBinding get() = _homePageBinding

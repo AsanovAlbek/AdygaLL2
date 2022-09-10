@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Answer
 import com.example.adygall2.databinding.SentenceItemBinding
 
 /**

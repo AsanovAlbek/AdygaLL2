@@ -1,51 +1,35 @@
 package com.example.adygall2.presentation.adapters
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color.*
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Answer
-import com.example.adygall2.data.db_models.Picture
-import com.example.adygall2.data.db_models.Sound
+import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.databinding.ImageQuestionItemBinding
-import kotlin.reflect.KFunction
+import com.example.adygall2.domain.model.ComplexAnswer
 
 /**
  * Класс - Адаптер, наследуемый от класса Adapter из класса RecyclerView
  * Нужен для взаимодействия с данными в списках (в нашем случае с картинками вариантов ответов)
  *
  * @param context - контекст фрагмента
- * @param answers - список ответов
- * @param pictures - список картинок
- * @param sounds - список озвучек
+ * @param complexAnswerList - лист из ответов, озвучек и картинок
  * @param listener - слушатель выбора карточки с картинкой
  */
 
 class ImageAdapter(
     private val context: Context,
-    private val answers : List<Answer>,
-    private val pictures : List<Picture>,
-    private val sounds : List<Sound>,
-    private val listener : OnSelectClickListener
+    private val complexAnswerList : List<ComplexAnswer>,
+    private val listener : ((ComplexAnswer) -> Unit)
 ) : RecyclerView.Adapter<ImageAdapter.ImageQueHolder>() {
 
     /** Переменная для хранения позиции выбранного элемента */
     private var selectItemPosition = -1
-
-    /** Интерфейс для обратного вызова выбора элемента */
-    interface OnSelectClickListener {
-        fun onSelect(position : Int, answer : Answer)
-    }
 
     /** Обратный вызов при уничтожении фрагмента, нужен для своевременной очистки кэша [Glide] */
     private var onDestroyCallback : (() -> Unit)? = null
@@ -60,14 +44,14 @@ class ImageAdapter(
     ) : RecyclerView.ViewHolder(itemBinding.root) {
 
         // Метод для изменения элементов внутри элемента адаптера, а так же присвоение им действий
-        fun binding(answer: Answer) {
+        fun binding(answer: ComplexAnswer) {
 
             // Находим картинку к варианту ответа
-            val answerPicture = pictures.first { answer.pictureId == it.id }
+            val answerPicture = answer.answerPicture
 
             // Ставим картинку
             Glide.with(itemBinding.root.context)
-                .load(answerPicture.picture)
+                .load(answerPicture.source)
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .skipMemoryCache(false)
                 .dontAnimate()
@@ -77,7 +61,7 @@ class ImageAdapter(
             itemBinding.wordInCard.text = answerPicture.name
 
             // Находим звук к варианту ответа
-            val answerSound = sounds.first { answer.soundId == it.id }
+            val answerSound = answer.answerSound
             val soundsPlayer = SoundsPlayer(context)
 
             if (selectItemPosition == -1) {
@@ -108,11 +92,11 @@ class ImageAdapter(
                         selectItemPosition = adapterPosition
                         notifyItemChanged(selectItemPosition)
                     }
-                    if (soundsPlayer.mediaPlayer.isPlaying) {
+                    if (soundsPlayer.isPlayingNow) {
                         soundsPlayer.stopPlay()
                     }
                     soundsPlayer.playSound(answerSound)
-                    listener.onSelect(adapterPosition, answer)
+                    listener.invoke(answer)
 
             }
         }
@@ -132,11 +116,11 @@ class ImageAdapter(
 
     // Метод для заполнения ViewHolder
     override fun onBindViewHolder(holder: ImageQueHolder, position: Int) {
-        holder.binding(answers[position])
+        holder.binding(complexAnswerList[position])
     }
 
     // Получение количества элементов в адаптере
-    override fun getItemCount() = pictures.size
+    override fun getItemCount() = complexAnswerList.size
 
     fun onDestroy(callback : (() -> Unit)) {
         onDestroyCallback = callback

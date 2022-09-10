@@ -1,7 +1,4 @@
-package com.example.adygall2.data.db_models
-
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+package com.example.adygall2.domain.model
 
 /**
  * Модель для заданий
@@ -14,16 +11,10 @@ import kotlinx.parcelize.Parcelize
  */
 data class Task(
     val id : Int,
-
     val taskType : Int,
-
     val task : String,
-
     val soundId : Int,
-
     val levelId : Int,
-
     val lessonId : Int,
-
     val exerciseId : Int
     )

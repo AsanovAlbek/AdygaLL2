@@ -1,9 +1,19 @@
 package com.example.adygall2.presentation.view_model
 
-import androidx.lifecycle.*
-import com.example.adygall2.data.db_models.*
-import com.example.adygall2.data.delegate.AnswerHelper
-import com.example.adygall2.domain.usecases.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.adygall2.data.delegate.AnswerFormatter
+import com.example.adygall2.domain.model.Answer
+import com.example.adygall2.domain.model.ComplexAnswer
+import com.example.adygall2.domain.model.Source
+import com.example.adygall2.domain.model.Task
+import com.example.adygall2.domain.usecases.AnswersByTaskIdUseCase
+import com.example.adygall2.domain.usecases.GetAllOrdersUseCase
+import com.example.adygall2.domain.usecases.GetComplexAnswerUseCase
+import com.example.adygall2.domain.usecases.SourceInteractor
+import com.example.adygall2.domain.usecases.TasksByOrdersUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -12,14 +22,13 @@ import kotlinx.coroutines.withContext
  * Вью модель для взаимодействия с данными из бд
  */
 class GameViewModel(
-    private val answerUseCase: AnswerUseCase,
-    private val orderUseCase: OrderUseCase,
-    private val pictureUseCase: PictureUseCase,
-    private val taskUseCase: TaskUseCase,
-    private val soundUseCase: SoundUseCase,
-    private val soundEffectUseCase: SoundEffectUseCase,
-    private val answerHelperDelegate : AnswerHelper
-) : ViewModel(), AnswerHelper by answerHelperDelegate {
+    private val answersByTaskIdUseCase: AnswersByTaskIdUseCase,
+    private val getAllOrdersUseCase: GetAllOrdersUseCase,
+    private val tasksByOrdersUseCase: TasksByOrdersUseCase,
+    private val getComplexAnswerUseCase: GetComplexAnswerUseCase,
+    private val sourceInteractor: SourceInteractor,
+    private val answerFormatterDelegate : AnswerFormatter
+) : ViewModel(), AnswerFormatter by answerFormatterDelegate {
 
     /** Лист заданий из бд */
     private var _tasksListFromDb = MutableLiveData<List<Task>>()
@@ -29,31 +38,34 @@ class GameViewModel(
     private var _answersListFromDb = MutableLiveData<MutableList<Answer>>()
     val answersListFromDb : LiveData<MutableList<Answer>> get() = _answersListFromDb
 
+    private var _complexAnswersListFromDb = MutableLiveData<List<ComplexAnswer>>()
+    val complexAnswersListFromDb get() = _complexAnswersListFromDb
+
     /** Лист картинок из бд */
-    private var _picturesListByAnswersFromDb = MutableLiveData<List<Picture>>()
-    val picturesListByAnswersFromDb : LiveData<List<Picture>> get() = _picturesListByAnswersFromDb
+    private var _picturesListByAnswersFromDb = MutableLiveData<List<Source>>()
+    val picturesListByAnswersFromDb : LiveData<List<Source>> get() = _picturesListByAnswersFromDb
 
     /** Лист озвучек из бд по ответам */
-    private var _soundsListByAnswersFromDb = MutableLiveData<List<Sound>>()
-    val soundsListByAnswersFromDb : LiveData<List<Sound>> get() = _soundsListByAnswersFromDb
+    private var _soundsListByAnswersFromDb = MutableLiveData<List<Source>>()
+    val soundsListByAnswersFromDb : LiveData<List<Source>> get() = _soundsListByAnswersFromDb
 
     /** Озвучка из бд */
-    private var _soundFromDb = MutableLiveData<Sound>()
-    val soundFromDb : LiveData<Sound> get() = _soundFromDb
+    private var _soundFromDb = MutableLiveData<Source>()
+    val soundFromDb : LiveData<Source> get() = _soundFromDb
 
     /** Звуковой эффект из бд для правильного ответа*/
-    private var _goodSoundEffect = MutableLiveData<SoundEffect>()
-    val goodSoundEffect : LiveData<SoundEffect> get() = _goodSoundEffect
+    private var _goodSoundEffect = MutableLiveData<Source>()
+    val goodSoundEffect : LiveData<Source> get() = _goodSoundEffect
 
     /** Звуковой эффект из бд для неправильного ответа */
-    private var _badSoundEffect = MutableLiveData<SoundEffect>()
-    val badSoundEffect : LiveData<SoundEffect> get() = _badSoundEffect
+    private var _badSoundEffect = MutableLiveData<Source>()
+    val badSoundEffect : LiveData<Source> get() = _badSoundEffect
 
     /** Получение озвучек по [soundId] */
     fun getSoundById(soundId: Int) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val sound = soundUseCase.getSoundById(soundId)
+                val sound = sourceInteractor.soundSourceById(soundId)
                 withContext(Dispatchers.Main) {
                     _soundFromDb.value = sound
                 }
@@ -65,7 +77,7 @@ class GameViewModel(
     fun okEffect() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val rightAnswerEffect = soundEffectUseCase.rightAnswerEffect()
+                val rightAnswerEffect = sourceInteractor.rightAnswerSource()
                 withContext(Dispatchers.Main) {
                     _goodSoundEffect.value = rightAnswerEffect
                 }
@@ -73,11 +85,13 @@ class GameViewModel(
         }
     }
 
+
+
     /** Получение звукового эффекта при неправильном ответе */
     fun wrongEffect() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val wrongAnswerEffect = soundEffectUseCase.wrongAnswerEffect()
+                val wrongAnswerEffect = sourceInteractor.wrongAnswerSource()
                 withContext(Dispatchers.Main) {
                     _badSoundEffect.value = wrongAnswerEffect
                 }
@@ -89,9 +103,21 @@ class GameViewModel(
     fun getAnswers(taskId: Int) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val answers = answerUseCase.getAnswersByTaskId(taskId)
+                val answers = answersByTaskIdUseCase(taskId)
                 withContext(Dispatchers.Main) {
                     _answersListFromDb.value = answers
+                }
+            }
+        }
+    }
+
+    fun getComplexAnswersByTaskId(taskId: Int) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val answers = answersByTaskIdUseCase(taskId)
+                val complexAnswers = getComplexAnswerUseCase(answers)
+                withContext(Dispatchers.Main) {
+                    _complexAnswersListFromDb.value = complexAnswers
                 }
             }
         }
@@ -101,7 +127,7 @@ class GameViewModel(
     fun getPicturesByAnswers(answers : List<Answer>) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val pictures = pictureUseCase.getPicturesByAnswers(answers)
+                val pictures = sourceInteractor.picturesByAnswers(answers)
                 withContext(Dispatchers.Main) {
                     _picturesListByAnswersFromDb.value = pictures
                 }
@@ -113,7 +139,7 @@ class GameViewModel(
     fun clearGlideCache() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                pictureUseCase.clearCaches()
+                sourceInteractor.clearGlideCaches()
             }
         }
     }
@@ -122,7 +148,7 @@ class GameViewModel(
     fun getSoundsByAnswers(answers: List<Answer>) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val sounds = soundUseCase.getSoundsByAnswers(answers)
+                val sounds = sourceInteractor.soundsByAnswers(answers)
                 withContext(Dispatchers.Main) {
                     _soundsListByAnswersFromDb.value = sounds
                 }
@@ -134,7 +160,7 @@ class GameViewModel(
     fun getTasksFromOrder() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val tasks = taskUseCase.getTasksFromOrders(orderUseCase.getAllOrders())
+                val tasks = tasksByOrdersUseCase(getAllOrdersUseCase())
                 withContext(Dispatchers.Main) {
                     _tasksListFromDb.value = tasks
                 }

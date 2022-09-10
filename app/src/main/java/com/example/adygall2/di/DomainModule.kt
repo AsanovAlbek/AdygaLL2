@@ -4,10 +4,9 @@ import com.example.adygall2.domain.usecases.*
 import org.koin.dsl.module
 
 val domainModule = module {
-    factory { AnswerUseCase(get()) }
-    factory { OrderUseCase(get()) }
-    factory { PictureUseCase(get()) }
-    factory { TaskUseCase(get()) }
-    factory { SoundUseCase(get()) }
-    factory { SoundEffectUseCase(get()) }
+    factory { AnswersByTaskIdUseCase() }
+    factory { GetAllOrdersUseCase() }
+    factory { TasksByOrdersUseCase() }
+    factory { SourceInteractor(get()) }
+    factory { GetComplexAnswerUseCase() }
 }

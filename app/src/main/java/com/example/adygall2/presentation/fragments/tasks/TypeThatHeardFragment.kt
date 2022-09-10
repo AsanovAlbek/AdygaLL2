@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.Fragment
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Sound
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.databinding.FragmentTypeThatHeardBinding
+import com.example.adygall2.domain.model.Answer
+import com.example.adygall2.domain.model.Source
 import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.SOUND_KEY
@@ -19,7 +19,7 @@ import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /** Фрагмент для задания с написанием услышанного */
-class TypeThatHeardTask : BaseTaskFragment(R.layout.fragment_type_that_heard) {
+class TypeThatHeardFragment : BaseTaskFragment(R.layout.fragment_type_that_heard) {
 
     private lateinit var _typeThatHeardBinding : FragmentTypeThatHeardBinding
     private val typeThatHeardBinding get() = _typeThatHeardBinding
@@ -38,29 +38,37 @@ class TypeThatHeardTask : BaseTaskFragment(R.layout.fragment_type_that_heard) {
 
         typeThatHeardBinding.taskText.text = arguments?.getString(TASK_KEY)
         setObservers()
+        getDataFromViewModel()
         // Слушатель на изменения в тексте
-        typeThatHeardBinding.textInputField.doAfterTextChanged {
-            val userAnswerStroke = it.toString()
-            _userAnswer = viewModel.transform(userAnswerStroke)
-        }
-
+        textChangeListener()
         return typeThatHeardBinding.root
     }
 
     private fun setObservers() {
-        val taskId = arguments?.getInt(ID_KEY)
-        val soundId = arguments?.getInt(SOUND_KEY)
-        viewModel.getAnswers(taskId!!)
-        viewModel.answersListFromDb.observe(viewLifecycleOwner) {
-            val rightAnswerStroke = it.joinToString { answer -> answer.answer }
-            _rightAnswer = viewModel.transform(rightAnswerStroke)
-        }
-
-        viewModel.getSoundById(soundId!!)
+        viewModel.answersListFromDb.observe(viewLifecycleOwner, ::setupAnswers)
         viewModel.soundFromDb.observe(viewLifecycleOwner, ::setSoundButtonsListeners)
     }
 
-    private fun setSoundButtonsListeners(sound: Sound) {
+    private fun setupAnswers(answers: MutableList<Answer>) {
+        val rightAnswerStroke = answers.joinToString { answer -> answer.answer }
+        _rightAnswer = viewModel.transform(rightAnswerStroke)
+    }
+
+    private fun textChangeListener() {
+        typeThatHeardBinding.textInputField.doAfterTextChanged {
+            val userAnswerStroke = it.toString()
+            _userAnswer = viewModel.transform(userAnswerStroke)
+        }
+    }
+
+    private fun getDataFromViewModel() {
+        val taskId = arguments?.getInt(ID_KEY)
+        val soundId = arguments?.getInt(SOUND_KEY)
+        viewModel.getAnswers(taskId!!)
+        viewModel.getSoundById(soundId!!)
+    }
+
+    private fun setSoundButtonsListeners(sound: Source) {
         // Экземпляр класса для работы с воспроизведением звука
         val soundsPlayer = SoundsPlayer(requireActivity())
 
@@ -70,9 +78,9 @@ class TypeThatHeardTask : BaseTaskFragment(R.layout.fragment_type_that_heard) {
         val stopSoundDrawable =
             ResourcesCompat.getDrawable(resources, R.drawable.stop_play, null)
         // Как воспроизведение заканчивается, иконка меняется
-        soundsPlayer.mediaPlayer.setOnCompletionListener {
+        soundsPlayer.setCompletionListener {
             typeThatHeardBinding.soundButtons.playSoundButton.icon = playSoundDrawable
-            soundsPlayer.mediaPlayer.reset()
+            soundsPlayer.reset()
         }
 
         typeThatHeardBinding.soundButtons.playSoundButton.setOnClickListener {
@@ -81,18 +89,18 @@ class TypeThatHeardTask : BaseTaskFragment(R.layout.fragment_type_that_heard) {
                 soundsPlayer.stopPlay()
             }
             else {
-                soundsPlayer.playbackSpeed = SoundsPlayer.NORMAL_PLAYBACK
+                soundsPlayer.normalPlaybackSpeed()
                 typeThatHeardBinding.soundButtons.playSoundButton.icon = stopSoundDrawable
                 soundsPlayer.playSound(sound)
             }
         }
 
         typeThatHeardBinding.soundButtons.slowPlayButton.setOnClickListener {
-            if (soundsPlayer.mediaPlayer.isPlaying) {
+            if (soundsPlayer.isPlayingNow) {
                 soundsPlayer.stopPlay()
             }
             else {
-                soundsPlayer.playbackSpeed = SoundsPlayer.SLOW_PLAYBACK
+                soundsPlayer.slowPlaybackSpeed()
                 soundsPlayer.playSound(sound)
             }
         }

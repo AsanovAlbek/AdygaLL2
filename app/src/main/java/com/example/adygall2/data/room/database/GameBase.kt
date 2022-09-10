@@ -37,7 +37,7 @@ abstract class GameBase : RoomDatabase() {
     companion object {
         fun buildDatabase(context : Context) =
             Room.databaseBuilder(context, GameBase::class.java, "game_database").
-                    fallbackToDestructiveMigration().createFromAsset(FULL_BASE).build()
+                    fallbackToDestructiveMigration().createFromAsset(DEMO_BASE).build()
     }
 
     abstract fun getAnswerDao() : AnswerDao

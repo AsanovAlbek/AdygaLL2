@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
-import com.example.adygall2.data.db_models.Task
+import com.example.adygall2.domain.model.Task
 import com.example.adygall2.databinding.FragmentLevelPageBinding
 
 /**

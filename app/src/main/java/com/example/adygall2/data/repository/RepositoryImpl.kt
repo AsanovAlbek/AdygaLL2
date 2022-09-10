@@ -2,9 +2,21 @@ package com.example.adygall2.data.repository
 
 import android.content.Context
 import com.bumptech.glide.Glide
-import com.example.adygall2.data.*
-import com.example.adygall2.data.db_models.*
-import com.example.adygall2.data.room.dao.*
+import com.example.adygall2.data.room.dao.AnswerDao
+import com.example.adygall2.data.room.dao.OrderDao
+import com.example.adygall2.data.room.dao.PictureDao
+import com.example.adygall2.data.room.dao.SoundEffectDao
+import com.example.adygall2.data.room.dao.SoundsDao
+import com.example.adygall2.data.room.dao.TaskDao
+import com.example.adygall2.data.toAnswer
+import com.example.adygall2.data.toOrder
+import com.example.adygall2.data.toSource
+import com.example.adygall2.data.toTask
+import com.example.adygall2.domain.model.Answer
+import com.example.adygall2.domain.model.ComplexAnswer
+import com.example.adygall2.domain.model.Order
+import com.example.adygall2.domain.model.Source
+import com.example.adygall2.domain.model.Task
 import com.example.adygall2.domain.repository.Repository
 
 /**
@@ -21,58 +33,62 @@ class RepositoryImpl(
 ) : Repository {
 
     // Answer
-    override fun getAnswersByTaskId(taskId: Int): MutableList<Answer> =
+    override suspend fun getAnswersByTaskId(taskId: Int): MutableList<Answer> =
         answerDao.getTaskAnswers(taskId).map { it.toAnswer() }.toMutableList()
 
-    override fun getAllAnswers(): List<Answer> =
+    override suspend fun getAllAnswers(): List<Answer> =
         answerDao.getAllAnswers().map { it.toAnswer() }
 
     // Order
-    override fun getOrderById(orderId: Int): Order =
+    override suspend fun getOrderById(orderId: Int): Order =
         orderDao.getOrder(orderId).toOrder()
 
-    override fun getAllOrders(): List<Order> =
+    override suspend fun getAllOrders(): List<Order> =
         orderDao.getAllOrders().map { it.toOrder() }
 
 
-    //Picture
-    override fun getPicturesByAnswers(answers: List<Answer>): List<Picture> =
-        answers.map { pictureDao.getPicture(it.pictureId).toPicture() }
+    //Source
+    override suspend fun getPictureSourcesByAnswers(answers: List<Answer>): List<Source> =
+        answers.map { pictureDao.getPicture(it.pictureId).toSource() }
 
-    override fun getAllPictures(): List<Picture> =
-        pictureDao.getAllPictures().map { it.toPicture() }
+    override suspend fun getAllPictures(): List<Source> =
+        pictureDao.getAllPictures().map { it.toSource() }
 
-    override fun clearPicturesInCache() {
+    override suspend fun getPictureById(pictureSourceId: Int): Source =
+        pictureDao.getPicture(pictureSourceId).toSource()
+
+    override suspend fun clearPicturesInCache() {
         Glide.get(context).clearDiskCache()
     }
 
+    override suspend fun getSoundSourcesByAnswers(answers: List<Answer>): List<Source> =
+        answers.map { soundsDao.getSoundById(it.soundId).toSource() }
+
+    override suspend fun getSourceSoundById(sourceId: Int) =
+        soundsDao.getSoundById(sourceId).toSource()
+
+    override suspend fun getAllSourceSounds(): List<Source> =
+        soundsDao.getAllSounds().map { it.toSource() }
+
+    override suspend fun rightAnswerSource(): Source =
+        soundEffectDao.rightAnswerSoundEffect().toSource()
+
+    override suspend fun wrongAnswerSource(): Source =
+        soundEffectDao.wrongAnswerSoundEffect().toSource()
+
     //Task
-    override fun getTasksByType(taskType : Int): List<Task> =
+    override suspend fun getTasksByType(taskType : Int): List<Task> =
         taskDao.getTaskByType(taskType).map { it.toTask() }
 
-    override fun getTaskById(taskId : Int): Task =
+    override suspend fun getTaskById(taskId : Int): Task =
         taskDao.getTaskById(taskId).toTask()
 
-    override fun getTasksFromOrder(orders: List<Order>): List<Task> {
-        return orders.map { getTaskById(it.taskNum) }
+    override suspend fun getTasksFromOrder(orders: List<Order>): List<Task> =
+        orders.map { getTaskById(it.taskNum) }
+
+    override suspend fun answerToComplexAnswer(answer: Answer): ComplexAnswer {
+        val picture = getPictureById(answer.pictureId)
+        val sound = getSourceSoundById(answer.soundId)
+        return ComplexAnswer(answer, sound, picture)
     }
-
-
-    // Sound
-
-    override fun getAllSounds(): List<Sound> =
-        soundsDao.getAllSounds().map { it.toSound() }
-
-    override fun getSoundById(soundId: Int) =
-        soundsDao.getSoundById(soundId).toSound()
-
-    override fun getSoundsByAnswers(answers: List<Answer>): List<Sound> =
-        answers.map { getSoundById(it.soundId) }
-
-    // SoundEffect
-    override fun rightAnswerSoundEffect(): SoundEffect =
-        soundEffectDao.rightAnswerSoundEffect().toSoundEffect()
-
-    override fun wrongAnswerSoundEffect(): SoundEffect =
-        soundEffectDao.wrongAnswerSoundEffect().toSoundEffect()
 }

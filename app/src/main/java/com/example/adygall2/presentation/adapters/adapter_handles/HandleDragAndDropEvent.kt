@@ -7,7 +7,7 @@ import android.view.DragEvent
  * Вспомогательный класс для перетаскивания элемента
  */
 class HandleDragAndDropEvent(private val event : DragEvent) {
-    fun handle(callback: AdapterCallback, isFirstAdapter: Boolean, position: Int) {
+    fun handle(callback: AdapterHandleDragAndDropCallback, isFirstAdapter: Boolean, position: Int) {
         if (event.action == DragEvent.ACTION_DROP) {
             val item : ClipData.Item = event.clipData.getItemAt(0)
             val dragData = item.text.toString()

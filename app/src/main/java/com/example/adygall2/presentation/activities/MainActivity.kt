@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var _binding: ActivityMainBinding
     private val binding get() = _binding
-    //private val navController by lazy { Navigation.findNavController(this, R.id.navHost) }
 
     // Метод, вызываемый при создании activity (в нашем случае, при открытии приложения)
     override fun onCreate(savedInstanceState: Bundle?) {
