@@ -20,8 +20,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /** Фрагмент для задания с  переводом текста через клавиатуру*/
 class TypeTranslateFragment : BaseTaskFragment(R.layout.fragment_type_translate){
 
-    private lateinit var _typeTranslateBinding : FragmentTypeTranslateBinding
-    private val typeTranslateBinding get() = _typeTranslateBinding
+    private var _typeTranslateBinding : FragmentTypeTranslateBinding? = null
+    private val typeTranslateBinding get() = _typeTranslateBinding!!
     private val viewModel by viewModel<GameViewModel>()
 
     private var _rightAnswer = ""
@@ -85,4 +85,15 @@ class TypeTranslateFragment : BaseTaskFragment(R.layout.fragment_type_translate)
             textSize = 18F
             setTextColor(Color.BLACK)
         }
+
+    override fun onPause() {
+        super.onPause()
+        _userAnswer = ""
+        _rightAnswer = ""
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _typeTranslateBinding = null
+    }
 }

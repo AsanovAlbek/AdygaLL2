@@ -3,7 +3,8 @@
     android:id="@+id/gameTaskContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_91">
+    android:background="@color/gray_91"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,33 +26,22 @@
 
     </LinearLayout>
 
+    <include
+        android:id="@+id/dialogShowAnswer"
+        layout="@layout/dialog_show_answer"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:orientation="vertical">
-
-        <FrameLayout
-            android:id="@+id/taskExplanationContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp">
-
-            <include
-                android:id="@+id/incorrectAnswerWindow"
-                layout="@layout/fragment_incorrect_answer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <include
-                android:id="@+id/correctAnswerWindow"
-                layout="@layout/fragment_correct_answer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </FrameLayout>
 
         <include
             android:id="@+id/getAnswerButton"
@@ -64,7 +54,7 @@
 
         <include
             android:id="@+id/taskBottomBar"
-            layout="@layout/bottom_bar"
+            layout="@layout/new_bottom_bar"
             android:layout_width="match_parent"
             android:layout_height="120dp" />
     </LinearLayout>

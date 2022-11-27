@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.adygall2.R
-import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.databinding.FragmentFourImageQuestionBinding
 import com.example.adygall2.domain.model.ComplexAnswer
 import com.example.adygall2.presentation.view_model.GameViewModel
@@ -23,8 +22,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  */
 
 class FourImageFragment : BaseTaskFragment(R.layout.fragment_four_image_question) {
-    private lateinit var _binding : FragmentFourImageQuestionBinding
-    private val binding get() = _binding
+    private var _binding : FragmentFourImageQuestionBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<GameViewModel>()
 
     private var _userAnswer = ""
@@ -40,13 +39,13 @@ class FourImageFragment : BaseTaskFragment(R.layout.fragment_four_image_question
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentFourImageQuestionBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.fourImageTaskEt.text = arguments?.getString(TASK_KEY)
-
         setObservers()
         viewModel.getComplexAnswersByTaskId(arguments?.getInt(ID_KEY)!!)
-
-        return binding.root
     }
 
     private fun setObservers() {
@@ -68,7 +67,14 @@ class FourImageFragment : BaseTaskFragment(R.layout.fragment_four_image_question
      */
     override fun onPause() {
         super.onPause()
-        imageAdapter.onDestroy {
+        _userAnswer = ""
+        _rightAnswer = ""
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        imageAdapter.onClearImages {
             viewModel.clearGlideCache()
         }
     }

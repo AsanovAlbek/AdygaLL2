@@ -17,8 +17,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /** Фрагмент для задания с тремя вариантами ответов */
 class ThreeWordsFragment : BaseTaskFragment(R.layout.fragment_three_words_question) {
 
-    private lateinit var _binding : FragmentThreeWordsQuestionBinding
-    private val binding get() = _binding
+    private var _binding : FragmentThreeWordsQuestionBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<GameViewModel>()
 
     private var _userAnswer = ""
@@ -26,22 +26,22 @@ class ThreeWordsFragment : BaseTaskFragment(R.layout.fragment_three_words_questi
     private var _rightAnswer = ""
     override val rightAnswer get() = _rightAnswer
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentThreeWordsQuestionBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val fullTask = arguments?.getString(TASK_KEY)
         binding.threeWordsTaskTv.text = fullTask
-
         setObservers()
-        viewModel.getAnswers(
-            arguments?.getInt(ArgsKey.ID_KEY)!!
-        )
-
-        return binding.root
+        viewModel.getAnswers(arguments?.getInt(ArgsKey.ID_KEY)!!)
     }
 
     private fun setObservers() {
@@ -56,5 +56,16 @@ class ThreeWordsFragment : BaseTaskFragment(R.layout.fragment_three_words_questi
         binding.threeWordsRecView.adapter = adapter
 
         _rightAnswer = answers.first { it.correctAnswer.toBoolean() }.answer
+    }
+
+    override fun onPause() {
+        super.onPause()
+        _userAnswer = ""
+        _rightAnswer = ""
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

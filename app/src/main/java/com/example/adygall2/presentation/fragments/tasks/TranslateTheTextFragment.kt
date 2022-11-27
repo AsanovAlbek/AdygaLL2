@@ -30,8 +30,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  */
 class TranslateTheTextFragment : BaseTaskFragment(R.layout.fragment_translate_the_text), AdapterHandleDragAndDropCallback {
 
-    private lateinit var _binding: FragmentTranslateTheTextBinding
-    private val binding get() = _binding
+    private var _binding: FragmentTranslateTheTextBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<GameViewModel>()
     private var _userAnswer = String()
     override val userAnswer get() = _userAnswer
@@ -47,11 +47,13 @@ class TranslateTheTextFragment : BaseTaskFragment(R.layout.fragment_translate_th
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTranslateTheTextBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setTaskText()
         setObservers()
         getDataFromViewModel()
-
-        return binding.root
     }
 
     private fun setObservers() {
@@ -164,5 +166,16 @@ class TranslateTheTextFragment : BaseTaskFragment(R.layout.fragment_translate_th
             answerAdapter.addAnswer(item, position)
         }
         _userAnswer = viewModel.transform(answerAdapter.adapterItems.joinToString())
+    }
+
+    override fun onPause() {
+        super.onPause()
+        _userAnswer = ""
+        _rightAnswer = ""
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -2,6 +2,7 @@ package com.example.adygall2.presentation.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.ColorRes
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
 import com.example.adygall2.databinding.PairWordItemBinding

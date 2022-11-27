@@ -47,7 +47,6 @@ class SoundsPlayer(private val context : Context) {
                     start()
                 }
             }
-            mediaPlayer.setOnCompletionListener { mediaPlayer.reset() }
         }
 
 

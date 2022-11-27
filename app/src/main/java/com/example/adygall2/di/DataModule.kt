@@ -1,14 +1,19 @@
 package com.example.adygall2.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.example.adygall2.data.delegate.AnswerFormatter
 import com.example.adygall2.data.delegate.AnswerFormatterImpl
+import com.example.adygall2.data.local.PrefConst
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.data.repository.RepositoryImpl
 import com.example.adygall2.data.room.dao.*
 import com.example.adygall2.data.room.database.GameBase
 import com.example.adygall2.domain.repository.Repository
 import org.koin.android.ext.koin.androidApplication
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import org.koin.dsl.single
 
 val dataModule = module {
     single { GameBase.buildDatabase(androidApplication()) }
@@ -33,4 +38,24 @@ val dataModule = module {
     }
     factory<AnswerFormatter> { AnswerFormatterImpl() }
     factory<SoundsPlayer>{ SoundsPlayer(androidApplication()) }
+
+    single(named(PrefConst.USER_HP)) {
+        androidApplication().applicationContext.getSharedPreferences(PrefConst.USER_HP, Context.MODE_PRIVATE)
+    }
+
+    single(named(PrefConst.USER_EXP)) {
+        androidApplication().applicationContext.getSharedPreferences(PrefConst.USER_EXP, Context.MODE_PRIVATE)
+    }
+
+    single(named(PrefConst.DATE)) {
+        androidApplication().applicationContext.getSharedPreferences(PrefConst.DATE, Context.MODE_PRIVATE)
+    }
+
+    single(named(PrefConst.LEVEL_PROGRESS)) {
+        androidApplication().applicationContext.getSharedPreferences(PrefConst.LEVEL_PROGRESS, Context.MODE_PRIVATE)
+    }
+
+    single(named(PrefConst.LESSON_PROGRESS)) {
+        androidApplication().applicationContext.getSharedPreferences(PrefConst.LESSON_PROGRESS, Context.MODE_PRIVATE)
+    }
 }

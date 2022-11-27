@@ -116,7 +116,7 @@ class GameViewModel(
             withContext(Dispatchers.IO) {
                 val answers = answersByTaskIdUseCase(taskId)
                 val complexAnswers = getComplexAnswerUseCase(answers)
-                withContext(Dispatchers.Main) {
+                    withContext(Dispatchers.Main) {
                     _complexAnswersListFromDb.value = complexAnswers
                 }
             }

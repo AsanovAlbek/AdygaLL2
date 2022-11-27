@@ -1,5 +1,6 @@
 package com.example.adygall2.presentation.fragments.menu
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.adygall2.R
+import com.example.adygall2.data.local.PrefConst
 import com.example.adygall2.databinding.FragmentLessonResultsBinding
+import org.koin.android.ext.android.inject
+import org.koin.core.qualifier.named
 
 /**
  * Фрагмент для показа результатов урока

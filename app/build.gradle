@@ -5,6 +5,7 @@ plugins {
 }
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
+apply plugin: 'androidx.navigation.safeargs.kotlin'
 
 android {
     compileSdk 32
@@ -109,6 +110,10 @@ dependencies {
 
     //Подсказки
     implementation 'com.tomergoldst.android:tooltips:1.1.1'
+
+    // Создание сложных списков
+    implementation "com.github.lisawray.groupie:groupie:2.10.1"
+    implementation "com.github.lisawray.groupie:groupie-viewbinding:2.10.1"
 }
 repositories {
     mavenCentral()

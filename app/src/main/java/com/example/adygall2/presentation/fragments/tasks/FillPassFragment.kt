@@ -23,8 +23,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /** Задание с заполнением ячейки словами из кнопок */
 class FillPassFragment : BaseTaskFragment(R.layout.fragment_fill_in_the_pass) {
 
-    private lateinit var _binding: FragmentFillInThePassBinding
-    private val binding get() = _binding
+    private var _binding: FragmentFillInThePassBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<GameViewModel>()
 
     private lateinit var textViewFiled: TextView
@@ -41,12 +41,13 @@ class FillPassFragment : BaseTaskFragment(R.layout.fragment_fill_in_the_pass) {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFillInThePassBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         textViewFiled = TextView(requireActivity())
         setObservers()
         getDataFromViewModel()
-
-        return binding.root
     }
 
     private fun setObservers() {
@@ -114,7 +115,7 @@ class FillPassFragment : BaseTaskFragment(R.layout.fragment_fill_in_the_pass) {
             textViewFiled.background =
                 resources.getDrawable(R.drawable.rounded_button2, null)
             userAdapter.removeAnswer(it)
-            _userAnswer = viewModel.transform(textViewFiled.text.toString())
+            _userAnswer = viewModel.transform(str = textViewFiled.text.toString())
         }
 
         val rightAnswerStroke = answers.first { it.correctAnswer.toBoolean() }.answer
@@ -131,5 +132,18 @@ class FillPassFragment : BaseTaskFragment(R.layout.fragment_fill_in_the_pass) {
             setPadding(0, 0, 10, 0)
             setTextColor(Color.BLACK)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        _userAnswer = ""
+        _rightAnswer = ""
+        textViewFiled.text = ""
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipDescription
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -73,14 +74,17 @@ class SentenceAdapter(
             with(itemBinding) {
                 sentenceWord.text = answer
                 with(root) {
-                    setOnLongClickListener {
-                        val item = ClipData.Item(answer)
-                        val dragData = ClipData(
-                            answer, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item
-                        )
-                        val shadowDrag = View.DragShadowBuilder(this)
-                        startDragAndDrop(dragData, shadowDrag, null, 0)
-                        true
+                    setOnTouchListener { view, motionEvent ->
+                        performClick()
+                        if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+                            val item = ClipData.Item(answer)
+                            val dragData = ClipData(
+                                answer, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item
+                            )
+                            val shadowDrag = View.DragShadowBuilder(this)
+                            startDragAndDrop(dragData, shadowDrag, null, 0)
+                        }
+                        view.onTouchEvent(motionEvent)
                     }
 
                     setOnDragListener { _, dragEvent ->

@@ -5,10 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.adygall2.R
-import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.databinding.FragmentPairsOfWordsBinding
+import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.PairsAdapter
 import com.example.adygall2.presentation.adapters.StaticPairsAdapter
@@ -22,10 +21,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /**
  * Фрагмент для заданий с парами ответов
  */
-class PairsOfWordsFragment : BaseTaskFragment(R.layout.fragment_pairs_of_words), AdapterHandleDragAndDropCallback {
+class PairsOfWordsFragment : BaseTaskFragment(R.layout.fragment_pairs_of_words)
+    , AdapterHandleDragAndDropCallback {
 
-    private lateinit var _pairsBinding : FragmentPairsOfWordsBinding
-    private val pairsBinding get() = _pairsBinding
+    private var _pairsBinding : FragmentPairsOfWordsBinding? = null
+    private val pairsBinding get() = _pairsBinding!!
     private val viewModel by viewModel<GameViewModel>()
     private var _userAnswerPairsCheckList = mutableListOf<String>()
     val userAnswerPairsCheckList get() = _userAnswerPairsCheckList
@@ -47,13 +47,13 @@ class PairsOfWordsFragment : BaseTaskFragment(R.layout.fragment_pairs_of_words),
         savedInstanceState: Bundle?,
     ): View {
         _pairsBinding = FragmentPairsOfWordsBinding.inflate(inflater, container, false)
+        return pairsBinding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         pairsBinding.taskText.text = arguments?.getString(TASK_KEY)
-
         setObservers()
         getDataFromViewModel()
-
-        return pairsBinding.root
     }
 
     private fun setAdapters(answers : List<Answer>) {
@@ -68,17 +68,16 @@ class PairsOfWordsFragment : BaseTaskFragment(R.layout.fragment_pairs_of_words),
         val leftColumnWords = answerPairs.map { it.first }.toMutableList()
         val rightColumnWords = answerPairs.map { it.second }.toMutableList()
 
-        val bottomGridLayoutManager = GridLayoutManager(requireContext(), 2)
-        pairsBinding.bottomWordsList.layoutManager = bottomGridLayoutManager
-
         // Один адаптер статичен
         leftAdapter = StaticPairsAdapter(leftColumnWords)
         rightAdapter = PairsAdapter(requireContext(),true, mutableListOf(), this)
         bottomAdapter = PairsAdapter(requireContext(),false, rightColumnWords, this)
 
-        pairsBinding.leftWordsList.adapter = leftAdapter
-        pairsBinding.rightWordsList.adapter = rightAdapter
-        pairsBinding.bottomWordsList.adapter = bottomAdapter
+        pairsBinding.apply {
+            leftWordsList.adapter = leftAdapter
+            rightWordsList.adapter = rightAdapter
+            bottomWordsList.adapter = bottomAdapter
+        }
 
         // Перетаскивание
         pairsBinding.bottomWordsList.setOnDragListener { _, dragEvent ->
@@ -116,5 +115,16 @@ class PairsOfWordsFragment : BaseTaskFragment(R.layout.fragment_pairs_of_words),
         }
         _userAnswer = viewModel.transform(_userAnswerPairsCheckList.joinToString())
         _rightAnswer = viewModel.transform(_rightAnswerPairsCheckList.joinToString())
+    }
+
+    override fun onPause() {
+        super.onPause()
+        _userAnswer = ""
+        _rightAnswer = ""
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _pairsBinding = null
     }
 }

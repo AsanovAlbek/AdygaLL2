@@ -55,6 +55,7 @@
         android:layout_marginTop="30dp"
         android:layout_gravity="center"
         tools:listitem="@layout/pair_word_item"
+        app:spanCount="2"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         tools:itemCount="4"/>
 </LinearLayout>

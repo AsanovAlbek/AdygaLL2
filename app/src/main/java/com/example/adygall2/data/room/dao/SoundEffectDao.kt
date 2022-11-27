@@ -15,6 +15,6 @@ abstract class SoundEffectDao {
     abstract fun rightAnswerSoundEffect() : SoundEffectEntity
 
     /** Получение звукового эффекта для неправильного ответа */
-    @Query("SELECT * FROM $SOUND_EFFECT_TABLE_NAME WHERE name = 'wrong'")
+    @Query("SELECT * FROM $SOUND_EFFECT_TABLE_NAME WHERE name = 'wronf'")
     abstract fun wrongAnswerSoundEffect() : SoundEffectEntity
 }

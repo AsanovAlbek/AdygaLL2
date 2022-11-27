@@ -28,8 +28,8 @@ class SentenceBuildFragment(
     private val skipListener: (() -> Unit)
 ) : BaseTaskFragment(R.layout.fragment_words_question), AdapterHandleDragAndDropCallback {
 
-    private lateinit var _sentenceBuildBinding: FragmentWordsQuestionBinding
-    private val sentenceBuildBinding get() = _sentenceBuildBinding
+    private var _sentenceBuildBinding: FragmentWordsQuestionBinding? = null
+    private val sentenceBuildBinding get() = _sentenceBuildBinding!!
     private val viewModel by viewModel<GameViewModel>()
     private val soundsPlayer : SoundsPlayer by inject()
 
@@ -46,15 +46,14 @@ class SentenceBuildFragment(
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-
         _sentenceBuildBinding = FragmentWordsQuestionBinding.inflate(inflater, container, false)
+        return sentenceBuildBinding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sentenceBuildBinding.wordsTaskText.text = arguments?.getString(TASK_KEY)
-
         setObservers()
         dataFromViewModel()
-
-        return sentenceBuildBinding.root
     }
 
     private fun setObservers() {
@@ -85,10 +84,13 @@ class SentenceBuildFragment(
         // Слушатель нажатий на кнопку проигрывания озвучки
         // При нажатиях меняется картинка
         sentenceBuildBinding.soundButtons.playSoundButton.setOnClickListener {
-            if (sentenceBuildBinding.soundButtons.playSoundButton.icon.equals(stopSoundDrawable)) {
-                sentenceBuildBinding.soundButtons.playSoundButton.icon = playSoundDrawable
+            if (soundsPlayer.isPlayingNow) {
                 soundsPlayer.stopPlay()
+                if (sentenceBuildBinding.soundButtons.playSoundButton.icon.equals(stopSoundDrawable)) {
+                    sentenceBuildBinding.soundButtons.playSoundButton.icon = playSoundDrawable
+                }
             }
+
             else {
                 soundsPlayer.normalPlaybackSpeed()
                 sentenceBuildBinding.soundButtons.playSoundButton.icon = stopSoundDrawable
@@ -100,6 +102,7 @@ class SentenceBuildFragment(
         sentenceBuildBinding.soundButtons.slowPlayButton.setOnClickListener {
             if (soundsPlayer.isPlayingNow) {
                 soundsPlayer.stopPlay()
+                sentenceBuildBinding.soundButtons.playSoundButton.icon = playSoundDrawable
             }
             else {
                 soundsPlayer.slowPlaybackSpeed()
@@ -152,5 +155,16 @@ class SentenceBuildFragment(
             userAdapter.removeAnswer(item)
         }
         _userAnswer = viewModel.transform(answerAdapter.adapterItems.joinToString())
+    }
+
+    override fun onPause() {
+        super.onPause()
+        _userAnswer = ""
+        _rightAnswer = ""
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _sentenceBuildBinding = null
     }
 }

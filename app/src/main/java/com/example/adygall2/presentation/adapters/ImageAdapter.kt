@@ -122,7 +122,7 @@ class ImageAdapter(
     // Получение количества элементов в адаптере
     override fun getItemCount() = complexAnswerList.size
 
-    fun onDestroy(callback : (() -> Unit)) {
+    fun onClearImages(callback : (() -> Unit)) {
         onDestroyCallback = callback
         onDestroyCallback?.invoke()
     }

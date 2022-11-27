@@ -1,5 +1,8 @@
 package com.example.adygall2.domain.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 /**
  * Модель для заданий
  * @param id - id задания
@@ -9,6 +12,7 @@ package com.example.adygall2.domain.model
  * @param lessonId - id урока
  * @param exerciseId - id внутри одного урока из 15 вопросов
  */
+@Parcelize
 data class Task(
     val id : Int,
     val taskType : Int,
@@ -17,4 +21,4 @@ data class Task(
     val levelId : Int,
     val lessonId : Int,
     val exerciseId : Int
-    )
+    ): Parcelable

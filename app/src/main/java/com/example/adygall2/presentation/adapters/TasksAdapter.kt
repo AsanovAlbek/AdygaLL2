@@ -20,6 +20,7 @@ import com.example.adygall2.presentation.consts.ArgsKey.TYPE_KEY
 import com.example.adygall2.presentation.fragments.tasks.*
 import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
 import java.lang.ref.WeakReference
+import org.koin.android.ext.android.get
 
 /**
  * Адаптер для создания BaseTaskFragment и его потомков
@@ -37,18 +38,20 @@ class TasksAdapter(
     private var taskSkipEvent : (() -> Unit)? = null
 
     /** мапа для хранения фрагментов по их номеру */
-    private val fragmentMap = mutableMapOf<Int, WeakReference<BaseTaskFragment>>()
+    //private val fragmentMap = mutableMapOf<Int, WeakReference<BaseTaskFragment>>()
+    private val fragmentMap = mutableMapOf<Int, BaseTaskFragment>()
 
     override fun getItemCount() = tasks.size
 
     /** метод для получения фрагмента по позиции */
-    fun getTaskFragment(position: Int) : BaseTaskFragment? = fragmentMap[position]?.get()
+    fun getTaskFragment(position: Int) : BaseTaskFragment? = fragmentMap[position]
 
     override fun createFragment(position: Int): BaseTaskFragment {
         val task = tasks[position]
         val taskFragment = buildTask(task.taskType)
 
-        fragmentMap[position] = WeakReference(taskFragment)
+        //fragmentMap[position] = WeakReference(taskFragment)
+        fragmentMap[position] = taskFragment
 
         // При создании фрагмента ему нужно передать некоторые данные из задания
         val bundle = Bundle()

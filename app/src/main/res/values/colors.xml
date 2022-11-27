@@ -32,4 +32,19 @@
     
     <color name="lime_green">#6EC66D</color>
     <color name="soft_red">#F9595F</color>
+    <color name="blue">#A8A6F3</color>
+    <color name="gray_progress_bar">#D9D9D9</color>
+    <color name="pink_circle">#D1D0FF</color>
+    <color name="orange_warm">#FF9A84</color>
+    <color name="red_warm">#FFCDC2</color>
+    <color name="cool_green">#ACD980</color>
+    <color name="snow_furry">#E3FFC8</color>
+    <color name="carnation_pink">#FFA7CC</color>
+    <color name="brink_pink">#F85A80</color>
+    <color name="hawkes_blue">#CBE1FF</color>
+    <color name="cornflower_blue">#529CFF</color>
+    
+    <color name="transparent_20_green">#338BFF89</color>
+    <color name="transparent_20_red">#33FF8368</color>
+    <color name="gray3">#D9D9D9</color>
 </resources>

@@ -21,8 +21,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /** Фрагмент для задания с написанием услышанного */
 class TypeThatHeardFragment : BaseTaskFragment(R.layout.fragment_type_that_heard) {
 
-    private lateinit var _typeThatHeardBinding : FragmentTypeThatHeardBinding
-    private val typeThatHeardBinding get() = _typeThatHeardBinding
+    private var _typeThatHeardBinding : FragmentTypeThatHeardBinding? = null
+    private val typeThatHeardBinding get() = _typeThatHeardBinding!!
     private val viewModel by viewModel<GameViewModel>()
     private var _rightAnswer = ""
     override val rightAnswer get() = _rightAnswer
@@ -35,13 +35,15 @@ class TypeThatHeardFragment : BaseTaskFragment(R.layout.fragment_type_that_heard
         savedInstanceState: Bundle?
     ): View {
         _typeThatHeardBinding = FragmentTypeThatHeardBinding.inflate(inflater, container, false)
+        return typeThatHeardBinding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         typeThatHeardBinding.taskText.text = arguments?.getString(TASK_KEY)
         setObservers()
         getDataFromViewModel()
         // Слушатель на изменения в тексте
         textChangeListener()
-        return typeThatHeardBinding.root
     }
 
     private fun setObservers() {
@@ -84,10 +86,13 @@ class TypeThatHeardFragment : BaseTaskFragment(R.layout.fragment_type_that_heard
         }
 
         typeThatHeardBinding.soundButtons.playSoundButton.setOnClickListener {
-            if (typeThatHeardBinding.soundButtons.playSoundButton.icon.equals(stopSoundDrawable)) {
-                typeThatHeardBinding.soundButtons.playSoundButton.icon = playSoundDrawable
+            if (soundsPlayer.isPlayingNow) {
                 soundsPlayer.stopPlay()
+                if (typeThatHeardBinding.soundButtons.playSoundButton.icon.equals(stopSoundDrawable)) {
+                    typeThatHeardBinding.soundButtons.playSoundButton.icon = playSoundDrawable
+                }
             }
+
             else {
                 soundsPlayer.normalPlaybackSpeed()
                 typeThatHeardBinding.soundButtons.playSoundButton.icon = stopSoundDrawable
@@ -104,5 +109,17 @@ class TypeThatHeardFragment : BaseTaskFragment(R.layout.fragment_type_that_heard
                 soundsPlayer.playSound(sound)
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        _userAnswer = ""
+        _rightAnswer = ""
+        typeThatHeardBinding.textInputField.setText("")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _typeThatHeardBinding = null
     }
 }

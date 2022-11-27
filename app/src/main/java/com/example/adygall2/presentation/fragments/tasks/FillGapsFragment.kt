@@ -22,8 +22,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  */
 class FillGapsFragment : BaseTaskFragment(R.layout.fragment_fill_gaps) {
 
-    private lateinit var _binding : FragmentFillGapsBinding
-    private val binding get() = _binding
+    private var _binding : FragmentFillGapsBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<GameViewModel>()
 
     private var _rightAnswer = ""
@@ -31,22 +31,19 @@ class FillGapsFragment : BaseTaskFragment(R.layout.fragment_fill_gaps) {
     private var _userAnswer = mutableListOf<EditText>()
     override val userAnswer get() = viewModel.transform(_userAnswer.joinToString { it.text })
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFillGapsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setObservers()
         getDataFromViewModel()
         setTaskText()
-
-        return binding.root
     }
 
     private fun setObservers() {
@@ -97,5 +94,17 @@ class FillGapsFragment : BaseTaskFragment(R.layout.fragment_fill_gaps) {
             }
         }
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        _userAnswer = mutableListOf()
+        _rightAnswer = ""
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

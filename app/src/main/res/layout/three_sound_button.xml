@@ -1,72 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="148dp"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/slowPlayButton"
-        style="@style/Widget.Material3.Button"
         android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
-        android:padding="0dp"
-        android:paddingStart="10dp"
-        app:cornerRadius="16dp"
+        android:layout_height="60dp"
+        app:cornerRadius="8dp"
         app:icon="@drawable/slow_play"
-        app:iconGravity="start"
+        app:iconTint="@color/white"
+        style="@style/Widget.Material3.Button.Icon"
         app:iconSize="30dp"
-        app:iconTint="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/playSoundButton"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:strokeWidth="0.3dp" />
+        android:backgroundTint="@color/blue"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/normalPlayButton"
-        style="@style/Widget.Material3.Button"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
-        android:padding="0dp"
-        android:paddingEnd="10dp"
-        app:cornerRadius="16dp"
-        app:icon="@drawable/normal_sound"
-        app:iconGravity="end"
-        app:iconSize="26dp"
-        app:iconTint="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@id/playSoundButton"
-        app:layout_constraintTop_toTopOf="parent"
-        app:strokeWidth="0.3dp" />
+    <Space
+        android:layout_width="12dp"
+        android:layout_height="wrap_content" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/playSoundButton"
-        style="@style/Widget.Material3.Button.OutlinedButton.Icon"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:backgroundTint="@color/white"
-        android:insetLeft="0dp"
-        android:insetTop="0dp"
-        android:insetRight="0dp"
-        android:insetBottom="0dp"
-        android:padding="25dp"
-        app:cornerRadius="360dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         app:icon="@drawable/play_sound"
-        app:iconTint="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.AdygaLL2.Button.Circle"
-        app:strokeColor="@color/black"
-        app:strokeWidth="0.3dp" />
+        app:iconTint="@color/white"
+        style="@style/Widget.Material3.Button.Icon"
+        app:cornerRadius="8dp"
+        app:iconSize="30dp"
+        android:backgroundTint="@color/blue"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
