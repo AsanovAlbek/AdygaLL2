@@ -14,6 +14,7 @@ import com.example.adygall2.data.local.PrefConst
 import com.example.adygall2.databinding.FragmentNewHomePageBinding
 import com.example.adygall2.domain.model.Task
 import com.example.adygall2.presentation.adapters.LevelsAdapter
+import com.example.adygall2.presentation.adapters.TasksAdapter
 import com.example.adygall2.presentation.fragments.dialog
 import com.example.adygall2.presentation.view_model.GameViewModel
 import org.koin.android.ext.android.inject
@@ -39,7 +40,7 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
     companion object {
         const val DEFAULT_HP = 100
         const val DEFAULT_EXP = 0
-        const val DEFAULT_LESSON_PROGRESS = 1
+        const val DEFAULT_LESSON_PROGRESS = 0
         const val DEFAULT_LEVEL_PROGRESS = 1
     }
 

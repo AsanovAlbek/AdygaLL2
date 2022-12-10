@@ -94,4 +94,8 @@ class TasksAdapter(
         taskSkipEvent = listener
     }
 
+    fun onFinish() {
+        fragmentMap.clear()
+    }
+
 }

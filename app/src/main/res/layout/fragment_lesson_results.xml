@@ -7,36 +7,149 @@
     android:layout_height="match_parent"
     android:background="@color/gray_91">
 
-    <TextView
-        android:id="@+id/resultsTitleText"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userAvatar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/concrete"
-        android:text="@string/results"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="90dp"
+        android:src="@drawable/user_avatar_white_bg"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.022"
-        android:textColor="@color/black" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/resultsList"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="70dp"
-        android:layout_marginBottom="100dp"
-        android:layout_marginStart="14dp"
-        android:layout_marginEnd="14dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultsTitleText"
-        app:layout_constraintVertical_bias="1.0"
-        tools:listitem="@layout/results_item" />
+        android:layout_height="2dp"
+        app:layout_constraintTop_toBottomOf="@id/userAvatar"
+        app:layout_constraintBottom_toTopOf="@id/lessonResultsText"
+        android:background="@color/teal_700"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/lessonResultsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pt_sans_regular"
+        android:text="@string/lesson_result"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@color/orange"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/userAvatar"
+        app:layout_constraintStart_toStartOf="@+id/userAvatar"
+        app:layout_constraintTop_toBottomOf="@+id/userAvatar" />
+
+    <RelativeLayout
+        android:id="@+id/statistic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="24dp"
+        app:layout_constraintTop_toBottomOf="@id/lessonResultsText"
+        android:layout_marginTop="50dp">
+
+        <TextView
+            android:id="@+id/newWordsLearned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_words_learned"
+            style="@style/StatisticTextView"
+            android:layout_alignParentStart="true"
+            android:textStyle="normal"/>
+
+        <TextView
+            android:id="@+id/mistakes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mistakes"
+            style="@style/StatisticTextView"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/newWordsLearned"
+            android:layout_marginTop="16dp"
+            android:textStyle="normal"/>
+
+        <TextView
+            android:id="@+id/coinsEarned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/coins_earned"
+            style="@style/StatisticTextView"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/mistakes"
+            android:layout_marginTop="16dp"
+            android:textStyle="normal"/>
+
+        <TextView
+            android:id="@+id/remainingLives"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/remaining_lives"
+            style="@style/StatisticTextView"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/coinsEarned"
+            android:layout_marginTop="16dp"
+            android:textStyle="normal"/>
+
+        <TextView
+            android:id="@+id/passageTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/passage_time"
+            style="@style/StatisticTextView"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/remainingLives"
+            android:layout_marginTop="16dp"
+            android:textStyle="normal"/>
+
+        <TextView
+            android:id="@+id/newLearnedWordsCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="0"
+            style="@style/StatisticTextView" />
+
+        <TextView
+            android:id="@+id/mistakesCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="16dp"
+            android:layout_below="@id/newLearnedWordsCount"
+            android:text="0"
+            style="@style/StatisticTextView" />
+
+        <TextView
+            android:id="@+id/coinsCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/mistakesCount"
+            android:layout_marginTop="16dp"
+            android:text="0"
+            style="@style/StatisticTextView" />
+
+        <TextView
+            android:id="@+id/livesCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="0"
+            android:layout_marginTop="16dp"
+            android:layout_below="@id/coinsCount"
+            style="@style/StatisticTextView" />
+
+        <TextView
+            android:id="@+id/passedTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="0"
+            android:layout_below="@id/livesCount"
+            android:layout_marginTop="16dp"
+            style="@style/StatisticTextView" />
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/completeLessonBtn"
@@ -57,7 +170,6 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultsList" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

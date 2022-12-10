@@ -34,4 +34,11 @@
     <string name="you_right">ВСЁ ВЕРНО! МОЛОДЕЦ!</string>
     <string name="you_not_right">НЕПРАВИЛЬНЫЙ ОТВЕТ</string>ng
     <string name="next_text">Следующий</string>
+    <string name="lesson_result">Итоги урока</string>
+    <string name="new_words_learned">Выучено новых слов</string>
+    <string name="mistakes">Ошибки</string>
+    <string name="coins_earned">Монет заработано</string>
+    <string name="remaining_lives">Оставшиеся жизни</string>
+    <string name="passage_time">Время прохождения</string>
+    <string name="minutes_and_seconds_format">mm:ss</string>
 </resources>

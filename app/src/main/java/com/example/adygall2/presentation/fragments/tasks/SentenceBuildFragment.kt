@@ -115,7 +115,6 @@ class SentenceBuildFragment(
 
     private fun setAdapter(answers: MutableList<Answer>) {
 
-
         val mutableAnswers = answers.map { it.answer }.toMutableList()
         userAdapter = SentenceAdapter(requireContext(), true, mutableAnswers, this)
         answerAdapter = SentenceAdapter(requireContext(), false, mutableListOf(), this)

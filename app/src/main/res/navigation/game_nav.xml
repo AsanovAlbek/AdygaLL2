@@ -73,5 +73,20 @@
         <action
             android:id="@+id/action_taskResults_to_homePage2"
             app:destination="@id/homePage" />
+        <argument
+            android:name="learnedWords"
+            app:argType="integer" />
+        <argument
+            android:name="mistakes"
+            app:argType="integer"/>
+        <argument
+            android:name="coins"
+            app:argType="integer"/>
+        <argument
+            android:name="lives"
+            app:argType="integer"/>
+        <argument
+            android:name="time"
+            app:argType="string"/>
     </fragment>
 </navigation>

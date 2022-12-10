@@ -33,7 +33,7 @@
         android:layout_height="220dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/clipart2"
-        android:paddingStart="24dp"
+        android:paddingHorizontal="24dp"
         android:paddingTop="6dp"
         android:paddingBottom="6dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -54,25 +54,31 @@
 
     </FrameLayout>
 
-    <ImageView
-        android:id="@+id/happyManIcon"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="208dp"
-        android:src="@drawable/happy_woman_icon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.061"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <include
-        android:id="@+id/soundButtons"
-        layout="@layout/three_sound_button"
+    <LinearLayout
+        android:id="@+id/picAndBtns"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/happyManIcon"
-        app:layout_constraintStart_toStartOf="@+id/happyManIcon"
-        app:layout_constraintTop_toBottomOf="@+id/happyManIcon" />
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/wordsRecView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/messageField">
+
+        <ImageView
+            android:id="@+id/happyManIcon"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/happy_woman_icon"
+            tools:ignore="ContentDescription" />
+
+        <include
+            android:id="@+id/soundButtons"
+            layout="@layout/sound_buttons"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/wordsRecView"
@@ -82,7 +88,7 @@
         app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/happyManIcon"
+        app:layout_constraintStart_toEndOf="@+id/picAndBtns"
         app:layout_constraintTop_toBottomOf="@+id/messageField"
         app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/sentence_item" />
@@ -91,13 +97,14 @@
         android:id="@+id/soundTaskSkip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="80dp"
         android:fontFamily="@font/corbel_bold"
         android:text="@string/i_cant_listen_now"
         android:textColor="@color/gray"
+        app:layout_constraintBottom_toBottomOf="@+id/picAndBtns"
         app:layout_constraintEnd_toEndOf="@+id/wordsRecView"
         app:layout_constraintHorizontal_bias="0.471"
-        app:layout_constraintStart_toStartOf="@+id/happyManIcon"
+        app:layout_constraintStart_toStartOf="@+id/picAndBtns"
         app:layout_constraintTop_toBottomOf="@id/wordsRecView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

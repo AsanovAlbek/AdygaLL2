@@ -52,9 +52,9 @@ class LevelsAdapter(
                     lessonsList.isVisible = !lessonsVisibility
                     // Соотвтетсвенно скрываем и показываем треугольник в кнопке
                     if (lessonsList.isVisible) {
-                        ObjectAnimator.ofInt(levelButton.icon, "level", 5000, 10000).start()
+                        levelButton.setIconResource(R.drawable.ic_rotated_polygon)
                     } else {
-                        ObjectAnimator.ofInt(levelButton.icon, "level", 0, 5000).start()
+                        levelButton.setIconResource(R.drawable.ic_polygon)
                     }
                 }
 
@@ -100,12 +100,14 @@ class LessonsAdapter(
         private val lessonBinding: ItemLessonInLevelBinding
     ): RecyclerView.ViewHolder(lessonBinding.root) {
         fun bind(number: Int, lessonTasks: List<Task>) {
+
             lessonBinding.apply {
                 lessonItem.isClickable = completedLevel <= number
                 lessonItem.setOnClickListener {
+                    Log.d("lessonAdapter","complLvl: $completedLevel, compLesson: $completedLesson, curLesson: $number, curLvl: $chosenLevelNum")
                     lessonItemClickEvent(chosenLevelNum, number, lessonTasks)
                 }
-                if (completedLesson <= number && completedLevel <= chosenLevelNum) {
+                if (completedLesson < number && completedLevel <= chosenLevelNum) {
                     lessonNumber.text = number.toString()
                 } else {
                     lessonNumber.text = "✓"

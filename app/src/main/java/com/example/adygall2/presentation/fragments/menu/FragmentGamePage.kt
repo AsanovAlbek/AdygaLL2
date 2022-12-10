@@ -3,6 +3,7 @@ package com.example.adygall2.presentation.fragments.menu
 import android.app.AlertDialog
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,8 @@ import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.TasksAdapter
 import com.example.adygall2.presentation.fragments.dialog
 import com.example.adygall2.presentation.fragments.snackBar
+import java.time.format.DateTimeFormatter
+import java.util.Date
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,14 +43,20 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
     private lateinit var _taskContainerBinding : TaskContainerBinding
     private val taskContainerBinding get() = _taskContainerBinding
     private val viewModel by viewModel<GameViewModel>()
-    private lateinit var soundsPlayer: SoundsPlayer
+    private val soundsPlayer: SoundsPlayer by inject()
     private val gameArgs: FragmentGamePageArgs by navArgs()
+    private lateinit var fragmentAdapter: TasksAdapter
 
     private val userHpPref: SharedPreferences by inject(named(PrefConst.USER_HP))
     private val expPref: SharedPreferences by inject(named(PrefConst.USER_EXP))
     private val levelProgressPref: SharedPreferences by inject(named(PrefConst.LEVEL_PROGRESS))
     private val lessonProgressPref: SharedPreferences by inject(named(PrefConst.LESSON_PROGRESS))
 
+    /** Время прохождения */
+    private var gameStartedTime = 0L
+    private var gameFinishedTime = 0L
+    /** Счётчик всех ошибок за урок */
+    private var totalMistakes = 0
     /** Счётчик ошибок */
     private var mistakesCounter = 0
     /** Количество монет, получаемое за один правильный ответ
@@ -63,6 +72,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
     companion object {
         /** Максимальное количество ошибок */
         private const val MISTAKES_LIMIT = 3
+
     }
 
     override fun onCreateView(
@@ -75,11 +85,12 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        soundsPlayer = SoundsPlayer(requireContext())
         getUserStates()
         handleTasks(gameArgs.tasks.toList())
         taskContainerBinding.taskTopBar.LevelNumber.text = "Урок ${gameArgs.lessonProgress}-1"
         setListeners()
+
+        gameStartedTime = System.currentTimeMillis()
 
         viewModel.getTasksFromOrder()
         viewModel.okEffect()
@@ -181,6 +192,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                                 if (userAnswer.compareTo(rightAnswer) != 0) {
                                     // Если игрок ошибся 5 раз, то его прогресс аннулируется
                                     mistakesCounter++
+                                    totalMistakes++
                                     if (mistakesCounter >= MISTAKES_LIMIT) {
                                         restartLesson()
                                     } else { incrementProgress() }
@@ -269,18 +281,43 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
      * Так же передавая экрану с результатами информацию о количестве здоровья и опыта
      */
     private fun exitIntoLvl() {
-        levelProgressPref.edit {
-            putInt(PrefConst.LESSON_PROGRESS ,gameArgs.lessonProgress)
-        }
-        lessonProgressPref.edit {
-            putInt(PrefConst.LEVEL_PROGRESS, gameArgs.levelProgress)
-        }
+        refreshUserProgress()
+        gameFinishedTime = System.currentTimeMillis()
+        val gameTime = DateFormat.format(
+            getString(R.string.minutes_and_seconds_format),
+            gameFinishedTime - gameStartedTime
+        ).toString()
+
         with(taskContainerBinding.taskBottomBar) {
+            val coinsDiff = exp.progress - gameArgs.exp
             val actionToResults = FragmentGamePageDirections.actionTaskContainerToTaskResults(
                 hp = hp.progress,
-                exp = exp.progress
+                exp = exp.progress,
+                coins = coinsDiff,
+                lives = hp.progress,
+                mistakes = totalMistakes,
+                time = gameTime,
+                learnedWords = 0
             )
             findNavController().navigate(actionToResults)
+        }
+    }
+
+    private fun refreshUserProgress() {
+        val lesson = lessonProgressPref.getInt(PrefConst.LESSON_PROGRESS, -1)
+        val lvl = levelProgressPref.getInt(PrefConst.LEVEL_PROGRESS, -1)
+
+        // Если урок новый (его порядковый номер больше и уровень открыт)
+        if (gameArgs.lessonProgress >= lesson && gameArgs.levelProgress >= lvl) {
+            lessonProgressPref.edit {
+                putInt(PrefConst.LESSON_PROGRESS ,gameArgs.lessonProgress)
+            }
+        }
+
+        if (gameArgs.levelProgress >= lvl) {
+            levelProgressPref.edit {
+                putInt(PrefConst.LEVEL_PROGRESS, gameArgs.levelProgress)
+            }
         }
     }
 
@@ -303,7 +340,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
      */
     private fun setViewPager(tasks : List<Task>) {
 
-        val fragmentAdapter = TasksAdapter(requireActivity(), tasks)
+        fragmentAdapter = TasksAdapter(requireActivity(), tasks)
         with(taskContainerBinding) {
             fragmentAdapter.setTaskSkipListener {
                 goNextTask()
@@ -356,5 +393,6 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
     override fun onPause() {
         super.onPause()
         viewModel.clearGlideCache()
+        fragmentAdapter.onFinish()
     }
 }

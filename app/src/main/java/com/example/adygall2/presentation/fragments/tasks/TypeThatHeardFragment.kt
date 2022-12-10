@@ -16,6 +16,7 @@ import com.example.adygall2.presentation.consts.ArgsKey.ID_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.SOUND_KEY
 import com.example.adygall2.presentation.consts.ArgsKey.TASK_KEY
 import com.example.adygall2.presentation.fragments.tasks.base_task.BaseTaskFragment
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /** Фрагмент для задания с написанием услышанного */
@@ -28,6 +29,7 @@ class TypeThatHeardFragment : BaseTaskFragment(R.layout.fragment_type_that_heard
     override val rightAnswer get() = _rightAnswer
     private var _userAnswer = ""
     override val userAnswer get() = _userAnswer
+    private val soundsPlayer by inject<SoundsPlayer>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,9 +73,6 @@ class TypeThatHeardFragment : BaseTaskFragment(R.layout.fragment_type_that_heard
     }
 
     private fun setSoundButtonsListeners(sound: Source) {
-        // Экземпляр класса для работы с воспроизведением звука
-        val soundsPlayer = SoundsPlayer(requireActivity())
-
         // При нажатии меняем иконку на кнопке
         val playSoundDrawable =
             ResourcesCompat.getDrawable(resources, R.drawable.play_sound, null)
