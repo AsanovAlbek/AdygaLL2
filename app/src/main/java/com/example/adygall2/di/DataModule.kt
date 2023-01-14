@@ -39,10 +39,14 @@ val dataModule = module {
         )
     }
     factory<AnswerFormatter> { AnswerFormatterImpl() }
-    factory<SoundsPlayer>{ SoundsPlayer(
+
+    single<FilesHandler>{ FilesHandler(androidApplication().applicationContext) }
+    single<MediaPlayer> { MediaPlayer() }
+
+    single<SoundsPlayer>{ SoundsPlayer(
         androidApplication().applicationContext,
-        FilesHandler(androidApplication().applicationContext),
-        MediaPlayer()
+        mediaPlayer = get(),
+        filesHandler = get()
     ) }
 
     single(named(PrefConst.USER_HP)) {

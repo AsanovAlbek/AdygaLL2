@@ -17,6 +17,12 @@ class SoundsPlayer(
     private val filesHandler: FilesHandler,
     private val mediaPlayer: MediaPlayer) {
 
+    init {
+        mediaPlayer.setOnPreparedListener {
+            it.start()
+        }
+    }
+
     /** Переменная для регулирования скорости воспроизведения */
     private var playbackSpeed = NORMAL_PLAYBACK
     /** Информация о проигрывании на данный момент
@@ -42,10 +48,9 @@ class SoundsPlayer(
                         stopPlay()
                     } else {
                         setDataSource(fileDescriptor)
-                        prepare()
+                        prepareAsync()
                         setSpeed(playbackSpeed)
-                        seekTo(0)
-                        start()
+                        //seekTo(0)
                     }
                 }
             }
@@ -55,7 +60,7 @@ class SoundsPlayer(
      * Метод для остановки воспроизведения
      */
         fun stopPlay() {
-            mediaPlayer.stop()
+            mediaPlayer.pause()
             mediaPlayer.reset()
         }
 

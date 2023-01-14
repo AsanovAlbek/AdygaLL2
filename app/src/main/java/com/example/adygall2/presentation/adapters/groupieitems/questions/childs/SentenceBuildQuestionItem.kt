@@ -33,6 +33,7 @@ class SentenceBuildQuestionItem(
     override val onNextQuestion: () -> Unit
         get() = {
             _userAnswer = ""
+            soundsPlayer.reset()
         }
 
     override fun bind(viewBinding: FragmentWordsQuestionBinding, position: Int) {
