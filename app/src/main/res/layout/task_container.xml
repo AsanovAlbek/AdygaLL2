@@ -57,6 +57,7 @@
             android:fontFamily="@font/corbel_bold"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="10dp"
+            android:visibility="gone"
             android:text="@string/i_cant_listen_now"
             android:textColor="@color/gray" />
 

@@ -11,6 +11,9 @@ import android.view.ViewGroup
 import androidx.core.content.edit
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
@@ -26,6 +29,7 @@ import com.example.adygall2.presentation.fragments.dialog
 import com.example.adygall2.presentation.fragments.log
 import com.example.adygall2.presentation.fragments.snackBar
 import com.xwray.groupie.GroupieAdapter
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -103,6 +107,8 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
             isUserInputEnabled = false
         }
         viewModel.getAllNewWords(gameArgs.tasks.toList())
+        viewModel.initAutoHill(taskContainerBinding.taskBottomBar.hp.progress)
+        hillHp()
     }
 
     /**
@@ -139,6 +145,19 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         //nextQuestion()
         //goNextTask()
         soundsPlayer.setCompletionListener { soundsPlayer.stopPlay() }
+    }
+
+    private fun hillHp() {
+        if (taskContainerBinding.taskBottomBar.hp.progress < 100) {
+            viewModel.viewModelScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.autoHillHp()
+                    viewModel.hpHillTimer.collect {
+                        taskContainerBinding.taskBottomBar.hp.progress = it
+                    }
+                }
+            }
+        }
     }
 
     private fun observe() {

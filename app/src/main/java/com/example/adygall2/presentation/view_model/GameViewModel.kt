@@ -18,7 +18,12 @@ import com.example.adygall2.domain.usecases.SourceInteractor
 import com.example.adygall2.domain.usecases.TasksByOrdersUseCase
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.createQuestion
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -33,6 +38,10 @@ class GameViewModel(
     private val sourceInteractor: SourceInteractor,
     private val answerFormatterDelegate : AnswerFormatter
 ) : ViewModel(), AnswerFormatter by answerFormatterDelegate {
+
+    companion object {
+        private const val fiveMinuteInMills = 300_000L
+    }
 
     private var question = MutableLiveData<QuestionItem<out ViewBinding>>()
     val item: LiveData<QuestionItem<out ViewBinding>> get() = question
@@ -55,6 +64,9 @@ class GameViewModel(
     private var _badSoundEffect = MutableLiveData<Source>()
     val badSoundEffect : LiveData<Source> get() = _badSoundEffect
 
+    private var _hpHillTimer = MutableStateFlow(0)
+    val hpHillTimer get() = _hpHillTimer.asStateFlow()
+
     fun fillItems(
         context: Context,
         tasks: List<Task>,
@@ -74,6 +86,27 @@ class GameViewModel(
                 }
                 withContext(Dispatchers.Main) {
                     questionItems.value = questions.toMutableList()
+                }
+            }
+        }
+    }
+
+    fun initAutoHill(value: Int) {
+        viewModelScope.launch {
+            withContext(Dispatchers.Main) {
+                _hpHillTimer.value = value
+            }
+        }
+    }
+
+    fun autoHillHp() {
+        viewModelScope.launch {
+            withContext(Dispatchers.Main) {
+                while (isActive) {
+                    delay(fiveMinuteInMills)
+                    if (_hpHillTimer.value < 100) {
+                        _hpHillTimer.value += 10
+                    }
                 }
             }
         }

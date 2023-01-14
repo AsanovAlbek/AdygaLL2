@@ -7,6 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.edit
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.adygall2.R
@@ -17,6 +21,8 @@ import com.example.adygall2.presentation.adapters.LevelsAdapter
 import com.example.adygall2.presentation.fragments.dialog
 import com.example.adygall2.presentation.view_model.GameViewModel
 import java.util.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.qualifier.named
@@ -55,10 +61,12 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
         getUserStates()
         observe()
 
+
         return homePageBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel.initAutoHill(homePageBinding.homeBottomBar.hp.progress)
         hillHp()
     }
 
@@ -84,6 +92,8 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
     private fun observe() {
         viewModel.tasksListFromDb.observe(viewLifecycleOwner, ::levelsTree)
         viewModel.getTasksFromOrder()
+
+
     }
 
     private fun levelsTree(list: List<Task>) {
@@ -116,6 +126,15 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
     }
 
     private fun hillHp() {
-
+        if (homePageBinding.homeBottomBar.hp.progress < 100) {
+            viewModel.viewModelScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.autoHillHp()
+                    viewModel.hpHillTimer.collect {
+                        homePageBinding.homeBottomBar.hp.progress = it
+                    }
+                }
+            }
+        }
     }
 }
