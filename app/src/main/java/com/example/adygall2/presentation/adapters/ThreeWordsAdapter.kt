@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
 import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.databinding.SimpleWordItemBinding
+import com.example.adygall2.domain.model.ComplexAnswer
 
 /**
  * Класс - Адаптер, наследуемый от класса Adapter из класса RecyclerView
@@ -21,8 +22,8 @@ import com.example.adygall2.databinding.SimpleWordItemBinding
 
 class ThreeWordsAdapter(
     private val context : Context,
-    private val itemsList : List <Answer>,
-    private val listener : ((Answer) -> Unit)
+    private val itemsList : List <ComplexAnswer>,
+    private val listener : ((ComplexAnswer) -> Unit)
 ) : RecyclerView.Adapter<ThreeWordsAdapter.ThreeWordsHolder>() {
 
     /** Позиция выбранного элемента */
@@ -32,8 +33,8 @@ class ThreeWordsAdapter(
         private val itemBinding : SimpleWordItemBinding
     ) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        fun binding(answer: Answer) {
-            itemBinding.simpleWord.text = answer.answer
+        fun binding(answer: ComplexAnswer) {
+            itemBinding.simpleWord.text = answer.answer.answer
 
             if (selectItemPosition == -1) {
                 // Если элемент не выбран, то фон белый

@@ -36,12 +36,7 @@ class RepositoryImpl(
     override suspend fun getAnswersByTaskId(taskId: Int): MutableList<Answer> =
         answerDao.getTaskAnswers(taskId).map { it.toAnswer() }.toMutableList()
 
-    override suspend fun getAllAnswers(): List<Answer> =
-        answerDao.getAllAnswers().map { it.toAnswer() }
-
     // Order
-    override suspend fun getOrderById(orderId: Int): Order =
-        orderDao.getOrder(orderId).toOrder()
 
     override suspend fun getAllOrders(): List<Order> =
         orderDao.getAllOrders().map { it.toOrder() }
@@ -51,9 +46,6 @@ class RepositoryImpl(
     override suspend fun getPictureSourcesByAnswers(answers: List<Answer>): List<Source> =
         answers.map { pictureDao.getPicture(it.pictureId).toSource() }
 
-    override suspend fun getAllPictures(): List<Source> =
-        pictureDao.getAllPictures().map { it.toSource() }
-
     override suspend fun getPictureById(pictureSourceId: Int): Source =
         pictureDao.getPicture(pictureSourceId).toSource()
 
@@ -61,14 +53,8 @@ class RepositoryImpl(
         Glide.get(context).clearDiskCache()
     }
 
-    override suspend fun getSoundSourcesByAnswers(answers: List<Answer>): List<Source> =
-        answers.map { soundsDao.getSoundById(it.soundId).toSource() }
-
-    override suspend fun getSourceSoundById(sourceId: Int) =
+    override suspend fun getSourceSoundById(sourceId: Int): Source =
         soundsDao.getSoundById(sourceId).toSource()
-
-    override suspend fun getAllSourceSounds(): List<Source> =
-        soundsDao.getAllSounds().map { it.toSource() }
 
     override suspend fun rightAnswerSource(): Source =
         soundEffectDao.rightAnswerSoundEffect().toSource()
@@ -77,8 +63,6 @@ class RepositoryImpl(
         soundEffectDao.wrongAnswerSoundEffect().toSource()
 
     //Task
-    override suspend fun getTasksByType(taskType : Int): List<Task> =
-        taskDao.getTaskByType(taskType).map { it.toTask() }
 
     override suspend fun getTaskById(taskId : Int): Task =
         taskDao.getTaskById(taskId).toTask()

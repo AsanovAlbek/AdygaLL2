@@ -4,6 +4,8 @@ package com.example.adygall2.data.room.consts
  * Типы заданий
  */
 object TaskType {
+    /** Не определён */
+    const val UNKNOWN = 0
     /** Задание с картинками */
     const val IMAGE = 1
     /** Задание с выбором трёх слов */

@@ -14,9 +14,9 @@ import com.example.adygall2.data.local.PrefConst
 import com.example.adygall2.databinding.FragmentNewHomePageBinding
 import com.example.adygall2.domain.model.Task
 import com.example.adygall2.presentation.adapters.LevelsAdapter
-import com.example.adygall2.presentation.adapters.TasksAdapter
 import com.example.adygall2.presentation.fragments.dialog
 import com.example.adygall2.presentation.view_model.GameViewModel
+import java.util.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.qualifier.named
@@ -54,7 +54,12 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
 
         getUserStates()
         observe()
+
         return homePageBinding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        hillHp()
     }
 
     override fun onStop() {
@@ -108,5 +113,9 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
         } else {
             dialog("У вас не достаточно здоровья, зайдите позже")
         }
+    }
+
+    private fun hillHp() {
+
     }
 }

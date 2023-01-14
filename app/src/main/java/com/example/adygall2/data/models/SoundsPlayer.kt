@@ -12,13 +12,11 @@ import java.io.FileInputStream
  * Обёртка над классом MediaPlayer
  */
 
-class SoundsPlayer(private val context : Context) {
+class SoundsPlayer(
+    private val context : Context,
+    private val filesHandler: FilesHandler,
+    private val mediaPlayer: MediaPlayer) {
 
-    /** Класс для создания файла и получение его FileDescriptor, чтобы проиграть аудиозапись */
-    private val filesHandler = FilesHandler(context)
-
-    /** Экземпляр класса для работы с аудиофайлами */
-    private val mediaPlayer = MediaPlayer()
     /** Переменная для регулирования скорости воспроизведения */
     private var playbackSpeed = NORMAL_PLAYBACK
     /** Информация о проигрывании на данный момент
@@ -40,23 +38,25 @@ class SoundsPlayer(private val context : Context) {
         fun playSound(source : Source) {
             filesHandler.addOnSuccessListener(source) { fileDescriptor ->
                 mediaPlayer.apply {
-                    setDataSource(fileDescriptor)
-                    prepare()
-                    setSpeed(playbackSpeed)
-                    seekTo(0)
-                    start()
+                    if (isPlayingNow) {
+                        stopPlay()
+                    } else {
+                        setDataSource(fileDescriptor)
+                        prepare()
+                        setSpeed(playbackSpeed)
+                        seekTo(0)
+                        start()
+                    }
                 }
             }
         }
-
-
 
     /**
      * Метод для остановки воспроизведения
      */
         fun stopPlay() {
-                mediaPlayer.stop()
-                mediaPlayer.reset()
+            mediaPlayer.stop()
+            mediaPlayer.reset()
         }
 
     /**
@@ -64,7 +64,7 @@ class SoundsPlayer(private val context : Context) {
      */
     fun setCompletionListener(completionListener : ((MediaPlayer) -> Unit)) {
             mediaPlayer.setOnCompletionListener(completionListener)
-        }
+    }
 
     fun reset() {
         mediaPlayer.reset()

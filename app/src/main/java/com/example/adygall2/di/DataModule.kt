@@ -2,9 +2,11 @@ package com.example.adygall2.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.media.MediaPlayer
 import com.example.adygall2.data.delegate.AnswerFormatter
 import com.example.adygall2.data.delegate.AnswerFormatterImpl
 import com.example.adygall2.data.local.PrefConst
+import com.example.adygall2.data.models.FilesHandler
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.data.repository.RepositoryImpl
 import com.example.adygall2.data.room.dao.*
@@ -16,7 +18,7 @@ import org.koin.dsl.module
 import org.koin.dsl.single
 
 val dataModule = module {
-    single { GameBase.buildDatabase(androidApplication()) }
+    single { GameBase.buildDatabase(androidApplication().applicationContext) }
 
     single { get<GameBase>().getAnswerDao() }
     single { get<GameBase>().getOrderDao() }
@@ -27,7 +29,7 @@ val dataModule = module {
 
     factory<Repository> {
         RepositoryImpl(
-            context = androidApplication(),
+            context = androidApplication().applicationContext,
             answerDao = get() as AnswerDao,
             orderDao = get() as OrderDao,
             pictureDao = get() as PictureDao,
@@ -37,7 +39,11 @@ val dataModule = module {
         )
     }
     factory<AnswerFormatter> { AnswerFormatterImpl() }
-    factory<SoundsPlayer>{ SoundsPlayer(androidApplication()) }
+    factory<SoundsPlayer>{ SoundsPlayer(
+        androidApplication().applicationContext,
+        FilesHandler(androidApplication().applicationContext),
+        MediaPlayer()
+    ) }
 
     single(named(PrefConst.USER_HP)) {
         androidApplication().applicationContext.getSharedPreferences(PrefConst.USER_HP, Context.MODE_PRIVATE)
@@ -57,5 +63,9 @@ val dataModule = module {
 
     single(named(PrefConst.LESSON_PROGRESS)) {
         androidApplication().applicationContext.getSharedPreferences(PrefConst.LESSON_PROGRESS, Context.MODE_PRIVATE)
+    }
+
+    single(named(PrefConst.LEARNED_WORDS)) {
+        androidApplication().applicationContext.getSharedPreferences(PrefConst.LEARNED_WORDS, Context.MODE_PRIVATE)
     }
 }

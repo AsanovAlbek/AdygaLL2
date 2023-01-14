@@ -107,12 +107,17 @@ class LessonsAdapter(
                     Log.d("lessonAdapter","complLvl: $completedLevel, compLesson: $completedLesson, curLesson: $number, curLvl: $chosenLevelNum")
                     lessonItemClickEvent(chosenLevelNum, number, lessonTasks)
                 }
-                if (completedLesson < number && completedLevel <= chosenLevelNum) {
-                    lessonNumber.text = number.toString()
+                if (completedLevel <= chosenLevelNum) {
+                    if (completedLesson < number) {
+                        lessonNumber.text = number.toString()
+                    } else {
+                        lessonNumber.text = "✓"
+                        lessonProgress.progress = 100
+                    }
                 } else {
-                    lessonNumber.text = "✓"
-                    lessonProgress.progress = 100
+                    lessonNumber.text = number.toString()
                 }
+
             }
         }
     }

@@ -13,16 +13,10 @@ interface Repository {
 
     // Orders
 
-    /** Получение Order по id */
-    suspend fun getOrderById(orderId : Int) : Order
-
     /** Получение всех Order */
     suspend fun getAllOrders() : List<Order>
 
     // Tasks
-
-    /** Получение [Task] по [TaskType] */
-    suspend fun getTasksByType(taskType : Int) : List<Task>
 
     /** Получение [Task] по id */
     suspend fun getTaskById(taskId : Int) : Task
@@ -32,24 +26,16 @@ interface Repository {
 
     // Source
 
-    /** Получение всех [Source] картинок */
-    suspend fun getAllPictures() : List<Source>
-
     suspend fun getPictureById(pictureSourceId : Int) : Source
 
     /** Получение всех [Source] по соответствующим [Answer] */
     suspend fun getPictureSourcesByAnswers(answers : List<Answer>) : List<Source>
-
-    suspend fun getSoundSourcesByAnswers(answers: List<Answer>) : List<Source>
 
     /** Очистка кэша Glide */
     suspend fun clearPicturesInCache()
 
     /** Получить [Source] озвучку по id */
     suspend fun getSourceSoundById(sourceId : Int) : Source
-
-    /** Получить все озвучки */
-    suspend fun getAllSourceSounds() : List<Source>
 
     /** Получить аудиофайл для правильного ответа */
     suspend fun rightAnswerSource() : Source
@@ -61,9 +47,6 @@ interface Repository {
 
     /** Получение [Answer] по id задания */
     suspend fun getAnswersByTaskId(taskId : Int) : MutableList<Answer>
-
-    /** Получить все [Answer] */
-    suspend fun getAllAnswers() : List<Answer>
 
     // ComplexAnswer
     /** Получение модели ответа с озвучкой и картинкой */

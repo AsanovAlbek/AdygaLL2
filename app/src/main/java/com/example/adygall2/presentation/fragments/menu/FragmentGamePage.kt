@@ -9,27 +9,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.edit
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.viewbinding.ViewBinding
 import com.example.adygall2.R
 import com.example.adygall2.data.local.PrefConst
-import com.example.adygall2.domain.model.Task
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.databinding.TaskContainerBinding
 import com.example.adygall2.domain.model.Source
+import com.example.adygall2.domain.model.Task
 import com.example.adygall2.presentation.view_model.GameViewModel
-import com.example.adygall2.presentation.adapters.TasksAdapter
+import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.example.adygall2.presentation.fragments.dialog
+import com.example.adygall2.presentation.fragments.log
 import com.example.adygall2.presentation.fragments.snackBar
-import java.time.format.DateTimeFormatter
-import java.util.Date
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.xwray.groupie.GroupieAdapter
 import org.koin.android.ext.android.inject
 
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -40,39 +36,42 @@ import org.koin.core.qualifier.named
  */
 class FragmentGamePage : Fragment(R.layout.task_container) {
 
-    private lateinit var _taskContainerBinding : TaskContainerBinding
+    private lateinit var _taskContainerBinding: TaskContainerBinding
     private val taskContainerBinding get() = _taskContainerBinding
     private val viewModel by viewModel<GameViewModel>()
     private val soundsPlayer: SoundsPlayer by inject()
     private val gameArgs: FragmentGamePageArgs by navArgs()
-    private lateinit var fragmentAdapter: TasksAdapter
+    private lateinit var tasksAdapter: GroupieAdapter
 
     private val userHpPref: SharedPreferences by inject(named(PrefConst.USER_HP))
     private val expPref: SharedPreferences by inject(named(PrefConst.USER_EXP))
     private val levelProgressPref: SharedPreferences by inject(named(PrefConst.LEVEL_PROGRESS))
     private val lessonProgressPref: SharedPreferences by inject(named(PrefConst.LESSON_PROGRESS))
+    private val learnedWordsPref: SharedPreferences by inject(named(PrefConst.LEARNED_WORDS))
+
+    private var userAnswer = ""
+    private var rightAnswer = ""
 
     /** Время прохождения */
     private var gameStartedTime = 0L
     private var gameFinishedTime = 0L
+
     /** Счётчик всех ошибок за урок */
     private var totalMistakes = 0
+
     /** Счётчик ошибок */
     private var mistakesCounter = 0
-    /** Количество монет, получаемое за один правильный ответ
-     * Вычисляется по формуле: количество заданий / 100
-     * Если откажемся от прогресс бара, то формула будет не нужна*/
-    private var moneyIncrementValue = 1
-        set(value) {
-            if (value > 1) {
-                field = value
-            }
-        }
+    private var newWordsCount = 0
+
+    private var currentQuestionPosition = 1
+    private var wordsSet = mutableSetOf<String>()
 
     companion object {
         /** Максимальное количество ошибок */
         private const val MISTAKES_LIMIT = 3
-
+        private const val HP_DAMAGE = 5
+        private const val MONEY_INCREMENT = 1
+        private const val TAG = "GameFragment"
     }
 
     override fun onCreateView(
@@ -85,27 +84,102 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        // Присвоение нажатия кнопке выхода
+        taskContainerBinding.taskTopBar.closeButton.setOnClickListener {
+            // Создание диалога для выхода
+            exitIntoLevelDialog()
+            taskContainerBinding.taskBottomBar.exp.progress = expPref.getInt(PrefConst.USER_EXP, 0)
+        }
+
         getUserStates()
-        handleTasks(gameArgs.tasks.toList())
         taskContainerBinding.taskTopBar.LevelNumber.text = "Урок ${gameArgs.lessonProgress}-1"
-        setListeners()
+        tasksAdapter = GroupieAdapter()
+        startGame()
+        observe()
 
-        gameStartedTime = System.currentTimeMillis()
+        taskContainerBinding.taskViewPager.apply {
+            adapter = tasksAdapter
+            isUserInputEnabled = false
+        }
+        viewModel.getAllNewWords(gameArgs.tasks.toList())
+    }
 
-        viewModel.getTasksFromOrder()
-        viewModel.okEffect()
-        viewModel.wrongEffect()
+    /**
+     * При скрытии фрагмента чистится кэш картинок
+     */
+    override fun onPause() {
+        super.onPause()
+        viewModel.clearGlideCache()
     }
 
     override fun onStop() {
         super.onStop()
         userHpPref.edit {
             // Сохраняем здоровье и монеты при выходе
-            putInt(PrefConst.USER_HP,taskContainerBinding.taskBottomBar.hp.progress)
+            putInt(PrefConst.USER_HP, taskContainerBinding.taskBottomBar.hp.progress)
         }
         expPref.edit {
             putInt(PrefConst.USER_EXP, taskContainerBinding.taskBottomBar.exp.progress)
         }
+    }
+
+    private fun startGame() {
+        gameStartedTime = System.currentTimeMillis()
+        viewModel.apply {
+            okEffect()
+            wrongEffect()
+            fillItems(
+                context = requireContext(),
+                tasks = gameArgs.tasks.toList(),
+                soundsPlayer = soundsPlayer
+            )
+            //makeQuestion(requireContext(), gameArgs.tasks.first(), soundsPlayer)
+        }
+        //nextQuestion()
+        //goNextTask()
+        soundsPlayer.setCompletionListener { soundsPlayer.stopPlay() }
+    }
+
+    private fun observe() {
+        viewModel.wordsForStatic.observe(viewLifecycleOwner, ::calculateNewLearnedWords)
+        viewModel.items.observe(viewLifecycleOwner, ::observeItems)
+        //viewModel.item.observe(viewLifecycleOwner, ::observeQuestionItem)
+    }
+
+    private fun calculateNewLearnedWords(words: List<String>) {
+        wordsSet =
+            learnedWordsPref.getStringSet(PrefConst.LEARNED_WORDS, mutableSetOf())?.toMutableSet() ?: mutableSetOf()
+        wordsSet.apply {
+            val oldWordsLength = size
+            wordsSet.addAll(words)
+            newWordsCount = size - oldWordsLength
+        }
+    }
+
+    /*private fun observeQuestionItem(questionItem: QuestionItem<out ViewBinding>) {
+        log("item changed")
+        tasksAdapter.add(questionItem)
+        setListeners()
+    }*/
+
+    private fun nextQuestion() {
+        if (tasksAdapter.itemCount < gameArgs.tasks.size) {
+            val nextAdapterPosition = tasksAdapter.itemCount
+            log("next = $nextAdapterPosition")
+            log("taskAdapterItem = ${gameArgs.tasks[nextAdapterPosition]}")
+            val task: Task = gameArgs.tasks[nextAdapterPosition]
+            viewModel.makeQuestion(
+                context = requireContext(),
+                task = task,
+                soundsPlayer = soundsPlayer
+            )
+        }
+    }
+
+    private fun observeItems(questionItems: MutableList<QuestionItem<out ViewBinding>?>) {
+        tasksAdapter.update(questionItems)
+        setListeners()
     }
 
     /**
@@ -118,14 +192,11 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         }
     }
 
-    private fun handleTasks(tasks: List<Task>) {
-        setViewPager(tasks)
-        moneyIncrementValue = 100 / tasks.size
-    }
-
-    private fun soundEffect(source : Source) {
-        soundsPlayer.playSound(source)
-        soundsPlayer.setCompletionListener { soundsPlayer.stopPlay() }
+    private fun soundEffect(source: Source) {
+        soundsPlayer.apply {
+            stopPlay()
+            playSound(source)
+        }
     }
 
     private fun wrongEffect() {
@@ -137,26 +208,34 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
     }
 
     private fun giveMoney() {
-        taskContainerBinding.taskBottomBar.exp.progress += moneyIncrementValue
+        taskContainerBinding.taskBottomBar.exp.progress += MONEY_INCREMENT
     }
 
     private fun takeAwayHp() {
-        taskContainerBinding.taskBottomBar.hp.progress -= 10
+        taskContainerBinding.taskBottomBar.hp.progress -= HP_DAMAGE
     }
 
     private fun goNextTask() {
-        taskContainerBinding.taskViewPager.currentItem += 1
+        taskContainerBinding.taskViewPager.currentItem++
+        log("current item pos after click = ${taskContainerBinding.taskViewPager.currentItem}")
+        val questionItem = tasksAdapter.getItem(
+            taskContainerBinding.taskViewPager.currentItem
+        ) as QuestionItem<out ViewBinding>
+        taskContainerBinding.soundTaskSkip.isVisible = questionItem.canSkipQuestion
+
+        //nextQuestion()
     }
 
     private fun isLastTask() = with(taskContainerBinding.taskViewPager) {
-        currentItem == adapter!!.itemCount - 1
+        currentItem == gameArgs.tasks.size - 1
     }
 
-    private fun isNotLastTask() = with(taskContainerBinding.taskViewPager) { currentItem < adapter!!.itemCount }
+    private fun isNotLastTask() =
+        with(taskContainerBinding.taskViewPager) { currentItem < gameArgs.tasks.size }
 
     private fun incrementProgress() {
         taskContainerBinding.apply {
-            taskTopBar.progressIndicator.progress = taskViewPager.currentItem * moneyIncrementValue
+            taskTopBar.progressIndicator.progress++
         }
     }
 
@@ -164,44 +243,50 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
      * Метод для присвоения обработчиков нажатий
      */
     private fun setListeners() {
-        var userAnswer = ""
-        var rightAnswer = ""
-
         taskContainerBinding.getAnswerButton.answerBtn.setOnClickListener {
-            // Получаем фрагмент, который сейчас на экране
-            val currentFragment = (taskContainerBinding.taskViewPager.adapter as TasksAdapter)
-                .getTaskFragment(taskContainerBinding.taskViewPager.currentItem)
+            log("current item pos = ${taskContainerBinding.taskViewPager.currentItem}")
+            val question = tasksAdapter.getItem(
+                taskContainerBinding.taskViewPager.currentItem
+            ) as QuestionItem<out ViewBinding>
 
+            taskContainerBinding.soundTaskSkip.isVisible = question.canSkipQuestion
             // Получение ответов
-            userAnswer = currentFragment!!.userAnswer
-            rightAnswer = currentFragment.rightAnswer
+            userAnswer = viewModel.transform(question.userAnswer)
+            rightAnswer = viewModel.transform(question.rightAnswer)
+            log("user = $userAnswer, right = $rightAnswer, mis = $mistakesCounter")
 
             // Пока не дошли до последнего элемента
             if (isNotLastTask()) {
                 // Если ответ выбран и получен
                 if (userAnswer.isNotEmpty()) {
-                        taskContainerBinding.apply {
-                            if (userAnswer.compareTo(rightAnswer) == 0) {
-                                goodEffect()
+                    taskContainerBinding.apply {
+                        if (userAnswer.compareTo(rightAnswer) == 0) {
+                            goodEffect()
+                        } else {
+                            wrongEffect()
+                        }
+                        showAnswerResultDialog(userAnswer, rightAnswer) {
+                            if (isLastTask()) {
+                                exitIntoLvl()
                             } else {
-                                wrongEffect()
-                            }
-                            showAnswerResultDialog(userAnswer, rightAnswer) {
                                 goNextTask()
                                 // Если ответил неправильно
                                 if (userAnswer.compareTo(rightAnswer) != 0) {
-                                    // Если игрок ошибся 5 раз, то его прогресс аннулируется
+                                    // Если игрок ошибся 3 раза, то его прогресс аннулируется
                                     mistakesCounter++
                                     totalMistakes++
                                     if (mistakesCounter >= MISTAKES_LIMIT) {
                                         restartLesson()
-                                    } else { incrementProgress() }
+                                        question.onNextQuestion()
+                                    } else {
+                                        incrementProgress()
+                                    }
                                     // Если игрок ошибся, то у него отнимается 10 очков здоровья
                                     takeAwayHp()
                                     // Если у игрока закончилось здоровье, то он выходит из уровня
                                     if (taskContainerBinding.taskBottomBar.hp.progress <= 0) {
                                         dialog("Провал")
-                                        exitIntoLvl()
+                                        exitToHomePage()
                                     }
 
                                     // Если ответил правильно
@@ -210,34 +295,47 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                                     giveMoney()
                                     incrementProgress()
                                 }
+                                question.onNextQuestion()
 
                                 taskTopBar.LevelNumber.text =
                                     "Урок ${gameArgs.lessonProgress}-${taskViewPager.currentItem + 1}"
                             }
-                        }
-                        // Если дошли до последнего вопроса и нажали, то выходим
-                        if (isLastTask()) {
-                            exitIntoLvl()
-                        }
-                }
-                else {
+                            }
+
+                    }
+                    // Если дошли до последнего вопроса и нажали, то выходим
+                    if (isLastTask()) {
+                        //exitIntoLvl()
+                    }
+                } else {
                     // Если ответ не выбран, то выводится сообщение
                     snackBar("Пожалуйста, выберите ответ")
                 }
             }
             // Если это был последний вопрос
             else {
-                    dialog("Пройдено")
-                    // Даём ещё монет и выходим из уровня
-                    giveMoney()
-                    exitIntoLvl()
-                }
+                dialog("Пройдено")
+                // Даём ещё монет и выходим из уровня
+                giveMoney()
+                exitIntoLvl()
             }
+        }
 
-        // Присвоение нажатия кнопке выхода
-        taskContainerBinding.taskTopBar.closeButton.setOnClickListener {
-            // Создание диалога для выхода
-            exitIntoLevelDialog()
+        taskContainerBinding.soundTaskSkip.apply {
+            log("current item pos = ${taskContainerBinding.taskViewPager.currentItem}")
+            val question = tasksAdapter.getItem(
+                taskContainerBinding.taskViewPager.currentItem
+            ) as QuestionItem<out ViewBinding>
+
+            //isVisible = question.canSkipQuestion
+            setOnClickListener {
+                goNextTask()
+                question.onNextQuestion()
+                taskContainerBinding.dialogShowAnswer.root.isVisible = false
+                taskContainerBinding.taskTopBar.LevelNumber.text =
+                    "Урок ${gameArgs.lessonProgress}-${taskContainerBinding.taskViewPager.currentItem + 1}"
+                soundsPlayer.stopPlay()
+            }
         }
     }
 
@@ -246,15 +344,21 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
      * Используется если пользователь достиг [MISTAKES_LIMIT]
      */
     private fun restartLesson() {
+        //tasksAdapter.clear()
         taskContainerBinding.apply {
             // Перебрасываем пользователя на первое задание
             taskViewPager.currentItem = 0
             taskTopBar.progressIndicator.progress = 0
             // Обнуляем набранные монетки
-            taskBottomBar.exp.progress = 0
+            taskBottomBar.exp.progress = expPref.getInt(PrefConst.USER_EXP, 0)
             // Обнуляем счётчик ошибок
             mistakesCounter = 0
             taskTopBar.LevelNumber.text = "Урок ${gameArgs.lessonProgress}-1"
+            /*viewModel.fillItems(
+                context = requireContext(),
+                tasks = gameArgs.tasks.toList(),
+                soundsPlayer = soundsPlayer
+            )*/
         }
     }
 
@@ -288,7 +392,12 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
             gameFinishedTime - gameStartedTime
         ).toString()
 
+        learnedWordsPref.edit {
+            putStringSet(PrefConst.LEARNED_WORDS, wordsSet)
+        }
+
         with(taskContainerBinding.taskBottomBar) {
+
             val coinsDiff = exp.progress - gameArgs.exp
             val actionToResults = FragmentGamePageDirections.actionTaskContainerToTaskResults(
                 hp = hp.progress,
@@ -297,7 +406,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                 lives = hp.progress,
                 mistakes = totalMistakes,
                 time = gameTime,
-                learnedWords = 0
+                learnedWords = newWordsCount
             )
             findNavController().navigate(actionToResults)
         }
@@ -310,7 +419,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         // Если урок новый (его порядковый номер больше и уровень открыт)
         if (gameArgs.lessonProgress >= lesson && gameArgs.levelProgress >= lvl) {
             lessonProgressPref.edit {
-                putInt(PrefConst.LESSON_PROGRESS ,gameArgs.lessonProgress)
+                putInt(PrefConst.LESSON_PROGRESS, gameArgs.lessonProgress)
             }
         }
 
@@ -335,24 +444,12 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         }
     }
 
-    /**
-     * Метод для получения заданий из базы
-     */
-    private fun setViewPager(tasks : List<Task>) {
-
-        fragmentAdapter = TasksAdapter(requireActivity(), tasks)
-        with(taskContainerBinding) {
-            fragmentAdapter.setTaskSkipListener {
-                goNextTask()
-                incrementProgress()
-                taskTopBar.LevelNumber.text = "Урок ${gameArgs.lessonProgress}-${taskViewPager.currentItem + 1}"
-            }
-            taskViewPager.adapter = fragmentAdapter
-            taskViewPager.isUserInputEnabled = false
-        }
-    }
-
-    private fun showAnswerResultDialog(userAnswer : String, rightAnswer : String, listener: (() -> Unit)) {
+    private fun showAnswerResultDialog(
+        userAnswer: String,
+        rightAnswer: String,
+        listener: (() -> Unit)
+    ) {
+        taskContainerBinding.soundTaskSkip.isVisible = false
         val likeIcon = requireContext().resources.getDrawable(R.drawable.like_icon, null)
         val crossIcon = requireContext().resources.getDrawable(R.drawable.cross_icon, null)
         val green = requireContext().resources.getColor(R.color.lime_green, null)
@@ -385,14 +482,5 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                 correctAnswer.text = rightAnswer
             }
         }
-    }
-
-    /**
-     * При скрытии фрагмента чистится кэш картинок
-     */
-    override fun onPause() {
-        super.onPause()
-        viewModel.clearGlideCache()
-        fragmentAdapter.onFinish()
     }
 }

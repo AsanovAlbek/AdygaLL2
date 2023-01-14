@@ -1,6 +1,7 @@
 package com.example.adygall2.application
 
 import android.app.Application
+import android.os.StrictMode
 import com.example.adygall2.di.dataModule
 import com.example.adygall2.di.domainModule
 import com.example.adygall2.di.presentationModule
