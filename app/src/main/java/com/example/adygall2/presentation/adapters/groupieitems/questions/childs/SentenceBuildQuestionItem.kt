@@ -54,25 +54,26 @@ class SentenceBuildQuestionItem(
                         reset()
                     }
 
-                    if (isPlayingNow) {
-                        stopPlay()
-                        playSoundButton.icon = playSoundDrawable
-                    }
-
                     playSoundButton.setOnClickListener {
-                        normalPlaybackSpeed()
                         if (isPlayingNow) {
-                            playSoundButton.icon = playSoundDrawable
+                            stopPlay()
+                            if (playSoundButton.icon.equals(stopSoundDrawable)) {
+                                playSoundButton.icon = playSoundDrawable
+                            }
                         } else {
+                            normalPlaybackSpeed()
                             playSoundButton.icon = stopSoundDrawable
+                            playSound(playerSource)
                         }
-                        playSound(playerSource)
                     }
 
                     slowPlayButton.setOnClickListener {
-                        slowPlaybackSpeed()
-                        playSoundButton.icon = stopSoundDrawable
-                        playSound(playerSource)
+                        if (isPlayingNow) {
+                            stopPlay()
+                        } else {
+                            slowPlaybackSpeed()
+                            playSound(playerSource)
+                        }
                     }
                 }
             }

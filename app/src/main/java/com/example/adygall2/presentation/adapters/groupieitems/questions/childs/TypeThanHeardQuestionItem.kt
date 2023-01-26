@@ -54,14 +54,18 @@ class TypeThanHeardQuestionItem(
         soundsPlayer.apply {
             viewBinding.soundButtons.apply {
                 setCompletionListener {
-                    playSoundButton.icon = playSoundDrawable
+                    if (playSoundButton.icon.equals(stopSoundDrawable)) {
+                        playSoundButton.icon = playSoundDrawable
+                    }
                     reset()
                 }
 
                 playSoundButton.setOnClickListener {
                     if (isPlayingNow) {
                         stopPlay()
-                        playSoundButton.icon = playSoundDrawable
+                        if(playSoundButton.icon.equals(stopSoundDrawable)) {
+                            playSoundButton.icon = playSoundDrawable
+                        }
                     } else {
                         normalPlaybackSpeed()
                         playSoundButton.icon = stopSoundDrawable

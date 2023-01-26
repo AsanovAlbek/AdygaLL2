@@ -14,8 +14,9 @@ import java.io.FileInputStream
 
 class SoundsPlayer(
     private val context : Context,
-    private val filesHandler: FilesHandler,
-    private val mediaPlayer: MediaPlayer) {
+    private val filesHandler: FilesHandler = FilesHandler(context),
+    private val mediaPlayer: MediaPlayer = MediaPlayer(context)
+    ) {
 
     /** Переменная для регулирования скорости воспроизведения */
     private var playbackSpeed = NORMAL_PLAYBACK

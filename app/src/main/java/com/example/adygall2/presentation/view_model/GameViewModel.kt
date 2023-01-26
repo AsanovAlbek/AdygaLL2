@@ -18,7 +18,6 @@ import com.example.adygall2.domain.usecases.SourceInteractor
 import com.example.adygall2.domain.usecases.TasksByOrdersUseCase
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.createQuestion
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +39,7 @@ class GameViewModel(
 ) : ViewModel(), AnswerFormatter by answerFormatterDelegate {
 
     companion object {
-        private const val fiveMinuteInMills = 300_000L
+        private const val fiveMinuteInMills = 300_000L // 5 минут * 60 секунд * 1000 милисекунд. 5 минут в милисекундах
     }
 
     private var question = MutableLiveData<QuestionItem<out ViewBinding>>()
@@ -64,8 +63,9 @@ class GameViewModel(
     private var _badSoundEffect = MutableLiveData<Source>()
     val badSoundEffect : LiveData<Source> get() = _badSoundEffect
 
-    private var _hpHillTimer = MutableStateFlow(0)
-    val hpHillTimer get() = _hpHillTimer.asStateFlow()
+    /** Значение здоровья, восстанавливающегося во время сессии */
+    private var _hpHill = MutableStateFlow(0)
+    val hpHill get() = _hpHill.asStateFlow()
 
     fun fillItems(
         context: Context,
@@ -94,18 +94,19 @@ class GameViewModel(
     fun initAutoHill(value: Int) {
         viewModelScope.launch {
             withContext(Dispatchers.Main) {
-                _hpHillTimer.value = value
+                _hpHill.value = value
             }
         }
     }
 
+    /** функция процесса восстановления здоровья*/
     fun autoHillHp() {
         viewModelScope.launch {
             withContext(Dispatchers.Main) {
                 while (isActive) {
                     delay(fiveMinuteInMills)
-                    if (_hpHillTimer.value < 100) {
-                        _hpHillTimer.value += 10
+                    if (_hpHill.value < 100) {
+                        _hpHill.value += 10
                     }
                 }
             }

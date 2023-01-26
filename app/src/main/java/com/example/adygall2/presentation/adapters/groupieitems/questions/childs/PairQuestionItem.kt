@@ -64,6 +64,8 @@ class PairQuestionItem(
 
         val leftColumnWords = answerPairs.map { it.first }.toMutableList()
         val bottomColumnWords = answerPairs.map { it.second }.toMutableList()
+        // Перемешанные слова
+        val randomizedWords = bottomColumnWords.shuffled().toMutableList()
 
         leftAdapter = StaticPairsAdapter(leftColumnWords)
         rightAdapter = PairsAdapter(
@@ -75,7 +77,7 @@ class PairQuestionItem(
         bottomAdapter = PairsAdapter(
             context = context,
             isFirstAdapter = false,
-            answers = bottomColumnWords,
+            answers = randomizedWords,
             callback = this
         )
 
