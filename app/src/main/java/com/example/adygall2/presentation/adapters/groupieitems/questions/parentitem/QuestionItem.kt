@@ -26,7 +26,7 @@ abstract class QuestionItem<T:ViewBinding>: BindableItem<T>() {
     open val userAnswer: String = ""
     open val rightAnswer: String = ""
 
-    val taskType: Int
+    private val taskType: Int
         get() = when(this) {
             is FourImagesQuestionItem -> IMAGE
             is SentenceBuildQuestionItem -> SENTENCE_BUILD

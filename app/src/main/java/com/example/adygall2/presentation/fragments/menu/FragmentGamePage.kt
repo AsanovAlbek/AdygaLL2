@@ -91,12 +91,12 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         // Присвоение нажатия кнопке выхода
         taskContainerBinding.taskTopBar.closeButton.setOnClickListener {
             // Создание диалога для выхода
-            exitIntoLevelDialog()
             taskContainerBinding.taskBottomBar.exp.progress = expPref.getInt(PrefConst.USER_EXP, 0)
+            exitIntoLevelDialog()
+
         }
 
         getUserStates()
-        taskContainerBinding.taskTopBar.LevelNumber.text = "Урок ${gameArgs.lessonProgress}-1"
         tasksAdapter = GroupieAdapter()
         startGame()
         observe()
@@ -105,6 +105,8 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
             adapter = tasksAdapter
             isUserInputEnabled = false
         }
+
+        refreshLessonTitle()
         viewModel.getAllNewWords(gameArgs.tasks.toList())
         viewModel.initAutoHill(taskContainerBinding.taskBottomBar.hp.progress)
         hillHp()
@@ -127,6 +129,11 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         expPref.edit {
             putInt(PrefConst.USER_EXP, taskContainerBinding.taskBottomBar.exp.progress)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        tasksAdapter.clear()
     }
 
     private fun startGame() {
@@ -263,12 +270,12 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                             if (isLastTask()) {
                                 exitIntoLvl()
                             } else {
-
+                                goNextTask()
                                 // Если ответил неправильно
                                 if (userAnswer.compareTo(rightAnswer) != 0) {
-                                    // Если игрок ошибся 3 раза, то его прогресс аннулируется
                                     mistakesCounter++
                                     totalMistakes++
+                                    // Если игрок ошибся 3 раза, то его прогресс аннулируется
                                     if (mistakesCounter >= MISTAKES_LIMIT) {
                                         restartLesson()
                                         question.onNextQuestion()
@@ -290,11 +297,8 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                                     incrementProgress()
                                 }
                                 question.onNextQuestion()
-                                goNextTask()
 
-                                taskTopBar.LevelNumber.text =
-                                    "Урок ${gameArgs.lessonProgress} - ${currentQuestionPosition + 1}"
-
+                                refreshLessonTitle()
                             }
                         }
 
@@ -332,8 +336,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                 goNextTask()
                 question.onNextQuestion()
                 taskContainerBinding.dialogShowAnswer.root.isVisible = false
-                taskContainerBinding.taskTopBar.LevelNumber.text =
-                    "Урок ${gameArgs.lessonProgress}-${currentQuestionPosition + 1}"
+                refreshLessonTitle()
                 incrementProgress()
                 soundsPlayer.stopPlay()
             }
@@ -349,12 +352,14 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         taskContainerBinding.apply {
             // Перебрасываем пользователя на первое задание
             currentQuestionPosition = 0
+            taskViewPager.currentItem = 0
             taskTopBar.progressIndicator.progress = 0
             // Обнуляем набранные монетки
             taskBottomBar.exp.progress = expPref.getInt(PrefConst.USER_EXP, 0)
             // Обнуляем счётчик ошибок
             mistakesCounter = 0
-            taskTopBar.LevelNumber.text = "Урок ${gameArgs.lessonProgress}-1"
+            //taskTopBar.LevelNumber.text = "Урок ${gameArgs.lessonProgress}-1"
+            refreshLessonTitle()
         }
     }
 
@@ -374,6 +379,15 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
             }
             show()
         }
+    }
+
+    private fun refreshLessonTitle() {
+        taskContainerBinding.taskTopBar.LevelNumber.text =
+            getString(
+                R.string.lesson_title_mask,
+                gameArgs.lessonProgress,
+                taskContainerBinding.taskViewPager.currentItem + 1
+            )
     }
 
     /**

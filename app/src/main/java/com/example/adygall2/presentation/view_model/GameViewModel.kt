@@ -42,9 +42,6 @@ class GameViewModel(
         private const val fiveMinuteInMills = 300_000L // 5 минут * 60 секунд * 1000 милисекунд. 5 минут в милисекундах
     }
 
-    private var question = MutableLiveData<QuestionItem<out ViewBinding>>()
-    val item: LiveData<QuestionItem<out ViewBinding>> get() = question
-
     private var questionItems = MutableLiveData<MutableList<QuestionItem<out ViewBinding>?>>()
     val items: LiveData<MutableList<QuestionItem<out ViewBinding>?>> get() = questionItems
 
@@ -67,6 +64,7 @@ class GameViewModel(
     private var _hpHill = MutableStateFlow(0)
     val hpHill get() = _hpHill.asStateFlow()
 
+    /** Получение всех заданий из урока и преобразование в визуальное представление */
     fun fillItems(
         context: Context,
         tasks: List<Task>,
@@ -91,6 +89,7 @@ class GameViewModel(
         }
     }
 
+    /** получение последнего сохраненного значения здоровья */
     fun initAutoHill(value: Int) {
         viewModelScope.launch {
             withContext(Dispatchers.Main) {
@@ -107,31 +106,6 @@ class GameViewModel(
                     delay(fiveMinuteInMills)
                     if (_hpHill.value < 100) {
                         _hpHill.value += 10
-                    }
-                }
-            }
-        }
-    }
-
-    fun makeQuestion(
-        context: Context,
-        task: Task,
-        soundsPlayer: SoundsPlayer
-    ) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val newQuestion = task.createQuestion(
-                    context = context,
-                    title = task.task,
-                    answers = getComplexAnswerUseCase(answersByTaskIdUseCase(task.id)),
-                    soundsPlayer = soundsPlayer,
-                    onClearImageCaches = ::clearGlideCache,
-                    playerSource = sourceInteractor.soundSourceById(task.soundId)
-                )
-                withContext(Dispatchers.Main) {
-                    newQuestion?.let {
-                        Log.i("gvm", "Новое значение вопроса id = ${task.id}")
-                        question.value = it
                     }
                 }
             }

@@ -13,14 +13,13 @@ import com.example.adygall2.presentation.adapters.groupieitems.questions.parenti
 
 class TypeThanHeardQuestionItem(
     private val context: Context,
-    private val title: String,
     private val answers: List<ComplexAnswer>,
-    private val soundsPlayer: SoundsPlayer,
     private val playerSource: Source
 ): QuestionItem<FragmentTypeThatHeardBinding>() {
     private var _userAnswer = ""
     override val userAnswer: String get() = _userAnswer
     private lateinit var textField: EditText
+    private var player: SoundsPlayer? = null
 
     override val rightAnswer: String = answers.joinToString { it.answer.answer }
 
@@ -28,6 +27,7 @@ class TypeThanHeardQuestionItem(
         get() = {
             _userAnswer = ""
             textField.setText("")
+            player = null
         }
 
     override fun getLayout(): Int = R.layout.fragment_type_that_heard
@@ -36,6 +36,7 @@ class TypeThanHeardQuestionItem(
         FragmentTypeThatHeardBinding.bind(view)
 
     override fun bind(viewBinding: FragmentTypeThatHeardBinding, position: Int) {
+        player = SoundsPlayer(context)
         setupSoundButtons(viewBinding)
         textChangedListener(viewBinding)
     }
@@ -51,34 +52,34 @@ class TypeThanHeardQuestionItem(
         val playSoundDrawable = context.getDrawable(R.drawable.play_sound)
         val stopSoundDrawable = context.getDrawable(R.drawable.stop_play)
 
-        soundsPlayer.apply {
+        player?.let { player ->
             viewBinding.soundButtons.apply {
-                setCompletionListener {
+                player.setCompletionListener {
                     if (playSoundButton.icon.equals(stopSoundDrawable)) {
                         playSoundButton.icon = playSoundDrawable
                     }
-                    reset()
+                    player.reset()
                 }
 
                 playSoundButton.setOnClickListener {
-                    if (isPlayingNow) {
-                        stopPlay()
+                    if (player.isPlayingNow) {
+                        player.stopPlay()
                         if(playSoundButton.icon.equals(stopSoundDrawable)) {
                             playSoundButton.icon = playSoundDrawable
                         }
                     } else {
-                        normalPlaybackSpeed()
+                        player.normalPlaybackSpeed()
                         playSoundButton.icon = stopSoundDrawable
-                        playSound(playerSource)
+                        player.playSound(playerSource)
                     }
                 }
 
                 slowPlayButton.setOnClickListener {
-                    if (isPlayingNow) {
-                        stopPlay()
+                    if (player.isPlayingNow) {
+                        player.stopPlay()
                     } else {
-                        slowPlaybackSpeed()
-                        playSound(playerSource)
+                        player.slowPlaybackSpeed()
+                        player.playSound(playerSource)
                     }
                 }
             }

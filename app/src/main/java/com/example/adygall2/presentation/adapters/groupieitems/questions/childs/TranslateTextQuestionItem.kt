@@ -14,6 +14,7 @@ import com.example.adygall2.presentation.adapters.adapter_handles.AdapterHandleD
 import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxLayout
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.tomergoldst.tooltips.ToolTip
 import com.tomergoldst.tooltips.ToolTipsManager
@@ -27,12 +28,14 @@ class TranslateTextQuestionItem(
     override val userAnswer: String get() = _userAnswer
     private lateinit var userAdapter: SentenceAdapter
     private lateinit var answerAdapter: SentenceAdapter
+    private lateinit var tooltipBar: FlexboxLayout
 
     override val rightAnswer: String = answers.first().answer.correctAnswer
 
     override val onNextQuestion: () -> Unit
         get() = {
             _userAnswer = ""
+            tooltipBar.removeAllViews()
         }
 
     override fun getLayout(): Int = R.layout.fragment_translate_the_text
@@ -100,6 +103,7 @@ class TranslateTextQuestionItem(
     }
 
     private fun setTaskText(viewBinding: FragmentTranslateTheTextBinding) {
+        tooltipBar = viewBinding.wordsWithTooltip
         val tooltipManagers = mutableListOf<ToolTipsManager>()
         val taskParts = title.split("*")
         val hints = taskParts[1].split("#")
@@ -116,7 +120,7 @@ class TranslateTextQuestionItem(
                 tooltipManagers.forEach { it.dismissAll() }
                 toolTipsManager.show(tooltipBuilder.build())
             }
-            viewBinding.wordsWithTooltip.addView(addedTextView)
+            tooltipBar.addView(addedTextView)
         }
     }
 

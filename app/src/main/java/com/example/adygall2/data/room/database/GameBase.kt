@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.adygall2.data.room.consts.RoomConst.DEMO_BASE
 import com.example.adygall2.data.room.consts.RoomConst.FULL_BASE
 import com.example.adygall2.data.room.dao.AnswerDao
 import com.example.adygall2.data.room.dao.OrderDao

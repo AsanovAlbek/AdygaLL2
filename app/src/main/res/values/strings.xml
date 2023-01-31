@@ -41,4 +41,5 @@
     <string name="remaining_lives">Оставшиеся жизни</string>
     <string name="passage_time">Время прохождения</string>
     <string name="minutes_and_seconds_format">mm:ss</string>
+    <string name="lesson_title_mask">Урок %d - %d</string>
 </resources>

@@ -11,6 +11,7 @@ import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentFillGapsBinding
 import com.example.adygall2.domain.model.ComplexAnswer
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
+import com.google.android.flexbox.FlexboxLayout
 
 class FillGapsQuestionItem(
     private val context: Context,
@@ -19,6 +20,7 @@ class FillGapsQuestionItem(
 ): QuestionItem<FragmentFillGapsBinding>() {
 
     private var _userAnswer = mutableListOf<EditText>()
+    private lateinit var textContainer: FlexboxLayout
     override val userAnswer: String get() = _userAnswer.joinToString { it.text }
 
     override val rightAnswer: String = answers.first().answer.answer
@@ -26,10 +28,12 @@ class FillGapsQuestionItem(
     override val onNextQuestion: () -> Unit
         get() = {
             _userAnswer = mutableListOf()
+            textContainer.removeAllViews()
         }
 
     override fun bind(viewBinding: FragmentFillGapsBinding, position: Int) {
         viewBinding.apply {
+            textContainer = viewBinding.flexbox
             phraseTaskTv.text = answers.first().answer.correctAnswer
             setTaskText(viewBinding)
         }
@@ -40,11 +44,11 @@ class FillGapsQuestionItem(
         textViews.forEachIndexed { index, item ->
             val addedTextView = TextView(context)
             addedTextView.setup(context, item)
-            viewBinding.flexbox.addView(addedTextView)
+            textContainer.addView(addedTextView)
             if (index < textViews.size - 1) {
                 val addedField = EditText(context)
                 addedField.setup(context)
-                viewBinding.flexbox.addView(addedField)
+                textContainer.addView(addedField)
                 _userAnswer.add(addedField)
             }
         }
