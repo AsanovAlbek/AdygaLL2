@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/imageChooseBottomSheet"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="0dp"
+    android:backgroundTint="@color/white"
+    android:background="@drawable/bottom_sheet_bg"
+    android:layout_marginHorizontal="8dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="@color/gray4"
+        app:cardCornerRadius="8dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/makePhotoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/camera"
+        app:icon="@drawable/camera_img"
+        style="@style/BottomSheetButton"
+        android:layout_marginTop="16dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/pickPhotoFromGalleryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/image_from_gallery"
+        app:icon="@drawable/gallery_img"
+        style="@style/BottomSheetButton"/>
+
+</LinearLayout>

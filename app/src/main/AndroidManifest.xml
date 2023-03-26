@@ -3,7 +3,10 @@
     package="com.example.adygall2"
     android:versionName="@string/version_name_1">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-feature android:name="android.hardware.camera" />
 
     <application
         android:name=".application.AdygaLanguageLearningApp"
@@ -12,7 +15,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AdygaLL2">
+        android:theme="@style/Theme.AdygaLL2"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".presentation.activities.MainActivity"
             android:exported="true"

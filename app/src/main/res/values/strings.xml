@@ -42,4 +42,22 @@
     <string name="passage_time">Время прохождения</string>
     <string name="minutes_and_seconds_format">mm:ss</string>
     <string name="lesson_title_mask">Урок %d - %d</string>
+    <string name="type_image">image/*</string>
+    <string name="user_avatar">user_avatar</string>
+    <string name="institute_name">Адыгейский республиканский \nинститут гуманитарных \nисследований имени Т. М. Керашева</string>
+    <string name="choose_image">Выбрать фото</string>
+    <string name="camera">Камера</string>
+    <string name="image_from_gallery">Фото из галереи</string>
+    <string name="no_name_user">No Name</string>
+    <string name="gallery">gallery</string>
+    <string name="exit_from_app_question">Вы точно хотите выйти из приложения?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="gallery_permission_denied">isGalleryPermissionDenied</string>
+    <string name="camera_permission_denied">isCameraPermissionDenied</string>
+    <string name="choose_answer_message">Пожалуйста, выберите ответ</string>
+    <string name="game_over">У вас закончились жизни, вы проиграли</string>
+    <string name="exit_from_level_question">Вы точно хотите выйти? Ваш прогресс будет утерян</string>
+    <string name="no_hp">У вас недостаточно здоровья, зайдите позже</string>
+    <string name="ok">Хорошо</string>
 </resources>

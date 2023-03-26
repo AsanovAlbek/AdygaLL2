@@ -29,7 +29,7 @@ import com.example.adygall2.data.room.entities.TaskEntity
         TaskEntity::class,
         SoundEntity::class,
         SoundEffectEntity::class
-    ], version = 5, exportSchema = false
+    ], version = 6, exportSchema = false
 )
 abstract class GameBase : RoomDatabase() {
 

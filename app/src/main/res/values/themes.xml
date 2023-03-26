@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.AdygaLL2" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.AdygaLL2" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/orange</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -55,6 +55,38 @@
         <item name="fontFamily">@font/pt_sans_regular</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="BottomSheetButton" parent="Widget.Material3.Button.TextButton.Icon">
+        <item name="android:textSize">20sp</item>
+        <item name="iconSize">24dp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="fontFamily">@font/pt_sans_regular</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="iconTint">@color/black</item>
+    </style>
+
+    <style name="CustomBottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="cornerSizeTopRight">24dp</item>
+        <item name="cornerSizeTopLeft">24dp</item>
+        <item name="marginHorizontal">8dp</item>
+    </style>
+
+    <style name="CustomBottomSheetDialog" parent="Theme.Material3.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheet</item>
+    </style>
+
+    <style name="SheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <!--<item name="android:windowCloseOnTouchOutside">false</item>-->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorBackground">     @android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.3</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
     </style>
 
 </resources>

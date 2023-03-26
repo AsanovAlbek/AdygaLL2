@@ -91,6 +91,8 @@ class SentenceAdapter(
                         HandleDragAndDropEvent(dragEvent).handle(callback, isFirstAdapter, layoutPosition)
                         true
                     }
+
+                    //setOnClickListener { callback.change(isFirstAdapter, answer, layoutPosition) }
                 }
             }
         }

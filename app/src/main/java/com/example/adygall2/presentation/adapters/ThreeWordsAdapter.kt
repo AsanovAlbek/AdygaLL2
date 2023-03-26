@@ -41,7 +41,7 @@ class ThreeWordsAdapter(
                 itemBinding.simpleWordContainer.setCardBackgroundColor(Color.WHITE)
             }
             else {
-                if (selectItemPosition == adapterPosition) {
+                if (selectItemPosition == bindingAdapterPosition) {
                     // Если позиция выбранного элемента совпала с позицией адаптера, то меняем цвет
                     // на зелённый
                     itemBinding.simpleWordContainer.setCardBackgroundColor(context.resources.getColor(R.color.lavender_blue, null))
@@ -55,9 +55,9 @@ class ThreeWordsAdapter(
             itemBinding.simpleWordContainer.setOnClickListener {
                 // Если позиция адаптера не равна выбранной, то оповещаем об этом адаптер,
                 // после чего меняем выбранную позицию на позицию адаптера
-                if (selectItemPosition != adapterPosition) {
+                if (selectItemPosition != bindingAdapterPosition) {
                     notifyItemChanged(selectItemPosition)
-                    selectItemPosition = adapterPosition
+                    selectItemPosition = bindingAdapterPosition
                     notifyItemChanged(selectItemPosition)
                     listener.invoke(answer)
                 }

@@ -95,8 +95,9 @@ class PairsAdapter(
                         HandleDragAndDropEvent(dragEvent).handle(callback, isFirstAdapter, layoutPosition)
                         true
                     }
-                }
 
+                    setOnClickListener { callback.change(isFirstAdapter, word, layoutPosition) }
+                }
             }
         }
 

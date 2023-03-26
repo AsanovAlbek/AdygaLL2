@@ -6,7 +6,7 @@ package com.example.adygall2.data.room.consts
 object RoomConst {
     private const val DATABASE_DIRECTORY = "game_db_alpha"
     // Название базы данных
-    const val FULL_BASE = "$DATABASE_DIRECTORY/game_db_full.db"
+    const val FULL_BASE = "$DATABASE_DIRECTORY/game_base.db"
 
     // Названия таблиц
     const val ANSWER_TABLE_NAME = "answers"

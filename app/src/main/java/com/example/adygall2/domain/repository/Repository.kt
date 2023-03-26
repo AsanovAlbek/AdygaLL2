@@ -10,7 +10,6 @@ import com.example.adygall2.domain.model.Task
  * Репозиторий для работы с бд
  */
 interface Repository {
-
     // Orders
 
     /** Получение всех Order */

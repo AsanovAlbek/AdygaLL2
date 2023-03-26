@@ -28,14 +28,14 @@ class TranslateTextQuestionItem(
     override val userAnswer: String get() = _userAnswer
     private lateinit var userAdapter: SentenceAdapter
     private lateinit var answerAdapter: SentenceAdapter
-    private lateinit var tooltipBar: FlexboxLayout
+    private var tooltipBar: FlexboxLayout? = null
 
     override val rightAnswer: String = answers.first().answer.correctAnswer
 
     override val onNextQuestion: () -> Unit
         get() = {
             _userAnswer = ""
-            tooltipBar.removeAllViews()
+            tooltipBar?.removeAllViews()
         }
 
     override fun getLayout(): Int = R.layout.fragment_translate_the_text
@@ -120,7 +120,7 @@ class TranslateTextQuestionItem(
                 tooltipManagers.forEach { it.dismissAll() }
                 toolTipsManager.show(tooltipBuilder.build())
             }
-            tooltipBar.addView(addedTextView)
+            tooltipBar?.addView(addedTextView)
         }
     }
 

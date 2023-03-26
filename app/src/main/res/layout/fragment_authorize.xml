@@ -9,86 +9,107 @@
     android:background="@color/gray_91">
 
     <ImageView
+        android:id="@+id/app_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/logo"
-        app:layout_constraintBottom_toTopOf="@+id/authLoginEt"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.626" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/authLoginEt"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:background="@color/white"
-        android:drawableStart="@drawable/pink_main_icon2"
-        android:drawablePadding="10dp"
-        android:fontFamily="@font/corbel_bold"
-        android:hint="@string/username_field"
-        android:paddingStart="4dp"
-        android:textColor="@color/pink"
-        android:textColorHint="@color/pink"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.341" />
+    <TextView
+        android:id="@+id/institute_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/institute_name"
+        android:fontFamily="@font/pt_sans_regular"
+        android:textColor="@color/blue"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/app_logo"
+        app:layout_constraintBottom_toBottomOf="@id/app_logo"
+        app:layout_constraintTop_toTopOf="@id/app_logo"
+        android:layout_marginStart="8dp"/>
 
-    <EditText
-        android:id="@+id/authPasswordEt"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="130dp"
-        android:background="@color/white"
-        android:drawableStart="@drawable/padlock"
-        android:drawablePadding="10dp"
-        android:fontFamily="@font/corbel_bold"
-        android:hint="@string/password_field"
-        android:inputType="textPassword"
-        android:paddingStart="4dp"
-        android:textColor="@color/pink"
-        android:textColorHint="@color/pink"
-        app:layout_constraintBottom_toTopOf="@+id/forestIcon"
-        app:layout_constraintEnd_toEndOf="@+id/authLoginEt"
-        app:layout_constraintHorizontal_bias="0.468"
-        app:layout_constraintStart_toStartOf="@+id/authLoginEt"
-        app:layout_constraintTop_toBottomOf="@+id/authLoginEt"
-        app:layout_constraintVertical_bias="0.038" />
-
-    <Button
-        android:id="@+id/authSingInButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:background="@drawable/rounded_button"
-        android:backgroundTint="@color/blue"
-        android:fontFamily="@font/concrete"
-        android:gravity="center_horizontal"
-        android:paddingTop="4dp"
-        android:text="@string/sign_in"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/forestIcon"
+        android:layout_marginTop="108dp"
+        android:orientation="vertical"
+        android:weightSum="3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/authPasswordEt"
-        app:layout_constraintVertical_bias="0.178" />
+        app:layout_constraintTop_toBottomOf="@+id/institute_name">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userAvatar"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/default_avatar" />
+
+            <TextView
+                android:id="@+id/choosePhotoTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/pt_sans_regular"
+                android:text="@string/choose_image"
+                android:textColor="@color/purple"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/authLoginEt"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:drawableStart="@drawable/pink_main_icon2"
+            android:drawablePadding="10dp"
+            android:fontFamily="@font/corbel_bold"
+            android:hint="@string/username_field"
+            android:textColor="@color/pink"
+            android:textColorHint="@color/pink"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/userAvatar" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/authSingInButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/blue"
+            android:fontFamily="@font/pt_sans_regular"
+            android:gravity="center|top"
+            android:text="@string/sign_in"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:cornerRadius="8dp" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/forestIcon"
         android:layout_width="wrap_content"
-        android:layout_height="270dp"
+        android:layout_height="wrap_content"
         android:src="@drawable/auth_forest_img"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

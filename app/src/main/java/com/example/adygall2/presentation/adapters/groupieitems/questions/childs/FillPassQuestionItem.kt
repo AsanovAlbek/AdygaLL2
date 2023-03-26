@@ -11,6 +11,7 @@ import com.example.adygall2.domain.model.ComplexAnswer
 import com.example.adygall2.presentation.adapters.SimpleSentenceAdapter
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxLayout
 import com.google.android.flexbox.FlexboxLayoutManager
 
 class FillPassQuestionItem(
@@ -23,6 +24,7 @@ class FillPassQuestionItem(
     override val userAnswer get() = _userAnswer
     private lateinit var userAdapter: SimpleSentenceAdapter
     private lateinit var textViewField: TextView
+    private lateinit var textContainer: FlexboxLayout
 
     override val rightAnswer: String =
         answers.first { it.answer.correctAnswer.lowercase().toBoolean() }.answer.answer
@@ -31,10 +33,12 @@ class FillPassQuestionItem(
         get() = {
             _userAnswer = ""
             textViewField.text = ""
+            textContainer.removeAllViews()
         }
 
     override fun bind(viewBinding: FragmentFillInThePassBinding, position: Int) {
         val mutableList = answers.map { it.answer.answer }.toMutableList()
+        textContainer = viewBinding.flexbox
         userAdapter = SimpleSentenceAdapter(mutableList)
         val manager = FlexboxLayoutManager(context).apply {
             flexDirection = FlexDirection.ROW
@@ -48,13 +52,13 @@ class FillPassQuestionItem(
         textViews.forEachIndexed { index, item ->
             val addedTextView = TextView(context)
             addedTextView.setup(context, item)
-            viewBinding.flexbox.addView(addedTextView)
+            textContainer.addView(addedTextView)
 
             if (index < textViews.size - 1) {
                 val addedTextViewField = TextView(context)
                 addedTextViewField.setupField(context)
                 textViewField = addedTextViewField
-                viewBinding.flexbox.addView(addedTextViewField)
+                textContainer.addView(addedTextViewField)
             }
             setupUserAdapter(context)
         }

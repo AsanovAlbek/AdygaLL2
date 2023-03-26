@@ -9,12 +9,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentLessonResultsBinding
+import com.example.adygall2.presentation.view_model.GameResultViewModel
+import com.example.adygall2.presentation.view_model.GameViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FragmentGameResults : Fragment(R.layout.fragment_lesson_results) {
 
     private lateinit var _lessonResultBinding : FragmentLessonResultsBinding
     private val lessonResultsBinding get() = _lessonResultBinding
     private val resultsArgs: FragmentGameResultsArgs by navArgs()
+    private val viewModel by viewModel<GameResultViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +34,7 @@ class FragmentGameResults : Fragment(R.layout.fragment_lesson_results) {
         lessonResultsBinding.completeLessonBtn.setOnClickListener {
             exitIntoLevel()
         }
+        lessonResultsBinding.userAvatar.setImageBitmap(viewModel.getPhotoFromCache())
         setStatisticByArguments()
     }
 
