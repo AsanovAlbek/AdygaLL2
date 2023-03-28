@@ -20,16 +20,16 @@ class FillGapsQuestionItem(
 ): QuestionItem<FragmentFillGapsBinding>() {
 
     private var _userAnswer = mutableListOf<EditText>()
-    private lateinit var textContainer: FlexboxLayout
+    private var textContainer: FlexboxLayout? = null
     override val userAnswer: String get() = _userAnswer.joinToString { it.text }
 
     override val rightAnswer: String = answers.first().answer.answer
 
-    override val onNextQuestion: () -> Unit
+    /*override val onNextQuestion: () -> Unit
         get() = {
             _userAnswer = mutableListOf()
             textContainer.removeAllViews()
-        }
+        }*/
 
     override fun bind(viewBinding: FragmentFillGapsBinding, position: Int) {
         viewBinding.apply {
@@ -44,11 +44,11 @@ class FillGapsQuestionItem(
         textViews.forEachIndexed { index, item ->
             val addedTextView = TextView(context)
             addedTextView.setup(context, item)
-            textContainer.addView(addedTextView)
+            textContainer?.addView(addedTextView)
             if (index < textViews.size - 1) {
                 val addedField = EditText(context)
                 addedField.setup(context)
-                textContainer.addView(addedField)
+                textContainer?.addView(addedField)
                 _userAnswer.add(addedField)
             }
         }
@@ -78,4 +78,9 @@ class FillGapsQuestionItem(
 
     override fun initializeViewBinding(view: View): FragmentFillGapsBinding =
         FragmentFillGapsBinding.bind(view)
+
+    override fun clear() {
+        _userAnswer = mutableListOf()
+        textContainer?.removeAllViews()
+    }
 }

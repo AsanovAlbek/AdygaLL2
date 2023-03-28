@@ -19,7 +19,7 @@ class FourImagesQuestionItem(
     private val onClearImages: (() -> Unit)? = null
 ): QuestionItem<FragmentFourImageQuestionBinding>() {
 
-    private lateinit var imageAdapter: ImageAdapter
+    private var imageAdapter: ImageAdapter? = null
     private var _userAnswer = ""
     override val userAnswer get() = _userAnswer
 
@@ -44,12 +44,17 @@ class FourImagesQuestionItem(
     override fun initializeViewBinding(view: View): FragmentFourImageQuestionBinding =
         FragmentFourImageQuestionBinding.bind(view)
 
-    override val onNextQuestion: () -> Unit
-        get() = {
-            _userAnswer = ""
-            onClearImages?.let { imageAdapter.onClearImages(it) }
-        }
+//    override val onNextQuestion: () -> Unit
+//        get() = {
+//            _userAnswer = ""
+//            onClearImages?.let { imageAdapter.onClearImages(it) }
+//        }
 
     override val rightAnswer: String =
         answers.first { it.answer.correctAnswer.lowercase().toBoolean() }.answer.answer
+
+    override fun clear() {
+        _userAnswer = ""
+        onClearImages?.let { imageAdapter?.onClearImages(it) }
+    }
 }

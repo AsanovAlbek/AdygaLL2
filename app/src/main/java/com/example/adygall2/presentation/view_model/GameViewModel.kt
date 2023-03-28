@@ -94,7 +94,7 @@ class GameViewModel(
     /** Получение актуального Question */
     private fun currentQuestion() = currentQuestionItems[currentGameState.currentQuestionPosition]!!
     private fun canSkipCurrentQuestion() = currentQuestion().canSkipQuestion
-    private fun onNextQuestion() = currentQuestion().onNextQuestion()
+    private fun onNextQuestion() = currentQuestion().clear()
 
     /** Основная функция вычисления ответа пользователя и игрового процесса
      * @param requireView - view для [Snackbar]
@@ -166,7 +166,7 @@ class GameViewModel(
                                         nextTask()
                                     }
                                     // Получение урона за неправильный ответ
-                                    damage()
+                                    //damage()
                                     // Если при этом закончилось здоровье, то выход из игры
                                     if (currentGameState.hp <= 0) {
                                         fail(
@@ -203,7 +203,7 @@ class GameViewModel(
                             nextTask()
                         }
                         // Урон
-                        damage()
+                        //damage()
                     }
                     // Даём монетки за пройденный урок
                     giveMoney()
@@ -313,6 +313,15 @@ class GameViewModel(
         }
     }
 
+    private fun nextQuestionAll() {
+        viewModelScope.launch {
+            withContext(mainDispatcher) {
+                currentQuestionItems.forEach { it?.clear() }
+                questionItems.value = currentQuestionItems
+            }
+        }
+    }
+
     /** Метод для пропуска задания */
     fun skipQuestion() {
         viewModelScope.launch {
@@ -366,6 +375,8 @@ class GameViewModel(
     private fun restartLesson() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
+                nextQuestionAll()
+                //onNextQuestion()
                 currentGameState = currentGameState.copy(
                     mistakesCounter = 0,
                     currentQuestionPosition = 0,
@@ -373,7 +384,7 @@ class GameViewModel(
                     canSkipTask = canSkipCurrentQuestion()
                 )
                 _gameState.value = currentGameState
-                onNextQuestion()
+                //onNextQuestion()
                 refreshLessonTitle()
             }
         }

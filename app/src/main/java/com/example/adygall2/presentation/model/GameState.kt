@@ -14,6 +14,5 @@ data class GameState(
     val currentQuestionPosition: Int = 0,
     val canSkipTask: Boolean = false,
     val coins: Int = 0,
-    val hp: Int = 0,
-    //val progressIndicator: Int = currentQuestionPosition + 1
+    val hp: Int = 0
 )

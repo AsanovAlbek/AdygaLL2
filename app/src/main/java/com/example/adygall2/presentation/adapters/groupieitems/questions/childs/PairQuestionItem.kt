@@ -21,18 +21,18 @@ class PairQuestionItem(
     private var _rightAnswer = ""
     private var userPairs = mutableListOf<String>()
     private var rightPairs = mutableListOf<String>()
-    private lateinit var leftAdapter: StaticPairsAdapter
-    private lateinit var rightAdapter: PairsAdapter
-    private lateinit var bottomAdapter: PairsAdapter
+    private var leftAdapter: StaticPairsAdapter? = null
+    private var rightAdapter: PairsAdapter? = null
+    private var bottomAdapter: PairsAdapter? = null
 
     override val rightAnswer: String get() = _rightAnswer
 
-    override val onNextQuestion: () -> Unit
-        get() = {
-            _userAnswer = ""
-            userPairs.clear()
-            rightPairs.clear()
-        }
+//    override val onNextQuestion: () -> Unit
+//        get() = {
+//            _userAnswer = ""
+//            userPairs.clear()
+//            rightPairs.clear()
+//        }
 
     override fun getLayout(): Int = R.layout.fragment_pairs_of_words
 
@@ -41,13 +41,13 @@ class PairQuestionItem(
 
     override fun change(isFirstAdapter: Boolean, item: String, position: Int) {
         if (isFirstAdapter) {
-            bottomAdapter.removeAnswer(item)
-            rightAdapter.addAnswer(item, position)
+            bottomAdapter?.removeAnswer(item)
+            rightAdapter?.addAnswer(item, position)
         } else {
-            bottomAdapter.addAnswer(item, position)
-            rightAdapter.removeAnswer(item)
+            bottomAdapter?.addAnswer(item, position)
+            rightAdapter?.removeAnswer(item)
         }
-        _userAnswer = rightAdapter.adapterItems.joinToString()
+        _userAnswer = rightAdapter?.adapterItems!!.joinToString()
         _rightAnswer = answers.joinToString { it.answer.answer.split("*")[1] }
     }
 
@@ -112,5 +112,11 @@ class PairQuestionItem(
             //userPairs = rightAdapter.adapterItems
             rightPairs = answers.map { it.answer.answer.split("*")[1] }.toMutableList()
         }
+    }
+
+    override fun clear() {
+        _userAnswer = ""
+            userPairs.clear()
+            rightPairs.clear()
     }
 }

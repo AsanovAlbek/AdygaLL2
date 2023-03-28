@@ -11,6 +11,8 @@ import com.example.adygall2.data.models.settings.ProgressItem
 import com.example.adygall2.domain.model.Task
 import com.example.adygall2.databinding.ItemLessonInLevelBinding
 import com.example.adygall2.databinding.ItemLevelBinding
+import com.google.android.material.button.MaterialButton
+
 /**
  * Адаптер уровней, в котором содержится адаптер уроков
  * */
@@ -96,16 +98,6 @@ class LessonsAdapter(
                 lessonItem.setOnClickListener {
                     lessonItemClickEvent(chosenLevelNum, number, lessonTasks)
                 }
-                /*if (completedLevel <= chosenLevelNum) {
-                    if (completedLesson < number) {
-                        lessonNumber.text = number.toString()
-                    } else {
-                        lessonNumber.text = "✓"
-                        lessonProgress.progress = 100
-                    }
-                } else {
-                    lessonNumber.text = number.toString()
-                }*/
 
                 if (userProgressInLesson.contains(number)) {
                     lessonNumber.text = "✓"

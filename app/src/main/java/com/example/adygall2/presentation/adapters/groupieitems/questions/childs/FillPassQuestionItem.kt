@@ -22,19 +22,19 @@ class FillPassQuestionItem(
 
     private var _userAnswer = ""
     override val userAnswer get() = _userAnswer
-    private lateinit var userAdapter: SimpleSentenceAdapter
-    private lateinit var textViewField: TextView
-    private lateinit var textContainer: FlexboxLayout
+    private var userAdapter: SimpleSentenceAdapter? = null
+    private var textViewField: TextView? = null
+    private var textContainer: FlexboxLayout? = null
 
     override val rightAnswer: String =
         answers.first { it.answer.correctAnswer.lowercase().toBoolean() }.answer.answer
 
-    override val onNextQuestion: () -> Unit
-        get() = {
-            _userAnswer = ""
-            textViewField.text = ""
-            textContainer.removeAllViews()
-        }
+//    override val onNextQuestion: () -> Unit
+//        get() = {
+//            _userAnswer = ""
+//            textViewField.text = ""
+//            textContainer.removeAllViews()
+//        }
 
     override fun bind(viewBinding: FragmentFillInThePassBinding, position: Int) {
         val mutableList = answers.map { it.answer.answer }.toMutableList()
@@ -52,30 +52,33 @@ class FillPassQuestionItem(
         textViews.forEachIndexed { index, item ->
             val addedTextView = TextView(context)
             addedTextView.setup(context, item)
-            textContainer.addView(addedTextView)
+            textContainer?.addView(addedTextView)
 
             if (index < textViews.size - 1) {
                 val addedTextViewField = TextView(context)
                 addedTextViewField.setupField(context)
                 textViewField = addedTextViewField
-                textContainer.addView(addedTextViewField)
+                textContainer?.addView(addedTextViewField)
             }
             setupUserAdapter(context)
         }
     }
 
     private fun setupUserAdapter(context: Context) {
-        userAdapter.setListener {
-            if (textViewField.text.isNotEmpty()) {
-                val textInField = textViewField.text.toString()
-                userAdapter.addAnswer(textInField)
+        userAdapter?.setListener { word ->
+            if (textViewField?.text!!.isNotEmpty()) {
+                val textInField = textViewField?.text.toString()
+                userAdapter?.addAnswer(textInField)
             }
             textViewField.apply {
-                text = it
-                background = context.getDrawable(R.drawable.rounded_button2)
+                this?.let {
+                    text = word
+                    background = context.getDrawable(R.drawable.rounded_button2)
+                }
+
             }
-            userAdapter.removeAnswer(it)
-            _userAnswer = textViewField.text.toString()
+            userAdapter?.removeAnswer(word)
+            _userAnswer = textViewField?.text.toString()
         }
     }
 
@@ -98,7 +101,7 @@ class FillPassQuestionItem(
         setPadding(0, 0, 10, 0)
         setOnClickListener {
             if (text.isNotEmpty()) {
-                userAdapter.addAnswer(text.toString())
+                userAdapter?.addAnswer(text.toString())
                 setBackgroundColor(Color.WHITE)
                 text = ""
             }
@@ -109,4 +112,10 @@ class FillPassQuestionItem(
 
     override fun initializeViewBinding(view: View): FragmentFillInThePassBinding =
         FragmentFillInThePassBinding.bind(view)
+
+    override fun clear() {
+        _userAnswer = ""
+        textViewField?.text = ""
+        textContainer?.removeAllViews()
+    }
 }

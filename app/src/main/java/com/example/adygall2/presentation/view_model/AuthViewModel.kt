@@ -39,7 +39,7 @@ class AuthViewModel(
 
     fun logInUser(userName: String) = userSettingsUseCase.updateUserInfo(
             name = userName,
-            userIsSignUp = true,
+            userIsSignUp = true
         )
 
     fun savePhotoInCache(image: Bitmap? = null, uri: Uri = Uri.EMPTY) {

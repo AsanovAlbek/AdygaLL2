@@ -18,17 +18,17 @@ class TypeThanHeardQuestionItem(
 ): QuestionItem<FragmentTypeThatHeardBinding>() {
     private var _userAnswer = ""
     override val userAnswer: String get() = _userAnswer
-    private lateinit var textField: EditText
+    private var textField: EditText? = null
     private var player: SoundsPlayer? = null
 
     override val rightAnswer: String = answers.joinToString { it.answer.answer }
 
-    override val onNextQuestion: () -> Unit
-        get() = {
-            _userAnswer = ""
-            textField.setText("")
-            player = null
-        }
+//    override val onNextQuestion: () -> Unit
+//        get() = {
+//            _userAnswer = ""
+//            textField.setText("")
+//            player = null
+//        }
 
     override fun getLayout(): Int = R.layout.fragment_type_that_heard
 
@@ -84,5 +84,11 @@ class TypeThanHeardQuestionItem(
                 }
             }
         }
+    }
+
+    override fun clear() {
+        _userAnswer = ""
+        textField?.setText("")
+        player = null
     }
 }

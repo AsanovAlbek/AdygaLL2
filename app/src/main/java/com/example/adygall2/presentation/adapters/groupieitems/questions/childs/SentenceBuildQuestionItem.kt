@@ -23,8 +23,8 @@ class SentenceBuildQuestionItem(
     private val playerSource: Source
 ): QuestionItem<FragmentWordsQuestionBinding>(), AdapterHandleDragAndDropCallback {
 
-    private lateinit var userAdapter: SentenceAdapter
-    private lateinit var answerAdapter: SentenceAdapter
+    private var userAdapter: SentenceAdapter? = null
+    private var answerAdapter: SentenceAdapter? = null
     private var _userAnswer = ""
     override val userAnswer: String get() = _userAnswer
     private var player: SoundsPlayer? = null
@@ -32,11 +32,11 @@ class SentenceBuildQuestionItem(
     override val rightAnswer: String =
         answers.first().answer.correctAnswer
 
-    override val onNextQuestion: () -> Unit
-        get() = {
-            _userAnswer = ""
-            player = null
-        }
+//    override val onNextQuestion: () -> Unit
+//        get() = {
+//            _userAnswer = ""
+//            player = null
+//        }
 
     override fun bind(viewBinding: FragmentWordsQuestionBinding, position: Int) {
         viewBinding.apply {
@@ -136,12 +136,17 @@ class SentenceBuildQuestionItem(
 
     override fun change(isFirstAdapter: Boolean, item: String, position: Int) {
         if (isFirstAdapter) {
-            userAdapter.addAnswer(item, position)
-            answerAdapter.removeAnswer(item)
+            userAdapter?.addAnswer(item, position)
+            answerAdapter?.removeAnswer(item)
         } else {
-            answerAdapter.addAnswer(item, position)
-            userAdapter.removeAnswer(item)
+            answerAdapter?.addAnswer(item, position)
+            userAdapter?.removeAnswer(item)
         }
-        _userAnswer = answerAdapter.adapterItems.joinToString()
+        _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+    }
+
+    override fun clear() {
+        _userAnswer = ""
+        player = null
     }
 }

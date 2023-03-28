@@ -20,6 +20,7 @@ import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.example.adygall2.presentation.model.DialogState
 import com.example.adygall2.presentation.model.GameState
+import com.google.android.material.button.MaterialButton
 import com.xwray.groupie.GroupieAdapter
 import kotlinx.coroutines.launch
 
@@ -64,7 +65,6 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
             lesson = gameArgs.lessonProgress,
             level = gameArgs.levelProgress
         )
-        Log.i("game", "lesson = ${gameArgs.lessonProgress} level = ${gameArgs.levelProgress}")
 
         taskContainerBinding.taskViewPager.apply {
             adapter = tasksAdapter

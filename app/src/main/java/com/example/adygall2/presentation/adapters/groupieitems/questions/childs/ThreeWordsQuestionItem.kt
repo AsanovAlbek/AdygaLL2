@@ -35,12 +35,16 @@ class ThreeWordsQuestionItem(
     override fun initializeViewBinding(view: View): FragmentThreeWordsQuestionBinding =
         FragmentThreeWordsQuestionBinding.bind(view)
 
-    override val onNextQuestion: () -> Unit
-        get() = {
-            _userAnswer = ""
-        }
+//    override val onNextQuestion: () -> Unit
+//        get() = {
+//            _userAnswer = ""
+//        }
 
     override val rightAnswer: String =
         answers.map { it.answer }.first { it.correctAnswer.toBoolean() }.answer
-        //answers.first { it.answer.correctAnswer.lowercase().toBoolean() }.answer.answer
+
+    override fun clear() {
+        _userAnswer = ""
+    }
+    //answers.first { it.answer.correctAnswer.lowercase().toBoolean() }.answer.answer
 }

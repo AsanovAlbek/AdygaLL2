@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import com.example.adygall2.R
@@ -20,13 +21,17 @@ class TypeTranslateQuestionItem(
 
     private var _userAnswer = ""
     override val userAnswer get() = _userAnswer
+    private var tooltips: FlexboxLayout? = null
+    private var editText: EditText? = null
 
     override fun bind(viewBinding: FragmentTypeTranslateBinding, position: Int) {
         viewBinding.apply {
+            tooltips = wordsWithTooltip
+            editText = userInputEt
             userInputEt.addTextChangedListener {
                 _userAnswer = it.toString()
             }
-            taskTitleWithHints(wordsWithTooltip)
+            taskTitleWithHints()
         }
     }
 
@@ -35,14 +40,14 @@ class TypeTranslateQuestionItem(
     override fun initializeViewBinding(view: View): FragmentTypeTranslateBinding =
         FragmentTypeTranslateBinding.bind(view)
 
-    private fun taskTitleWithHints(hintLayout: FlexboxLayout) {
+    private fun taskTitleWithHints() {
         val hintsList = title.split(" ")
         hintsList.forEach {
             val addedWord = SpannableString(it)
             addedWord.setSpan(UnderlineSpan(), 0, addedWord.length, 0)
             val addedTextView = TextView(context)
             setTextViewParams(addedTextView, addedWord)
-            hintLayout.addView(addedTextView)
+            tooltips?.addView(addedTextView)
         }
     }
 
@@ -56,11 +61,15 @@ class TypeTranslateQuestionItem(
         }
     }
 
-    override val onNextQuestion: () -> Unit
-        get() = {
-            _userAnswer = ""
-        }
-
+//    override val onNextQuestion: () -> Unit
+//        get() = {
+//            _userAnswer = ""
+//        }
     override val rightAnswer: String = currentAnswer
+    override fun clear() {
+        _userAnswer = ""
+        editText?.text?.clear()
+        tooltips?.removeAllViews()
+    }
 
 }
