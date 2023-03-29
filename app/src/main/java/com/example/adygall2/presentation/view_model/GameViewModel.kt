@@ -166,7 +166,7 @@ class GameViewModel(
                                         nextTask()
                                     }
                                     // Получение урона за неправильный ответ
-                                    //damage()
+                                    damage()
                                     // Если при этом закончилось здоровье, то выход из игры
                                     if (currentGameState.hp <= 0) {
                                         fail(
@@ -203,7 +203,7 @@ class GameViewModel(
                             nextTask()
                         }
                         // Урон
-                        //damage()
+                        damage()
                     }
                     // Даём монетки за пройденный урок
                     giveMoney()
@@ -506,7 +506,7 @@ class GameViewModel(
     private fun playEffect() {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val soundEffect = if (currentGameState.userAnswer.compareTo(currentGameState.rightAnswer) == 0) {
+                val soundEffect = if (isRight()) {
                     sourceInteractor.rightAnswerSource()
                 } else {
                     sourceInteractor.wrongAnswerSource()
