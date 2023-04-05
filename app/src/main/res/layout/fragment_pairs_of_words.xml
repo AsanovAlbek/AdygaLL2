@@ -18,12 +18,13 @@
         android:textSize="22sp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="14dp"
+
         android:layout_marginTop="30dp"
         android:orientation="horizontal"
-        android:weightSum="2">
+        android:weightSum="2"
+        android:layout_gravity="center">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/leftWordsList"
@@ -32,31 +33,34 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/pair_word_item"
             android:layout_weight="1"
-            android:paddingStart="34dp"
-            tools:itemCount="4" />
+            tools:itemCount="4"
+            android:layout_marginEnd="30dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rightWordsList"
+            android:background="@drawable/pair_words_slot"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="end"
+            android:minWidth="100dp"
+            android:layout_gravity="center"
             android:layout_weight="1"
             tools:itemCount="4"
+            android:layout_marginStart="30dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/pair_word_item"
-            android:paddingStart="34dp"
-            android:paddingEnd="34dp"/>
+            tools:listitem="@layout/pair_word_item" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/bottomWordsList"
+        android:background="@drawable/pair_words_slot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="80dp"
+        android:minWidth="200dp"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"
         tools:itemCount="4"
-        android:layout_marginEnd="8dp"
         tools:listitem="@layout/pair_word_item" />
 </LinearLayout>
