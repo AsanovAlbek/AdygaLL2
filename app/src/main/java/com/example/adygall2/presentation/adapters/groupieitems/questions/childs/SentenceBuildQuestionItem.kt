@@ -21,7 +21,7 @@ class SentenceBuildQuestionItem(
     private val title: String,
     private val answers: List<ComplexAnswer>,
     private val playerSource: Source
-): QuestionItem<FragmentWordsQuestionBinding>(), AdapterHandleDragAndDropCallback {
+) : QuestionItem<FragmentWordsQuestionBinding>(), AdapterHandleDragAndDropCallback {
 
     private var userAdapter: SentenceAdapter? = null
     private var answerAdapter: SentenceAdapter? = null
@@ -98,6 +98,19 @@ class SentenceBuildQuestionItem(
             answers = mutableListOf(),
             callback = this
         )
+
+        userAdapter?.clickAction = {
+            userAdapter?.removeAnswer(it)
+            answerAdapter?.addAnswer(it, -1)
+            _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+        }
+
+        answerAdapter?.clickAction = {
+            answerAdapter?.removeAnswer(it)
+            userAdapter?.addAnswer(it, -1)
+            _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+        }
+
         val answerLayoutManager = FlexboxLayoutManager(context).apply {
             flexDirection = FlexDirection.ROW
         }

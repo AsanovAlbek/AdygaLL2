@@ -71,7 +71,12 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
             isUserInputEnabled = false
         }
 
-        viewModel.initAutoHill(taskContainerBinding.taskBottomBar.hp.progress)
+        taskContainerBinding.taskBottomBar.apply {
+            userNameTv.text = viewModel.user.name
+            userAvatar.setImageBitmap(viewModel.getPhotoFromCache())
+            viewModel.initAutoHill(hp.progress)
+        }
+
         hillHp()
     }
 

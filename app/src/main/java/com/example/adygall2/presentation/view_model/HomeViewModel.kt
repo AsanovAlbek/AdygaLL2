@@ -114,7 +114,8 @@ class HomeViewModel(
     }
 
     fun getPhotoFromCache(): Bitmap {
-        val directory =
+        return userSettingsUseCase.photo(resourceProvider)
+        /*val directory =
             resourceProvider.contextWrapper.getDir(
                 resourceProvider.getString(R.string.user_avatar),
                 Context.MODE_PRIVATE
@@ -127,7 +128,7 @@ class HomeViewModel(
             }
         } else {
             return resourceProvider.getBitmap(R.drawable.default_avatar)!!.toBitmap()
-        }
+        }*/
     }
 
     override fun onCleared() {

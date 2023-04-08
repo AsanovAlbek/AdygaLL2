@@ -23,7 +23,7 @@ class TranslateTextQuestionItem(
     private val context: Context,
     private val title: String,
     private val answers: List<ComplexAnswer>
-): QuestionItem<FragmentTranslateTheTextBinding>(), AdapterHandleDragAndDropCallback {
+) : QuestionItem<FragmentTranslateTheTextBinding>(), AdapterHandleDragAndDropCallback {
     private var _userAnswer = ""
     override val userAnswer: String get() = _userAnswer
     private var userAdapter: SentenceAdapter? = null
@@ -73,6 +73,20 @@ class TranslateTextQuestionItem(
             answers = mutableListOf(),
             callback = this
         )
+
+        answerAdapter?.clickAction = {
+            answerAdapter?.removeAnswer(it)
+            userAdapter?.addAnswer(it, -1)
+            _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+        }
+
+        userAdapter?.clickAction = {
+            userAdapter?.removeAnswer(it)
+            answerAdapter?.addAnswer(it, -1)
+            _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+
+        }
+
         viewBinding.apply {
             answersRecycler.apply {
                 adapter = answerAdapter
@@ -124,7 +138,11 @@ class TranslateTextQuestionItem(
         }
     }
 
-    private fun setTooltip(viewBinding: FragmentTranslateTheTextBinding, tv: TextView, hintWord: String): ToolTip.Builder {
+    private fun setTooltip(
+        viewBinding: FragmentTranslateTheTextBinding,
+        tv: TextView,
+        hintWord: String
+    ): ToolTip.Builder {
         val builder = ToolTip.Builder(
             context,
             tv, viewBinding.rootForTooltip,

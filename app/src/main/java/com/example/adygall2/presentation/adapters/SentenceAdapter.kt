@@ -33,6 +33,7 @@ class SentenceAdapter(
 
     /** Получение элементов адаптера */
     val adapterItems get() = answers
+    var clickAction: ((String) -> Unit)? = null
 
     /** Добавление элемента ответа в адаптер
      *  @param addedAnswer - добавляемый элемент ответа
@@ -74,25 +75,24 @@ class SentenceAdapter(
             with(itemBinding) {
                 sentenceWord.text = answer
                 with(root) {
-                    setOnTouchListener { view, motionEvent ->
-                        performClick()
-                        if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                            val item = ClipData.Item(answer)
-                            val dragData = ClipData(
-                                answer, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item
-                            )
-                            val shadowDrag = View.DragShadowBuilder(this)
-                            startDragAndDrop(dragData, shadowDrag, null, 0)
-                        }
-                        view.onTouchEvent(motionEvent)
+                    setOnLongClickListener {
+                        val item = ClipData.Item(answer)
+                        val dragData = ClipData(
+                            answer, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item
+                        )
+                        val shadowDrag = View.DragShadowBuilder(this)
+                        startDragAndDrop(dragData, shadowDrag, null, 0)
+                        true
+                    }
+
+                    setOnClickListener {
+                        clickAction?.invoke(answer)
                     }
 
                     setOnDragListener { _, dragEvent ->
                         HandleDragAndDropEvent(dragEvent).handle(callback, isFirstAdapter, layoutPosition)
                         true
                     }
-
-                    //setOnClickListener { callback.change(isFirstAdapter, answer, layoutPosition) }
                 }
             }
         }

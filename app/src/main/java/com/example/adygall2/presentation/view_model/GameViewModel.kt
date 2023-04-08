@@ -463,7 +463,8 @@ class GameViewModel(
                         hp = user.hp,
                         coins = user.coins,
                         lessonProgress = lesson,
-                        levelProgress = level
+                        levelProgress = level,
+                        currentQuestionPosition = 0
                     )
                     _gameState.value = currentGameState
                     refreshLessonTitle()

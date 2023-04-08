@@ -16,25 +16,10 @@ class GameResultViewModel(
     private val resourceProvider: ResourceProvider,
     private val userSettingsUseCase: UserSettingsUseCase
 ): ViewModel() {
-    fun getPhotoFromCache(): Bitmap {
-        val directory =
-            resourceProvider.contextWrapper.getDir(
-                resourceProvider.getString(R.string.user_avatar),
-                Context.MODE_PRIVATE
-            )
-        val saveFile = File(directory, "thumbnail.jpeg")
-
-        if (saveFile.exists()) {
-            FileInputStream(saveFile).use { inputStream ->
-                return BitmapFactory.decodeStream(inputStream)
-            }
-        } else {
-            return resourceProvider.getBitmap(R.drawable.default_avatar)!!.toBitmap()
-        }
-    }
+    fun getPhotoFromCache(): Bitmap = userSettingsUseCase.photo(resourceProvider)
 
     override fun onCleared() {
-        userSettingsUseCase.updateUserInfo(userLastFragment = RESULT_SCREEN)
+        //userSettingsUseCase.updateUserInfo(userLastFragment = RESULT_SCREEN)
         super.onCleared()
     }
 }

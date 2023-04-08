@@ -60,4 +60,17 @@
     <string name="exit_from_level_question">Вы точно хотите выйти? Ваш прогресс будет утерян</string>
     <string name="no_hp">У вас недостаточно здоровья, зайдите позже</string>
     <string name="ok">Хорошо</string>
+    <string name="levels_global">Пройдено уровней:</string>
+    <string name="lessons_global">Пройдено уроков:</string>
+    <string name="learned_words_global">Выученно слов:</string>
+    <string name="global_hours">Всего часов играли:</string>
+    <string name="week_hours">Играли часов на этой неделе:</string>
+    <string name="change_profile">Редактировать профиль</string>
+    <string name="pick_from_gallery">Выбрать фото из галереи</string>
+    <string name="make_photo">Сделать снимок</string>
+    <string name="enter_new_name">Введите новое имя</string>
+    <string name="save_changes">Сохранить изменения и выйти</string>
+    <string name="changes_saved">Изменения сохранены</string>
+    <string name="user_profile">UserProfile</string>
+    <string name="change_success">Данные успешно изменены</string>
 </resources>

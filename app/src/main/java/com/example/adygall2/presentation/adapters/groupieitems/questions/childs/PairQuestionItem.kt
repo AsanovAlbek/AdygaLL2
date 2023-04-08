@@ -15,7 +15,7 @@ class PairQuestionItem(
     private val context: Context,
     private val title: String,
     private val answers: List<ComplexAnswer>
-): QuestionItem<FragmentPairsOfWordsBinding>(), AdapterHandleDragAndDropCallback {
+) : QuestionItem<FragmentPairsOfWordsBinding>(), AdapterHandleDragAndDropCallback {
     private var _userAnswer = ""
     override val userAnswer: String get() = _userAnswer
     private var _rightAnswer = ""
@@ -81,6 +81,19 @@ class PairQuestionItem(
             callback = this
         )
 
+        rightAdapter?.clickEvent = { word ->
+            rightAdapter?.removeAnswer(word)
+            bottomAdapter?.addAnswer(word, -1)
+            _userAnswer = rightAdapter?.adapterItems!!.joinToString()
+            _rightAnswer = answers.joinToString { it.answer.answer.split("*")[1] }
+        }
+        bottomAdapter?.clickEvent = { word ->
+            bottomAdapter?.removeAnswer(word)
+            rightAdapter?.addAnswer(word, -1)
+            _userAnswer = rightAdapter?.adapterItems!!.joinToString()
+            _rightAnswer = answers.joinToString { it.answer.answer.split("*")[1] }
+        }
+
         viewBinding.apply {
 
             bottomWordsList.apply {
@@ -116,7 +129,7 @@ class PairQuestionItem(
 
     override fun clear() {
         _userAnswer = ""
-            userPairs.clear()
-            rightPairs.clear()
+        userPairs.clear()
+        rightPairs.clear()
     }
 }

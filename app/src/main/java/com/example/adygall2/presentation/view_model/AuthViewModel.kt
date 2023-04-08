@@ -43,8 +43,8 @@ class AuthViewModel(
         )
 
     fun savePhotoInCache(image: Bitmap? = null, uri: Uri = Uri.EMPTY) {
-
-        val savedImage = image ?: ImageDecoder.decodeBitmap(
+        userSettingsUseCase.savePhoto(image = image, uri = uri, resourceProvider = resourceProvider)
+        /*val savedImage = image ?: ImageDecoder.decodeBitmap(
             ImageDecoder.createSource(
                 resourceProvider.provideContentResolver, uri
             )
@@ -62,11 +62,12 @@ class AuthViewModel(
         val saveFile = File(directory, "thumbnail.jpeg")
         FileOutputStream(saveFile).use { outputStream ->
             savedImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        }
+        }*/
     }
 
     fun getPhotoFromCache(): Bitmap {
-        val directory =
+        return userSettingsUseCase.photo(resourceProvider)
+        /*val directory =
             resourceProvider.contextWrapper.getDir(
                 resourceProvider.getString(R.string.user_avatar),
                 Context.MODE_PRIVATE
@@ -79,7 +80,7 @@ class AuthViewModel(
             }
         } else {
             return resourceProvider.getBitmap(R.drawable.default_avatar)!!.toBitmap()
-        }
+        }*/
     }
 
     override fun onCleared() {

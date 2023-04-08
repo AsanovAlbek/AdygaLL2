@@ -3,6 +3,7 @@ package com.example.adygall2.presentation.adapters
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -28,16 +29,9 @@ class PairsAdapter(
     private val callback: AdapterHandleDragAndDropCallback
 ) : RecyclerView.Adapter<PairsAdapter.PairsHolder>() {
 
-    companion object {
-        private const val MAX_X = 70
-        private const val MAX_Y = 70
-    }
-
-    var xPos = 0f
-    var yPos = 0f
-
     /** Переменная для получения всех элементов */
     val adapterItems get() = answers
+    var clickEvent: ((String) -> Unit)? = null
 
     /**
      * Метод для удаления элемента для его перемещения в другой PairsAdapter
@@ -85,22 +79,20 @@ class PairsAdapter(
                 setCardParams()
                 // Обработка долгого нажатия
                 with(root) {
-                    setOnTouchListener { view, motionEvent ->
-                        if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                            performClick()
-                            val item = ClipData.Item(word)
-                            val dragData = ClipData(
-                                word, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item
-                            )
-                            val shadowDrag = View.DragShadowBuilder(this)
-                            // Начало процесса перемещения
-                            startDragAndDrop(dragData, shadowDrag, null, 0)
-                        }
-                        view.onTouchEvent(motionEvent)
+                    setOnLongClickListener { view ->
+                        val item = ClipData.Item(word)
+                        val dragData = ClipData(
+                            word, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item
+                        )
+                        val shadowDrag = View.DragShadowBuilder(this)
+                        // Начало процесса перемещения
+                        startDragAndDrop(dragData, shadowDrag, null, 0)
+                        true
                     }
 
                     // Обработка перемещения
                     setOnDragListener { _, dragEvent ->
+                        Log.i("game", "drag")
                         HandleDragAndDropEvent(dragEvent).handle(
                             callback,
                             isFirstAdapter,
@@ -109,7 +101,10 @@ class PairsAdapter(
                         true
                     }
 
-                    setOnClickListener { callback.change(isFirstAdapter, word, layoutPosition) }
+                    setOnClickListener {
+                        Log.i("game", "click")
+                        clickEvent?.invoke(word)
+                    }
                 }
             }
         }

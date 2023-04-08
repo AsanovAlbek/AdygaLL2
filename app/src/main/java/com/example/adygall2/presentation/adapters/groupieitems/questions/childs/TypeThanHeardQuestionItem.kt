@@ -15,7 +15,7 @@ class TypeThanHeardQuestionItem(
     private val context: Context,
     private val answers: List<ComplexAnswer>,
     private val playerSource: Source
-): QuestionItem<FragmentTypeThatHeardBinding>() {
+) : QuestionItem<FragmentTypeThatHeardBinding>() {
     private var _userAnswer = ""
     override val userAnswer: String get() = _userAnswer
     private var textField: EditText? = null
@@ -64,7 +64,7 @@ class TypeThanHeardQuestionItem(
                 playSoundButton.setOnClickListener {
                     if (player.isPlayingNow) {
                         player.stopPlay()
-                        if(playSoundButton.icon.equals(stopSoundDrawable)) {
+                        if (playSoundButton.icon.equals(stopSoundDrawable)) {
                             playSoundButton.icon = playSoundDrawable
                         }
                     } else {

@@ -12,7 +12,7 @@ class ThreeWordsQuestionItem(
     private val context: Context,
     private val title: String,
     private val answers: List<ComplexAnswer>
-): QuestionItem<FragmentThreeWordsQuestionBinding>() {
+) : QuestionItem<FragmentThreeWordsQuestionBinding>() {
 
     private var _userAnswer = ""
     override val userAnswer get() = _userAnswer

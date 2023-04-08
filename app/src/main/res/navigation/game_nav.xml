@@ -28,6 +28,9 @@
         <argument
             android:name="exp"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_homePage_to_userProfile"
+            app:destination="@id/userProfile" />
     </fragment>
     <fragment
         android:id="@+id/taskContainer"
@@ -82,5 +85,24 @@
         <argument
             android:name="time"
             app:argType="string"/>
+    </fragment>
+    <fragment
+        android:id="@+id/userProfile"
+        android:name="com.example.adygall2.presentation.fragments.menu.FragmentUserProfile"
+        tools:layout="@layout/fragment_user_profile"
+        android:label="@string/user_profile">
+        <action
+            android:id="@+id/action_userProfile_to_editUserProfile"
+            app:destination="@id/editUserProfile" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editUserProfile"
+        android:label="EditUserProfile"
+        tools:layout="@layout/fragment_edit_user"
+        android:name="com.example.adygall2.presentation.fragments.menu.FragmentEditUser">
+        <action
+            android:id="@+id/action_editUserProfile_to_userProfile"
+            app:destination="@id/userProfile" />
     </fragment>
 </navigation>
