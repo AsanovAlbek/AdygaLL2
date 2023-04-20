@@ -123,5 +123,5 @@ class LessonsAdapter(
         holder.bind(number = position + 1, lessonTasks = tasksInLevel.chunked(15)[position])
     }
 
-    override fun getItemCount(): Int = 12
+    override fun getItemCount(): Int = 3
 }

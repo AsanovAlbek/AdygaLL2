@@ -12,17 +12,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentEditUserBinding
+import com.example.adygall2.presentation.activities.MainActivity
 import com.example.adygall2.presentation.model.UserProfileState
 import com.example.adygall2.presentation.view_model.EditUserViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FragmentEditUser : Fragment(R.layout.fragment_edit_user) {
     private var _editUserBinding: FragmentEditUserBinding? = null
     private val editUserBinding get() = _editUserBinding!!
-    private val viewModel by viewModels<EditUserViewModel>()
+    private val viewModel by viewModel<EditUserViewModel>()
 
     private lateinit var cameraAction: ActivityResultLauncher<Void>
     private lateinit var galleryAction: ActivityResultLauncher<String>
@@ -31,36 +32,7 @@ class FragmentEditUser : Fragment(R.layout.fragment_edit_user) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        cameraPermission =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-                if (granted) {
-                    cameraAction.launch(null)
-                }
-            }
-
-        galleryPermission =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-                if (granted) {
-                    galleryAction.launch(getString(R.string.type_image))
-                }
-            }
-
-        cameraAction =
-            registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmapImage ->
-                editUserBinding.avatar.setImageBitmap(bitmapImage)
-                viewModel.updateAvatar(bitmapImage)
-            }
-
-        galleryAction =
-            registerForActivityResult(ActivityResultContracts.GetContent()) { contentUri ->
-                val image = ImageDecoder.decodeBitmap(
-                    ImageDecoder.createSource(
-                        requireContext().contentResolver, contentUri
-                    )
-                )
-                editUserBinding.avatar.setImageBitmap(image)
-                viewModel.updateAvatar(image)
-            }
+        registerToPermissions()
     }
 
     override fun onCreateView(
@@ -74,16 +46,42 @@ class FragmentEditUser : Fragment(R.layout.fragment_edit_user) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         observe()
+        viewModel.initViewModel()
         editUserBinding.apply {
-            editName.doAfterTextChanged {
-                viewModel.updateUserName(it.toString())
-            }
             cameraButton.setOnClickListener { cameraAction() }
             galleryButton.setOnClickListener { galleryAction() }
             saveButton.setOnClickListener {
+                viewModel.updateUserName(editName.text.toString())
                 viewModel.acceptChanges(requireView(), findNavController())
+                (requireActivity() as MainActivity).updateUserStates()
             }
         }
+    }
+
+    private fun registerToPermissions() {
+        cameraAction =
+            registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmapImage ->
+                viewModel.updateAvatar(bitmap = bitmapImage)
+            }
+
+        galleryAction =
+            registerForActivityResult(ActivityResultContracts.GetContent()) { contentUri ->
+                viewModel.updateAvatar(uri = contentUri)
+            }
+
+        cameraPermission =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+                if (granted) {
+                    cameraAction.launch(null)
+                }
+            }
+
+        galleryPermission =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+                if (granted) {
+                    galleryAction.launch(getString(R.string.type_image))
+                }
+            }
     }
 
     private fun observe() {
@@ -120,6 +118,7 @@ class FragmentEditUser : Fragment(R.layout.fragment_edit_user) {
             galleryPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
+
 
     override fun onDestroyView() {
         _editUserBinding = null

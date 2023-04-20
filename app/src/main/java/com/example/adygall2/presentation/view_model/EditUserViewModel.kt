@@ -1,7 +1,7 @@
 package com.example.adygall2.presentation.view_model
 
-import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.view.View
 import androidx.core.graphics.drawable.toBitmap
@@ -14,10 +14,10 @@ import com.example.adygall2.R
 import com.example.adygall2.data.models.ResourceProvider
 import com.example.adygall2.domain.usecases.UserSettingsUseCase
 import com.example.adygall2.presentation.fragments.menu.FragmentEditUserDirections
-import com.example.adygall2.presentation.fragments.menu.FragmentUserProfileDirections
 import com.example.adygall2.presentation.model.UserProfileState
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -25,13 +25,12 @@ class EditUserViewModel(
     private val resourceProvider: ResourceProvider,
     private val userSettingsUseCase: UserSettingsUseCase,
     private val mainDispatcher: CoroutineDispatcher
-): ViewModel() {
+) : ViewModel() {
     private val userChanges = MutableLiveData<UserProfileState>()
     val changes: LiveData<UserProfileState> get() = userChanges
-    private var current =
-        UserProfileState(photo = resourceProvider.getBitmap(R.drawable.default_avatar)!!.toBitmap())
+    private var current = UserProfileState()
 
-    init {
+    fun initViewModel() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 val user = userSettingsUseCase.userInfo()
@@ -42,13 +41,21 @@ class EditUserViewModel(
                 userChanges.value = current
             }
         }
+
     }
 
-    fun updateAvatar(bitmap: Bitmap) {
+    fun updateAvatar(bitmap: Bitmap? = null, uri: Uri = Uri.EMPTY) {
         viewModelScope.launch {
-            withContext(mainDispatcher) {
-                current = current.copy(photo = bitmap)
-                userChanges.value = current
+            withContext(Dispatchers.IO) {
+                val image = bitmap ?: ImageDecoder.decodeBitmap(
+                    ImageDecoder.createSource(
+                        resourceProvider.provideContentResolver, uri
+                    )
+                )
+                withContext(mainDispatcher) {
+                    current = current.copy(photo = image)
+                    userChanges.value = current
+                }
             }
         }
     }
@@ -59,7 +66,7 @@ class EditUserViewModel(
                 userSettingsUseCase.apply {
                     updateUserInfo(name = current.name)
                     savePhoto(
-                        image = current.photo,
+                        image = current.photo ?: resourceProvider.getDrawable(R.drawable.default_avatar)!!.toBitmap(),
                         resourceProvider = resourceProvider
                     )
                 }
@@ -68,7 +75,8 @@ class EditUserViewModel(
                 Snackbar.make(
                     view,
                     R.string.change_success,
-                    Snackbar.LENGTH_SHORT).show()
+                    Snackbar.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -76,7 +84,7 @@ class EditUserViewModel(
     fun updateUserName(userInputText: String) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                current = current.copy(name = userInputText)
+                current = current.copy(name = userInputText.trim().replace("\n", ""))
                 userChanges.value = current
             }
         }

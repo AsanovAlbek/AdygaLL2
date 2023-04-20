@@ -1,4 +1,4 @@
-package com.example.adygall2.presentation.fragments.menu
+package com.example.adygall2.presentation.fragments.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +10,6 @@ import androidx.navigation.fragment.navArgs
 import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentLessonResultsBinding
 import com.example.adygall2.presentation.view_model.GameResultViewModel
-import com.example.adygall2.presentation.view_model.GameViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FragmentGameResults : Fragment(R.layout.fragment_lesson_results) {

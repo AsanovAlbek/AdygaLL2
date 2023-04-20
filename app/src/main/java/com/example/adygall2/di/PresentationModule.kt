@@ -65,7 +65,7 @@ val presentationModule = module {
     viewModel {
         EditUserViewModel(
             resourceProvider = get(),
-            mainDispatcher = get(),
+            mainDispatcher = get(named(MAIN_DISPATCHER)),
             userSettingsUseCase = get()
         )
     }

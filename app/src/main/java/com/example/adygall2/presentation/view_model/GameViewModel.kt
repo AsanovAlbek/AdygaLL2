@@ -26,7 +26,7 @@ import com.example.adygall2.domain.usecases.UserSettingsUseCase
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.createQuestion
 import com.example.adygall2.presentation.const.LastNavigationPage.GAME_SCREEN
-import com.example.adygall2.presentation.fragments.menu.FragmentGamePageDirections
+import com.example.adygall2.presentation.fragments.main.FragmentGamePageDirections
 import com.example.adygall2.presentation.model.DialogState
 import com.example.adygall2.presentation.model.GameState
 import com.google.android.material.snackbar.Snackbar
@@ -58,7 +58,7 @@ class GameViewModel(
     companion object {
         private const val fiveMinuteInMills = 300_000L // 5 минут * 60 секунд * 1000 милисекунд. 5 минут в милисекундах
         /** Максимальное количество ошибок */
-        private const val MISTAKES_LIMIT = 7
+        private const val MISTAKES_LIMIT = 20
         private const val HP_DAMAGE = 5
         private const val MONEY_INCREMENT = 1
         private const val TAG = "GameFragment"
@@ -323,10 +323,30 @@ class GameViewModel(
     }
 
     /** Метод для пропуска задания */
-    fun skipQuestion() {
+    fun skipQuestion(
+        level: Int,
+        lesson: Int,
+        tasks: List<Task>,
+        coinsBeforeLesson: Int,
+        navController: NavController,
+        coins: Int,
+        hp: Int
+    ) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                nextTask()
+                if (isLastQuestion()) {
+                    finishLesson(
+                        level = level,
+                        lesson = lesson,
+                        tasks = tasks,
+                        coinsBeforeLesson = coinsBeforeLesson,
+                        navController = navController,
+                        coins = coins,
+                        hp = hp
+                    )
+                } else {
+                    nextTask()
+                }
                 soundsPlayer.stopPlay()
             }
         }
@@ -488,7 +508,7 @@ class GameViewModel(
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 while (isActive) {
-                    delay(fiveMinuteInMills)
+                    delay(30_000)
                     if (_hpHill.value < 100) {
                         _hpHill.value += 10
                     }
@@ -582,12 +602,7 @@ class GameViewModel(
                 return BitmapFactory.decodeStream(inputStream)
             }
         } else {
-            return resourceProvider.getBitmap(R.drawable.default_avatar)!!.toBitmap()
+            return resourceProvider.getDrawable(R.drawable.default_avatar)!!.toBitmap()
         }
-    }
-
-    override fun onCleared() {
-        userSettingsUseCase.updateUserInfo(userLastFragment = GAME_SCREEN)
-        super.onCleared()
     }
 }

@@ -1,4 +1,4 @@
-package com.example.adygall2.presentation.fragments.menu
+package com.example.adygall2.presentation.fragments.main
 
 import android.os.Bundle
 import android.util.Log
@@ -12,11 +12,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.adygall2.R
-import com.example.adygall2.data.local.PrefConst
 import com.example.adygall2.databinding.FragmentNewHomePageBinding
 import com.example.adygall2.domain.model.Task
 import com.example.adygall2.presentation.adapters.LevelsAdapter
-import com.example.adygall2.presentation.fragments.dialog
 import com.example.adygall2.presentation.view_model.HomeViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel

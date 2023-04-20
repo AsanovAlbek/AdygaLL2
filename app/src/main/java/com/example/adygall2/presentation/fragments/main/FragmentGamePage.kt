@@ -1,7 +1,6 @@
-package com.example.adygall2.presentation.fragments.menu
+package com.example.adygall2.presentation.fragments.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,6 @@ import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.example.adygall2.presentation.model.DialogState
 import com.example.adygall2.presentation.model.GameState
-import com.google.android.material.button.MaterialButton
 import com.xwray.groupie.GroupieAdapter
 import kotlinx.coroutines.launch
 
@@ -168,7 +166,15 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                 )
             }
             soundTaskSkip.setOnClickListener {
-                viewModel.skipQuestion()
+                viewModel.skipQuestion(
+                    tasks = gameArgs.tasks.toList(),
+                    level = gameArgs.levelProgress,
+                    lesson = gameArgs.lessonProgress,
+                    coinsBeforeLesson = viewModel.user.coins,
+                    coins = taskContainerBinding.taskBottomBar.exp.progress,
+                    hp = taskContainerBinding.taskBottomBar.hp.progress,
+                    navController = findNavController()
+                )
             }
         }
     }

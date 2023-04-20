@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.adygall2.data.room.consts.RoomConst.FULL_BASE
+import com.example.adygall2.data.room.consts.RoomConst.SECOND_BASE
 import com.example.adygall2.data.room.dao.AnswerDao
 import com.example.adygall2.data.room.dao.OrderDao
 import com.example.adygall2.data.room.dao.PictureDao
@@ -36,7 +37,7 @@ abstract class GameBase : RoomDatabase() {
     companion object {
         fun buildDatabase(context : Context) =
             Room.databaseBuilder(context, GameBase::class.java, "game_database").
-                    fallbackToDestructiveMigration().createFromAsset(FULL_BASE).build()
+                    fallbackToDestructiveMigration().createFromAsset(SECOND_BASE).build()
     }
 
     abstract fun getAnswerDao() : AnswerDao

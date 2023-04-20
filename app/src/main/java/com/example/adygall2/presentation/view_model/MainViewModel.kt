@@ -2,6 +2,8 @@ package com.example.adygall2.presentation.view_model
 
 import android.app.Activity
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -9,6 +11,7 @@ import com.example.adygall2.R
 import com.example.adygall2.data.models.ResourceProvider
 import com.example.adygall2.data.models.settings.UserInfo
 import com.example.adygall2.domain.usecases.UserSettingsUseCase
+import com.example.adygall2.presentation.model.UserProfileState
 import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -31,6 +34,17 @@ class MainViewModel(
     }
 
     val user: UserInfo get()  = userSettingsUseCase.userInfo()
+    private val userState = MutableLiveData<UserProfileState>()
+    val state: LiveData<UserProfileState> get() = userState
+    private var current = UserProfileState()
+
+    fun userStates() {
+        current = current.copy(
+            name = user.name,
+            photo = userSettingsUseCase.photo(resourceProvider = resourceProvider)
+        )
+        userState.value = current
+    }
 
     fun regenerateHealthOffline() {
         viewModelScope.launch {
@@ -64,11 +78,20 @@ class MainViewModel(
         }
     }
 
-    fun backPressedAlertDialog(activity: Activity) {
+    fun exitFromAppDialog(activity: Activity) {
         AlertDialog.Builder(activity)
             .setMessage(resourceProvider.getString(R.string.exit_from_app_question))
             .setPositiveButton(resourceProvider.getString(R.string.yes)) { _, _ -> activity.finish() }
             .setNegativeButton(resourceProvider.getString(R.string.no)) { dialog, _ -> dialog.cancel() }
+            .create()
+            .show()
+    }
+
+    fun exitFromLessonDialog(activity: Activity, navController: NavController) {
+        AlertDialog.Builder(activity)
+            .setMessage(R.string.exit_from_level_question)
+            .setPositiveButton(R.string.yes) { _,_ -> navController.navigate(R.id.homePage) }
+            .setNeutralButton(R.string.no) { dialog, _ -> dialog.cancel() }
             .create()
             .show()
     }

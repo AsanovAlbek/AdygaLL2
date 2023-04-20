@@ -32,7 +32,7 @@
         layout="@layout/dialog_show_answer"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_marginHorizontal="16dp"
+        android:layout_marginHorizontal="8dp"
         android:layout_gravity="center"
         android:layout_marginBottom="16dp"
         android:visibility="gone"/>

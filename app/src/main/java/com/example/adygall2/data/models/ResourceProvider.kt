@@ -11,7 +11,7 @@ class ResourceProvider(
 ) {
     fun getString(@StringRes stringId: Int) = appContext.getString(stringId)
     fun getString(@StringRes stringId: Int, vararg args: Any) = appContext.getString(stringId, *args)
-    fun getBitmap(@DrawableRes drawableId: Int) = appContext.getDrawable(drawableId)
+    fun getDrawable(@DrawableRes drawableId: Int) = appContext.getDrawable(drawableId)
     val provideContentResolver: ContentResolver get() = appContext.contentResolver
     val contextWrapper get() = ContextWrapper(appContext)
 }

@@ -54,7 +54,7 @@ class UserSettingsUseCase(
                 return BitmapFactory.decodeStream(inputStream)
             }
         } else {
-            return resourceProvider.getBitmap(R.drawable.default_avatar)!!.toBitmap()
+            return resourceProvider.getDrawable(R.drawable.default_avatar)!!.toBitmap()
         }
     }
 

@@ -7,8 +7,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_marginTop="16dp"
         android:src="@drawable/default_avatar"
 
@@ -52,6 +52,8 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
         android:minHeight="40dp"
+        app:boxStrokeColor="@color/blue"
+        app:hintTextColor="@color/blue"
         app:boxCornerRadiusBottomEnd="8dp"
         app:boxCornerRadiusBottomStart="8dp"
         app:boxCornerRadiusTopEnd="8dp"
@@ -66,7 +68,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/enter_new_name"
             android:paddingHorizontal="8dp"
-            android:textColor="@color/pink2" />
+            android:textColor="@color/blue"
+            android:inputType="text"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 

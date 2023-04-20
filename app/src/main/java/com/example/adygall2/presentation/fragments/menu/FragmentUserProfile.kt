@@ -30,7 +30,7 @@ class FragmentUserProfile: Fragment(R.layout.fragment_user_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.profile.observe(viewLifecycleOwner, ::observeUser)
         userProfileBinding.changeProfile.setOnClickListener {
-            viewModel.editUserProfileClick(findNavController())
+            findNavController().navigate(R.id.editUserProfile)
         }
     }
 

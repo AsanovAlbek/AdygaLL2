@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.fragments.menu.FragmentAuth"
+    tools:context=".presentation.fragments.main.FragmentAuth"
     android:background="@color/gray_91">
 
     <ImageView
@@ -20,17 +20,21 @@
         android:id="@+id/institute_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/institute_name"
+        android:layout_marginStart="8dp"
         android:fontFamily="@font/pt_sans_regular"
+        android:text="@string/institute_name"
         android:textColor="@color/blue"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/app_logo"
         app:layout_constraintBottom_toBottomOf="@id/app_logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/app_logo"
         app:layout_constraintTop_toTopOf="@id/app_logo"
-        android:layout_marginStart="8dp"/>
+        app:layout_constraintVertical_bias="0.421" />
 
     <LinearLayout
+        android:id="@+id/loginContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="108dp"
@@ -80,6 +84,7 @@
             android:drawablePadding="10dp"
             android:fontFamily="@font/corbel_bold"
             android:hint="@string/username_field"
+            android:inputType="text"
             android:textColor="@color/pink"
             android:textColorHint="@color/pink"
             app:layout_constraintEnd_toEndOf="parent"
@@ -113,5 +118,6 @@
         android:src="@drawable/auth_forest_img"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loginContent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
