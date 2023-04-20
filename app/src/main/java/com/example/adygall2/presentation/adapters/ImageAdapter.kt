@@ -24,15 +24,16 @@ import com.example.adygall2.domain.model.ComplexAnswer
 
 class ImageAdapter(
     private val context: Context,
-    private val complexAnswerList : List<ComplexAnswer>,
-    private val listener : ((ComplexAnswer) -> Unit)
+    private val complexAnswerList: List<ComplexAnswer>,
+    private val listener: ((ComplexAnswer) -> Unit),
+    private val soundsPlayer: SoundsPlayer
 ) : RecyclerView.Adapter<ImageAdapter.ImageQueHolder>() {
 
     /** Переменная для хранения позиции выбранного элемента */
     private var selectItemPosition = -1
 
     /** Обратный вызов при уничтожении фрагмента, нужен для своевременной очистки кэша [Glide] */
-    private var onDestroyCallback : (() -> Unit)? = null
+    private var onDestroyCallback: (() -> Unit)? = null
 
     /**
      * inner class - вложенный класс, имеющий доступ к переменным и методам внешнего класса
@@ -40,7 +41,7 @@ class ImageAdapter(
      * @param itemBinding - переменная для взаимодействия с элементом списка
      */
     inner class ImageQueHolder(
-        private val itemBinding : ImageQuestionItemBinding
+        private val itemBinding: ImageQuestionItemBinding
     ) : RecyclerView.ViewHolder(itemBinding.root) {
 
         // Метод для изменения элементов внутри элемента адаптера, а так же присвоение им действий
@@ -57,26 +58,27 @@ class ImageAdapter(
                 .dontAnimate()
                 .into(itemBinding.pictureInCard)
 
-            // Ставим слово к картинке
             itemBinding.wordInCard.text = answerPicture.name
 
             // Находим звук к варианту ответа
             val answerSound = answer.answerSound
-            val soundsPlayer = SoundsPlayer(context)
 
             if (selectItemPosition == -1) {
                 itemBinding.pictureCard.setCardBackgroundColor(WHITE)
                 itemBinding.wordInCard.setTextColor(BLACK)
-            }
-            else {
+            } else {
                 if (selectItemPosition == adapterPosition) {
                     // Если позиция выбранного элемента совпала с позицией адаптера, то меняем цвет
-                        // на зелённый
+                    // на зелённый
                     // Если элемент не выбран, то фон белый
-                    itemBinding.pictureCard.setCardBackgroundColor(context.resources.getColor(R.color.lavender_blue, null))
+                    itemBinding.pictureCard.setCardBackgroundColor(
+                        context.resources.getColor(
+                            R.color.lavender_blue,
+                            null
+                        )
+                    )
                     itemBinding.wordInCard.setTextColor(WHITE)
-                }
-                else {
+                } else {
                     // Иначе снова белый
                     itemBinding.pictureCard.setCardBackgroundColor(WHITE)
                     itemBinding.wordInCard.setTextColor(BLACK)
@@ -85,19 +87,18 @@ class ImageAdapter(
 
             // Присваиваем root элементу обработчик нажатий
             itemBinding.pictureCard.setOnClickListener {
-                    // Если позиция адаптера не равна выбранной, то оповещаем об этом адаптер,
-                    // после чего меняем выбранную позицию на позицию адаптера
+                // Если позиция адаптера не равна выбранной, то оповещаем об этом адаптер,
+                // после чего меняем выбранную позицию на позицию адаптера
+                notifyItemChanged(selectItemPosition)
+                if (selectItemPosition != bindingAdapterPosition) {
+                    selectItemPosition = bindingAdapterPosition
                     notifyItemChanged(selectItemPosition)
-                    if (selectItemPosition != adapterPosition) {
-                        selectItemPosition = adapterPosition
-                        notifyItemChanged(selectItemPosition)
-                    }
-                    if (soundsPlayer.isPlayingNow) {
-                        soundsPlayer.stopPlay()
-                    }
-                    soundsPlayer.playSound(answerSound)
-                    listener.invoke(answer)
-
+                }
+                if (soundsPlayer.isPlayingNow) {
+                    soundsPlayer.stopPlay()
+                }
+                soundsPlayer.playSound(answerSound)
+                listener.invoke(answer)
             }
         }
 
@@ -107,22 +108,22 @@ class ImageAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ImageQueHolder(
             ImageQuestionItemBinding.bind(
-                LayoutInflater.from(parent.context).
-                        inflate(R.layout.image_question_item, parent, false)
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.image_question_item, parent, false)
             )
         )
 
 
-
     // Метод для заполнения ViewHolder
     override fun onBindViewHolder(holder: ImageQueHolder, position: Int) {
+        soundsPlayer.setCompletionListener { soundsPlayer.stopPlay() }
         holder.binding(complexAnswerList[position])
     }
 
     // Получение количества элементов в адаптере
     override fun getItemCount() = complexAnswerList.size
 
-    fun onClearImages(callback : (() -> Unit)) {
+    fun onClearImages(callback: (() -> Unit)) {
         onDestroyCallback = callback
         onDestroyCallback?.invoke()
     }

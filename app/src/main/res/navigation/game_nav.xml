@@ -7,21 +7,21 @@
 
     <fragment
         android:id="@+id/authorize"
-        android:name="com.example.adygall2.presentation.fragments.menu.FragmentAuth"
+        android:name="com.example.adygall2.presentation.fragments.main.FragmentAuth"
         android:label="fragment_authorize"
-        tools:layout="@layout/fragment_authorize" >
+        tools:layout="@layout/fragment_authorize">
         <action
             android:id="@+id/action_authorize_to_homePage"
             app:destination="@id/homePage" />
     </fragment>
     <fragment
         android:id="@+id/homePage"
-        android:name="com.example.adygall2.presentation.fragments.menu.FragmentHomePage"
+        android:name="com.example.adygall2.presentation.fragments.main.FragmentHomePage"
         android:label="fragment_home_page"
         tools:layout="@layout/fragment_new_home_page" >
         <action
             android:id="@+id/action_homePage_to_taskContainer"
-            app:destination="@id/taskContainer" />
+            app:destination="@id/taskContainer"/>
         <argument
             android:name="hp"
             app:argType="integer" />
@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/taskContainer"
-        android:name="com.example.adygall2.presentation.fragments.menu.FragmentGamePage"
+        android:name="com.example.adygall2.presentation.fragments.main.FragmentGamePage"
         android:label="TaskContainer"
         tools:layout="@layout/task_container">
         <argument
@@ -41,29 +41,23 @@
             android:name="lesson_progress"
             app:argType="integer"/>
         <argument
-            android:name="hp"
-            app:argType="integer" />
-        <argument
-            android:name="exp"
-            app:argType="integer" />
-        <argument
             android:name="tasks"
             app:argType="com.example.adygall2.domain.model.Task[]" />
         <action
             android:id="@+id/action_taskContainer_to_taskResults"
-            app:destination="@id/taskResults" />
+            app:destination="@id/taskResults"/>
         <action
             android:id="@+id/action_taskContainer_to_homePage"
-            app:destination="@id/homePage" />
+            app:destination="@id/homePage"/>
     </fragment>
     <fragment
         android:id="@+id/taskResults"
-        android:name="com.example.adygall2.presentation.fragments.menu.FragmentGameResults"
+        android:name="com.example.adygall2.presentation.fragments.main.FragmentGameResults"
         android:label="TaskResults"
         tools:layout="@layout/fragment_lesson_results">
         <action
             android:id="@+id/action_taskResults_to_homePage"
-            app:destination="@id/homePage" />
+            app:destination="@id/homePage"/>
         <argument
             android:name="hp"
             app:argType="integer" />
@@ -72,7 +66,7 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_taskResults_to_homePage2"
-            app:destination="@id/homePage" />
+            app:destination="@id/homePage"/>
         <argument
             android:name="learnedWords"
             app:argType="integer" />
@@ -88,5 +82,44 @@
         <argument
             android:name="time"
             app:argType="string"/>
+    </fragment>
+    <fragment
+        android:id="@+id/userProfile"
+        android:name="com.example.adygall2.presentation.fragments.menu.FragmentUserProfile"
+        tools:layout="@layout/fragment_user_profile"
+        android:label="@string/user_profile">
+        <action
+            android:id="@+id/action_userProfile_to_editUserProfile"
+            app:destination="@id/editUserProfile"
+            app:popUpTo="@id/homePage"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/editUserProfile"
+        android:label="EditUserProfile"
+        tools:layout="@layout/fragment_edit_user"
+        android:name="com.example.adygall2.presentation.fragments.menu.FragmentEditUser">
+        <action
+            android:id="@+id/action_editUserProfile_to_userProfile"
+            app:destination="@id/userProfile"
+            app:popUpTo="@id/userProfile"/>
+    </fragment>
+    <fragment
+        android:id="@+id/appTutorial"
+        tools:layout="@layout/fragment_app_tutorial"
+        android:name="com.example.adygall2.presentation.fragments.menu.FragmentTutorial"
+        android:label="@string/help">
+    </fragment>
+    <fragment
+        android:id="@+id/aboutApp"
+        tools:layout="@layout/fragment_info_about_company"
+        android:label="@string/about_app"
+        android:name="com.example.adygall2.presentation.fragments.menu.FragmentAboutApp">
+    </fragment>
+    <fragment
+        android:id="@+id/contactUs"
+        android:label="@string/contact_us"
+        tools:layout="@layout/fragment_contact_us"
+        android:name="com.example.adygall2.presentation.fragments.menu.FragmentContactUs">
     </fragment>
 </navigation>

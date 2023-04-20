@@ -1,15 +1,15 @@
 package com.example.adygall2.data
 
-import com.example.adygall2.domain.model.Answer
-import com.example.adygall2.domain.model.Order
-import com.example.adygall2.domain.model.Task
 import com.example.adygall2.data.room.entities.AnswerEntity
 import com.example.adygall2.data.room.entities.OrderEntity
 import com.example.adygall2.data.room.entities.PictureEntity
 import com.example.adygall2.data.room.entities.SoundEffectEntity
 import com.example.adygall2.data.room.entities.SoundEntity
 import com.example.adygall2.data.room.entities.TaskEntity
+import com.example.adygall2.domain.model.Answer
+import com.example.adygall2.domain.model.Order
 import com.example.adygall2.domain.model.Source
+import com.example.adygall2.domain.model.Task
 
 /**
  * Модуль для маппинга Entity классов в модели

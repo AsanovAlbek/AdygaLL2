@@ -1,31 +1,25 @@
 package com.example.adygall2.presentation.adapters
 
-import android.animation.ObjectAnimator
 import android.content.Context
-import android.graphics.drawable.AnimatedImageDrawable
-import android.graphics.drawable.RotateDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
+import com.example.adygall2.data.models.settings.ProgressItem
 import com.example.adygall2.domain.model.Task
 import com.example.adygall2.databinding.ItemLessonInLevelBinding
 import com.example.adygall2.databinding.ItemLevelBinding
-import com.example.adygall2.domain.lesson
-import com.example.adygall2.domain.level
-import com.example.adygall2.domain.levels
+import com.google.android.material.button.MaterialButton
 
 /**
  * Адаптер уровней, в котором содержится адаптер уроков
  * */
 class LevelsAdapter(
-    private val context: Context,
     private val tasks : List<Task>,
     private val lessonClickEvent : ((Int,Int, List<Task>) -> Unit),
-    private val completedLesson: Int,
-    private val completedLevel: Int
+    private val userProgress: Set<ProgressItem>
 ) : RecyclerView.Adapter<LevelsAdapter.LevelHolder>() {
 
     private lateinit var lessonsAdapter: LessonsAdapter
@@ -58,12 +52,14 @@ class LevelsAdapter(
                     }
                 }
 
+                val availableLessons = userProgress.filter { it.level == position + 1 }.map { it.lesson }
+                itemBinding.root.isEnabled = userProgress.map { it.level }.contains(position)
+
                 // Присваиваем адаптер и подаём ему список заданий
                 lessonsAdapter = LessonsAdapter(
                     tasksInLevel = taskList,
                     lessonItemClickEvent = lessonClickEvent,
-                    completedLevel = completedLevel,
-                    completedLesson = completedLesson,
+                    userProgressInLesson = availableLessons,
                     chosenLevelNum = position + 1
                 )
                 lessonsList.adapter = lessonsAdapter
@@ -79,11 +75,9 @@ class LevelsAdapter(
         )
 
     override fun onBindViewHolder(holder: LevelHolder, position: Int) {
-        //holder.bind(taskList = tasks.levels().level(position + 1))
         holder.bind(position, levelTitle = levelsNames[position], taskList = tasks)
     }
 
-    //override fun getItemCount(): Int = tasks.levels().size
     override fun getItemCount(): Int = levelsNames.size
 }
 
@@ -91,8 +85,7 @@ class LevelsAdapter(
 class LessonsAdapter(
     private val tasksInLevel: List<Task>,
     private val lessonItemClickEvent: ((Int, Int, List<Task>) -> Unit),
-    private val completedLevel: Int,
-    private val completedLesson: Int,
+    private val userProgressInLesson: List<Int>,
     private val chosenLevelNum: Int
 ): RecyclerView.Adapter<LessonsAdapter.LessonViewHolder>() {
 
@@ -100,19 +93,19 @@ class LessonsAdapter(
         private val lessonBinding: ItemLessonInLevelBinding
     ): RecyclerView.ViewHolder(lessonBinding.root) {
         fun bind(number: Int, lessonTasks: List<Task>) {
-
             lessonBinding.apply {
-                lessonItem.isClickable = completedLevel <= number
+                root.isClickable = userProgressInLesson.contains(number)
                 lessonItem.setOnClickListener {
-                    Log.d("lessonAdapter","complLvl: $completedLevel, compLesson: $completedLesson, curLesson: $number, curLvl: $chosenLevelNum")
                     lessonItemClickEvent(chosenLevelNum, number, lessonTasks)
                 }
-                if (completedLesson < number && completedLevel <= chosenLevelNum) {
-                    lessonNumber.text = number.toString()
-                } else {
+
+                if (userProgressInLesson.contains(number)) {
                     lessonNumber.text = "✓"
                     lessonProgress.progress = 100
+                } else {
+                    lessonNumber.text = number.toString()
                 }
+
             }
         }
     }
@@ -130,5 +123,5 @@ class LessonsAdapter(
         holder.bind(number = position + 1, lessonTasks = tasksInLevel.chunked(15)[position])
     }
 
-    override fun getItemCount(): Int = 12
+    override fun getItemCount(): Int = 3
 }

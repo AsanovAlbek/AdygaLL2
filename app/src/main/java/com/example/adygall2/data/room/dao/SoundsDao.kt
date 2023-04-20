@@ -3,7 +3,6 @@ package com.example.adygall2.data.room.dao
 import androidx.room.Dao
 import androidx.room.Query
 import com.example.adygall2.data.room.consts.RoomConst.SOUNDS_TABLE_NAME
-import com.example.adygall2.data.room.entities.AnswerEntity
 import com.example.adygall2.data.room.entities.SoundEntity
 
 /**

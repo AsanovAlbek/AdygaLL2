@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
 import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.databinding.SimpleWordItemBinding
+import com.example.adygall2.domain.model.ComplexAnswer
 
 /**
  * Класс - Адаптер, наследуемый от класса Adapter из класса RecyclerView
@@ -21,8 +22,8 @@ import com.example.adygall2.databinding.SimpleWordItemBinding
 
 class ThreeWordsAdapter(
     private val context : Context,
-    private val itemsList : List <Answer>,
-    private val listener : ((Answer) -> Unit)
+    private val itemsList : List <ComplexAnswer>,
+    private val listener : ((ComplexAnswer) -> Unit)
 ) : RecyclerView.Adapter<ThreeWordsAdapter.ThreeWordsHolder>() {
 
     /** Позиция выбранного элемента */
@@ -32,15 +33,15 @@ class ThreeWordsAdapter(
         private val itemBinding : SimpleWordItemBinding
     ) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        fun binding(answer: Answer) {
-            itemBinding.simpleWord.text = answer.answer
+        fun binding(answer: ComplexAnswer) {
+            itemBinding.simpleWord.text = answer.answer.answer
 
             if (selectItemPosition == -1) {
                 // Если элемент не выбран, то фон белый
                 itemBinding.simpleWordContainer.setCardBackgroundColor(Color.WHITE)
             }
             else {
-                if (selectItemPosition == adapterPosition) {
+                if (selectItemPosition == bindingAdapterPosition) {
                     // Если позиция выбранного элемента совпала с позицией адаптера, то меняем цвет
                     // на зелённый
                     itemBinding.simpleWordContainer.setCardBackgroundColor(context.resources.getColor(R.color.lavender_blue, null))
@@ -54,9 +55,9 @@ class ThreeWordsAdapter(
             itemBinding.simpleWordContainer.setOnClickListener {
                 // Если позиция адаптера не равна выбранной, то оповещаем об этом адаптер,
                 // после чего меняем выбранную позицию на позицию адаптера
-                if (selectItemPosition != adapterPosition) {
+                if (selectItemPosition != bindingAdapterPosition) {
                     notifyItemChanged(selectItemPosition)
-                    selectItemPosition = adapterPosition
+                    selectItemPosition = bindingAdapterPosition
                     notifyItemChanged(selectItemPosition)
                     listener.invoke(answer)
                 }

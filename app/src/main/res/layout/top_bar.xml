@@ -46,6 +46,7 @@
         android:layout_marginEnd="16dp"
         app:trackCornerRadius="8dp"
         app:trackThickness="20dp"
+        android:max="15"
         app:trackColor="@color/gray"
         app:indicatorColor="@color/blue"
         app:layout_constraintEnd_toEndOf="parent"

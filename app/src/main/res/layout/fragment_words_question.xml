@@ -27,17 +27,17 @@
 
     </LinearLayout>
 
-    <FrameLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/messageField"
         android:layout_width="340dp"
-        android:layout_height="220dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="@drawable/clipart2"
+        android:backgroundTint="@color/white"
         android:paddingHorizontal="24dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
+        android:paddingVertical="8dp"
+        app:cardCornerRadius="8dp"
+        app:strokeWidth="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/wordsLevelLL">
 
@@ -46,37 +46,39 @@
             android:layout_width="match_parent"
             android:layout_height="122dp"
             android:layout_gravity="center|start"
-            android:layout_marginStart="14dp"
-            android:layout_marginEnd="14dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginVertical="10dp"
             app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
             tools:listitem="@layout/sentence_item" />
 
-    </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <LinearLayout
         android:id="@+id/picAndBtns"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="220dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/wordsRecView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/messageField">
+        app:layout_constraintTop_toBottomOf="@id/messageField"
+        app:layout_constraintVertical_bias="0.0">
 
         <ImageView
             android:id="@+id/happyManIcon"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
             android:layout_marginBottom="8dp"
             android:src="@drawable/happy_woman_icon"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"
+            android:layout_gravity="center"/>
 
         <include
             android:id="@+id/soundButtons"
             layout="@layout/sound_buttons"
             android:layout_width="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_height="wrap_content" />
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
 
@@ -84,27 +86,13 @@
         android:id="@+id/wordsRecView"
         android:layout_width="210dp"
         android:layout_height="120dp"
+        android:layout_marginTop="44dp"
         android:orientation="horizontal"
         app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/picAndBtns"
         app:layout_constraintTop_toBottomOf="@+id/messageField"
-        app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/sentence_item" />
-
-    <TextView
-        android:id="@+id/soundTaskSkip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:fontFamily="@font/corbel_bold"
-        android:text="@string/i_cant_listen_now"
-        android:textColor="@color/gray"
-        app:layout_constraintBottom_toBottomOf="@+id/picAndBtns"
-        app:layout_constraintEnd_toEndOf="@+id/wordsRecView"
-        app:layout_constraintHorizontal_bias="0.471"
-        app:layout_constraintStart_toStartOf="@+id/picAndBtns"
-        app:layout_constraintTop_toBottomOf="@id/wordsRecView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

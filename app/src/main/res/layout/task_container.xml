@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/gameTaskContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_91"
-    >
+    android:background="@color/gray_91">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <include
@@ -20,9 +20,10 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/taskViewPager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
     </LinearLayout>
 
@@ -31,8 +32,7 @@
         layout="@layout/dialog_show_answer"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginHorizontal="8dp"
         android:layout_gravity="center"
         android:layout_marginBottom="16dp"
         android:visibility="gone"/>
@@ -50,7 +50,18 @@
             android:layout_height="40dp"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:id="@+id/soundTaskSkip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/corbel_bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            android:text="@string/i_cant_listen_now"
+            android:textColor="@color/gray" />
 
         <include
             android:id="@+id/taskBottomBar"

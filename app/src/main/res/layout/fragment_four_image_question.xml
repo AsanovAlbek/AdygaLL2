@@ -33,6 +33,9 @@
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             tools:listitem="@layout/image_question_item"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            tools:itemCount="4"
             android:layout_marginBottom="30dp"/>
 
     </LinearLayout>
