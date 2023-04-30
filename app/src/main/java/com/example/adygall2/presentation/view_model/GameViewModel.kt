@@ -2,12 +2,10 @@ package com.example.adygall2.presentation.view_model
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,13 +23,10 @@ import com.example.adygall2.domain.usecases.SourceInteractor
 import com.example.adygall2.domain.usecases.UserSettingsUseCase
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.createQuestion
-import com.example.adygall2.presentation.const.LastNavigationPage.GAME_SCREEN
 import com.example.adygall2.presentation.fragments.main.FragmentGamePageDirections
 import com.example.adygall2.presentation.model.DialogState
 import com.example.adygall2.presentation.model.GameState
 import com.google.android.material.snackbar.Snackbar
-import java.io.File
-import java.io.FileInputStream
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -255,7 +250,10 @@ class GameViewModel(
                     .setPositiveButton(R.string.yes) { _, _ ->
                         currentGameState.apply {
                             onNextQuestion()
-                            userSettingsUseCase.updateUserInfo(userCoins = currentGameState.coins)
+                            userSettingsUseCase.updateUserInfo(
+                                userCoins = currentGameState.coins,
+                                globalTime = user.globalPlayingTime + currentGameState.finishTime - currentGameState.startTime
+                            )
                             val navigateToHome = FragmentGamePageDirections.actionTaskContainerToHomePage(
                                 hp = hp,
                                 exp = coins
@@ -458,7 +456,8 @@ class GameViewModel(
         context: Context,
         tasks: List<Task>,
         level: Int,
-        lesson: Int
+        lesson: Int,
+        levelName: String
     ) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
@@ -484,7 +483,8 @@ class GameViewModel(
                         coins = user.coins,
                         lessonProgress = lesson,
                         levelProgress = level,
-                        currentQuestionPosition = 0
+                        currentQuestionPosition = 0,
+                        levelName = levelName
                     )
                     _gameState.value = currentGameState
                     refreshLessonTitle()
@@ -518,10 +518,14 @@ class GameViewModel(
     }
 
     /** Сохранение статистики пользователя после выхода */
-    fun saveUserStates(hp: Int, coins: Int) = userSettingsUseCase.updateUserInfo(
-        userHp = hp,
-        userCoins = coins
-    )
+    fun saveUserStates(hp: Int, coins: Int) {
+        currentGameState = currentGameState.copy(finishTime = System.currentTimeMillis())
+        return userSettingsUseCase.updateUserInfo(
+            userHp = hp,
+            userCoins = coins,
+            globalTime = user.globalPlayingTime + currentGameState.finishTime - currentGameState.startTime
+        )
+    }
 
     /** Проигрывание аудио эффекта */
     private fun playEffect() {
@@ -579,8 +583,9 @@ class GameViewModel(
                 currentGameState = currentGameState.copy(
                     lessonTitle = resourceProvider.getString(
                         R.string.lesson_title_mask,
-                        currentGameState.levelProgress,
-                        currentGameState.lessonProgress
+                        currentGameState.levelName,
+                        currentGameState.lessonProgress,
+                        currentGameState.currentQuestionPosition + 1
                     )
                 )
                 _gameState.value = currentGameState
@@ -590,19 +595,6 @@ class GameViewModel(
 
     /** Получение фото пользователя из кэша приложения */
     fun getPhotoFromCache(): Bitmap {
-        val directory =
-            resourceProvider.contextWrapper.getDir(
-                resourceProvider.getString(R.string.user_avatar),
-                Context.MODE_PRIVATE
-            )
-        val saveFile = File(directory, "thumbnail.jpeg")
-
-        if (saveFile.exists()) {
-            FileInputStream(saveFile).use { inputStream ->
-                return BitmapFactory.decodeStream(inputStream)
-            }
-        } else {
-            return resourceProvider.getDrawable(R.drawable.default_avatar)!!.toBitmap()
-        }
+        return userSettingsUseCase.photo(resourceProvider)
     }
 }

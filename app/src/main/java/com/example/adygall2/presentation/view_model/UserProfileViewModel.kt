@@ -5,11 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.example.adygall2.R
 import com.example.adygall2.data.models.ResourceProvider
 import com.example.adygall2.domain.usecases.UserSettingsUseCase
 import com.example.adygall2.presentation.model.UserProfileState
+import java.util.Calendar
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,13 +38,22 @@ class UserProfileViewModel(
                         learnedWordsCount = user.learnedWords.count(),
                         levelProgress = levels,
                         lessonProgress = user.learningProgressSet.size,
-                        globalPlayingHours = 1,
+                        globalPlayingHours = user.globalPlayingTime,
                         weekPlayingHours = 1
                     )
                     userProfile.value = currentProfile
                 }
             }
-
         }
+    }
+
+    fun millisToDate(millis: Long): String {
+        if (millis > 0) {
+            val days = millis / (1000 * 60 * 60 * 24)
+            val hours = millis / (1000 * 60 * 60) % 24
+            val minutes = millis / (1000 * 60) % 60
+            return resourceProvider.getString(R.string.global_date_format, days, hours, minutes)
+        }
+        return resourceProvider.getString(R.string.global_date_format, 0, 0 ,0)
     }
 }

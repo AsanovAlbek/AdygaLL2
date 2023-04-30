@@ -73,7 +73,9 @@ class MainViewModel(
     fun saveExitTime() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                userSettingsUseCase.updateUserInfo(userLastOnlineTime = Date().time)
+                userSettingsUseCase.updateUserInfo(
+                    userLastOnlineTime = Date().time
+                )
             }
         }
     }
@@ -90,7 +92,9 @@ class MainViewModel(
     fun exitFromLessonDialog(activity: Activity, navController: NavController) {
         AlertDialog.Builder(activity)
             .setMessage(R.string.exit_from_level_question)
-            .setPositiveButton(R.string.yes) { _,_ -> navController.navigate(R.id.homePage) }
+            .setPositiveButton(R.string.yes) { _,_ ->
+                navController.navigate(R.id.homePage)
+            }
             .setNeutralButton(R.string.no) { dialog, _ -> dialog.cancel() }
             .create()
             .show()

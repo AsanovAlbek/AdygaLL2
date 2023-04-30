@@ -1,16 +1,13 @@
 package com.example.adygall2.presentation.activities
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.view.Window
-import android.view.WindowInsetsController
-import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -67,28 +64,53 @@ class MainActivity : AppCompatActivity() {
     // Установка видимости тулбара
     private fun setupToolbarVisible() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            when(destination.id) {
+            when (destination.id) {
                 R.id.userProfile,
                 R.id.editUserProfile,
                 R.id.aboutApp,
                 R.id.homePage,
                 R.id.appTutorial,
-                R.id.contactUs-> showActionBar()
+                R.id.contactUs -> showActionBar()
                 else -> hideActionBar()
             }
         }
     }
 
     private fun hideActionBar() {
-        supportActionBar?.hide()
         // Прячет Action Bar
-        window.insetsController?.hide(WindowInsetsCompat.Type.systemBars())
+        /*if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            supportActionBar?.hide()
+            window.insetsController?.hide(WindowInsetsCompat.Type.systemBars())
+        } else {
+            supportActionBar?.hide()
+            @Suppress("DEPRECATION")
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+            @Suppress("DEPRECATION")
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        }*/
+        supportActionBar?.hide()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, binding.root).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
     }
 
     private fun showActionBar() {
         // Показывает Action Bar
+        /*if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            supportActionBar?.show()
+            window.insetsController?.show(WindowInsetsCompat.Type.systemBars())
+        } else {
+            supportActionBar?.show()
+            @Suppress("DEPRECATION")
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            @Suppress("DEPRECATION")
+            window.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+        }*/
         supportActionBar?.show()
-        window.insetsController?.show(WindowInsetsCompat.Type.systemBars())
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+        WindowInsetsControllerCompat(window, binding.root).show(WindowInsetsCompat.Type.systemBars())
     }
 
     private fun observe() {
@@ -102,7 +124,10 @@ class MainActivity : AppCompatActivity() {
         // Здесь фрагменты, которые будут в Navigation Drawer
         // id обязательно должны быть одинаковыми с id элементов из меню
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.homePage), binding.drawerLayout
+            setOf(
+                R.id.homePage
+            ),
+            binding.drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
@@ -126,8 +151,8 @@ class MainActivity : AppCompatActivity() {
 
     // При закрытии приложения записывается время выхода
     override fun onStop() {
-        super.onStop()
         viewModel.saveExitTime()
+        super.onStop()
     }
 
     // Переопределили, чтобы работал бургер
@@ -137,7 +162,7 @@ class MainActivity : AppCompatActivity() {
 
     // Кастомизация нажатия кнопки назад
     override fun onBackPressed() {
-        when(navController.currentDestination?.id) {
+        when (navController.currentDestination?.id) {
             // Диалоговое окно с выходом из приложения
             R.id.homePage, R.id.authorize -> viewModel.exitFromAppDialog(this)
             // Диалоговое окно с выходом из урока
@@ -147,7 +172,7 @@ class MainActivity : AppCompatActivity() {
             R.id.userProfile,
             R.id.appTutorial,
             R.id.aboutApp,
-            R.id.contactUs-> navController.navigate(R.id.homePage)
+            R.id.contactUs -> navController.navigate(R.id.homePage)
             // Иначе ничего не меняем
             else -> super.onBackPressed()
         }

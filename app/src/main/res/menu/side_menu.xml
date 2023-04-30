@@ -5,8 +5,8 @@
     <group
         android:checkableBehavior="single">
         <item
-            android:id="@+id/userProfile"
-            android:title="@string/profile"/>
+            android:id="@+id/homePage"
+            android:title="@string/homePageTitle"/>
         <item
             android:id="@+id/contactUs"
             android:title="@string/contact_us"/>

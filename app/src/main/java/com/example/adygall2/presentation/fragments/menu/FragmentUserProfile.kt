@@ -39,8 +39,7 @@ class FragmentUserProfile: Fragment(R.layout.fragment_user_profile) {
             avatar.setImageBitmap(state.photo)
             name.text = state.name
             wordsProgress.text = "${wordsProgress.text} ${state.learnedWordsCount}"
-            weekHours.text = "${weekHours.text} ${state.weekPlayingHours}"
-            globalHours.text = "${globalHours.text} ${state.globalPlayingHours}"
+            globalHours.text = "${globalHours.text} ${viewModel.millisToDate(state.globalPlayingHours)}"
             levelProgress.text = "${levelProgress.text} ${state.levelProgress}"
             lessonProgress.text = "${lessonProgress.text} ${state.lessonProgress}"
         }

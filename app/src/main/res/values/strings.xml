@@ -41,7 +41,7 @@
     <string name="remaining_lives">Оставшиеся жизни</string>
     <string name="passage_time">Время прохождения</string>
     <string name="minutes_and_seconds_format">mm:ss</string>
-    <string name="lesson_title_mask">Урок %d - %d</string>
+    <string name="lesson_title_mask">%s. Урок %d. Задание %d.</string>
     <string name="type_image">image/*</string>
     <string name="user_avatar">user_avatar</string>
     <string name="institute_name">Адыгейский республиканский \nинститут гуманитарных \nисследований имени Т. М. Керашева</string>
@@ -101,4 +101,17 @@ In nibh mauris cursus mattis molestie a iaculis at erat. Et netus et malesuada f
 
 Venenatis tellus in metus vulputate eu scelerisque. Nulla aliquet porttitor lacus luctus accumsan tortor. Aliquam etiam erat velit scelerisque in dictum. Diam sit amet nisl suscipit adipiscing bibendum est ultricies integer. Dolor purus non enim praesent. Enim sit amet venenatis urna cursus eget nunc scelerisque viverra. Eget egestas purus viverra accumsan. Imperdiet sed euismod nisi porta lorem mollis aliquam ut. Urna id volutpat lacus laoreet non curabitur gravida arcu. Mollis nunc sed id semper. Posuere ac ut consequat semper. Nunc eget lorem dolor sed viverra ipsum nunc. Tristique senectus et netus et malesuada fames ac. Ut sem viverra aliquet eget sit.
     </string>
+    <string name="global_date_format">%d д, %d ч, %d м</string>
+    <string name="company_name">Разработано КБНЦ РАН по заказу\n Адыгейского института</string>
+    <string name="release_date">Дата релиза 01.06.2023</string>
+    <string name="app_version_name">Версия: 1.0</string>
+    <string name="about_app_text">
+        Актуальность изучения адыгейского языка сейчас находится на высоком уровне.Многие люди хотят научиться говорить на этом красивом языке, но не имеют возможности посещать курсы и занятия.
+        Именно поэтому мы создали простое, удобное и интересное приложение, которое помогает изучать адыгский языкв любое время и в любом месте. Наше приложение позволяет не только изучать словарный запас и грамматику адыгскогоязыка, но и закреплять полученные знания через разнообразные игры с различными формами заданий.
+        Весь материал представлен в понятном и удобном формате. Изучение адыгского языка с нашим приложением – это увлекательный процесс, ведь игры помогают закреплять знания легко и с удовольствием. Приложение доступно для использования как в офлайн режиме, что позволяет изучать язык в любоеудобное для вас время. Наше приложение – не просто возможность изучить новый язык.Это также возможность расширить свой кругозор, общаться с новыми людьми, находить новые возможностидля карьерного роста.
+        Не упустите шанс, наши пользователи уже наслаждаются изучением адыгского языкас нашим приложением, присоединяйтесь к ним!
+    </string>
+    <string name="right_answer_is">Правильный ответ:</string>
+    <string name="not_right_answer">Неправильный ответ</string>
+    <string name="homePageTitle">Главная</string>
 </resources>

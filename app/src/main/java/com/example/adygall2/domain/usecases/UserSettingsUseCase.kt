@@ -27,7 +27,7 @@ class UserSettingsUseCase(
         userLastOnlineTime: Long? = null,
         learnedWords: Set<String>? = null,
         userLearningProgressSet: Set<ProgressItem>? = null,
-        userLastFragment: Int? = null
+        globalTime: Long? = null
     ) = userSettings.updateUserInfo(
             userHp = userHp,
             userCoins = userCoins,
@@ -36,7 +36,7 @@ class UserSettingsUseCase(
             userLastOnlineTime = userLastOnlineTime,
             learnedWords = learnedWords,
             userLearningProgressSet = userLearningProgressSet,
-            lastSavedFragment = userLastFragment
+            globalTime = globalTime
         )
 
     fun addLessonToCompletedLessons(level: Int, lesson: Int) = userSettings.addCompletedLesson(level, lesson)

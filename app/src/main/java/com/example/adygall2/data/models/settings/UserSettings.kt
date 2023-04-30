@@ -3,6 +3,7 @@ package com.example.adygall2.data.models.settings
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.example.adygall2.data.local.PrefConst.DATE
+import com.example.adygall2.data.local.PrefConst.GLOBAL_TIME
 import com.example.adygall2.data.local.PrefConst.IS_USER_SIGN_UP
 import com.example.adygall2.data.local.PrefConst.LAST_USER_FRAGMENT
 import com.example.adygall2.data.local.PrefConst.LEARNED_WORDS
@@ -33,8 +34,7 @@ object UserSettings: KoinComponent {
     private val lastUserOnlineDate by inject<SharedPreferences>(named(DATE))
     /** Сохранение и получение статуса зарегистрированности пользователя */
     private val isUserSignUp by inject<SharedPreferences>(named(IS_USER_SIGN_UP))
-    /** Последний экран, на котором был пользователь */
-    private val lastUserFragment by inject<SharedPreferences>(named(LAST_USER_FRAGMENT))
+    private val globalPlayingTime by inject<SharedPreferences>(named(GLOBAL_TIME))
 
     fun userInfo(): UserInfo =
         UserInfo(
@@ -49,7 +49,7 @@ object UserSettings: KoinComponent {
                 val (level, lesson) = it.split("-")
                 ProgressItem(level = level.toInt(), lesson = lesson.toInt())
             }?.toMutableSet() ?: mutableSetOf(),
-            lastFragmentNum = lastUserFragment.getInt(LAST_USER_FRAGMENT, 1)
+            globalPlayingTime = globalPlayingTime.getLong(GLOBAL_TIME, 0L)
         )
 
     fun updateUserInfo(
@@ -60,7 +60,8 @@ object UserSettings: KoinComponent {
         userLastOnlineTime: Long? = null,
         learnedWords: Set<String>? = null,
         userLearningProgressSet: Set<ProgressItem>? = null,
-        lastSavedFragment: Int? = null
+        lastSavedFragment: Int? = null,
+        globalTime: Long? = null
     ) {
         userHp?.let { userHealth.edit { putInt(USER_HP, it) } }
         userCoins?.let { userMoney.edit { putInt(USER_EXP, it) } }
@@ -73,7 +74,7 @@ object UserSettings: KoinComponent {
             userProgressSet.edit { putStringSet(USER_PROGRESS, progressItemToStringSet)
             }
         }
-        lastSavedFragment?.let { lastUserFragment.edit { putInt(LAST_USER_FRAGMENT,it) } }
+        globalTime?.let { globalPlayingTime.edit { putLong(GLOBAL_TIME, it) } }
     }
 
     fun addCompletedLesson(level: Int, lesson: Int) {
@@ -91,7 +92,7 @@ data class UserInfo(
     val lastUserOnline: Long = 0L,
     val learnedWords: MutableSet<String> = mutableSetOf(),
     val learningProgressSet: MutableSet<ProgressItem> = mutableSetOf(),
-    val lastFragmentNum: Int = 1
+    val globalPlayingTime: Long
 )
 
 data class ProgressItem(

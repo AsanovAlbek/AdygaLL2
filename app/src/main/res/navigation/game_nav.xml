@@ -46,6 +46,9 @@
         <action
             android:id="@+id/action_taskContainer_to_taskResults"
             app:destination="@id/taskResults"/>
+        <argument
+            android:name="levelName"
+            app:argType="string"/>
         <action
             android:id="@+id/action_taskContainer_to_homePage"
             app:destination="@id/homePage"/>

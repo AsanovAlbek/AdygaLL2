@@ -9,4 +9,5 @@ object PrefConst {
     const val USER_NAME = "user_name"
     const val IS_USER_SIGN_UP = "is_user_sign_up"
     const val LAST_USER_FRAGMENT = "last_fragment"
+    const val GLOBAL_TIME = "global_time"
 }

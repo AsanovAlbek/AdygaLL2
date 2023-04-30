@@ -18,7 +18,7 @@ import com.google.android.material.button.MaterialButton
  * */
 class LevelsAdapter(
     private val tasks : List<Task>,
-    private val lessonClickEvent : ((Int,Int, List<Task>) -> Unit),
+    private val lessonClickEvent : ((Int,Int, List<Task>, String) -> Unit),
     private val userProgress: Set<ProgressItem>
 ) : RecyclerView.Adapter<LevelsAdapter.LevelHolder>() {
 
@@ -60,7 +60,8 @@ class LevelsAdapter(
                     tasksInLevel = taskList,
                     lessonItemClickEvent = lessonClickEvent,
                     userProgressInLesson = availableLessons,
-                    chosenLevelNum = position + 1
+                    chosenLevelNum = position + 1,
+                    lessonName = levelsNames[position]
                 )
                 lessonsList.adapter = lessonsAdapter
             }
@@ -84,9 +85,10 @@ class LevelsAdapter(
 // Адаптер подменю
 class LessonsAdapter(
     private val tasksInLevel: List<Task>,
-    private val lessonItemClickEvent: ((Int, Int, List<Task>) -> Unit),
+    private val lessonItemClickEvent: ((Int, Int, List<Task>, String) -> Unit),
     private val userProgressInLesson: List<Int>,
-    private val chosenLevelNum: Int
+    private val chosenLevelNum: Int,
+    private val lessonName: String
 ): RecyclerView.Adapter<LessonsAdapter.LessonViewHolder>() {
 
     inner class LessonViewHolder(
@@ -96,7 +98,7 @@ class LessonsAdapter(
             lessonBinding.apply {
                 root.isClickable = userProgressInLesson.contains(number)
                 lessonItem.setOnClickListener {
-                    lessonItemClickEvent(chosenLevelNum, number, lessonTasks)
+                    lessonItemClickEvent(chosenLevelNum, number, lessonTasks, lessonName)
                 }
 
                 if (userProgressInLesson.contains(number)) {

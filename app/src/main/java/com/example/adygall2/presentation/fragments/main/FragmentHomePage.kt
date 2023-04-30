@@ -74,22 +74,24 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
     private fun levelsTree(list: List<Task>) {
         val adapter = LevelsAdapter(
             tasks = list,
-            lessonClickEvent = { levelNumber, number, adapterList -> openTasks(levelNumber, number, adapterList) },
+            lessonClickEvent = { levelNumber, number, adapterList, levelName ->
+                openTasks(levelNumber, number, adapterList, levelName)
+            },
             userProgress = viewModel.user.learningProgressSet
         )
         homePageBinding.levelItems.adapter = adapter
         homePageBinding.levelItems.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    private fun openTasks(levelNumber: Int, lessonNumber: Int, tasks: List<Task>) {
+    private fun openTasks(levelNumber: Int, lessonNumber: Int, tasks: List<Task>, levelName: String) {
         if (homePageBinding.homeBottomBar.hp.progress > 0) {
             viewModel.openLesson(
                 level = levelNumber,
                 lesson = lessonNumber,
                 tasks = tasks,
-                navController = findNavController()
+                navController = findNavController(),
+                levelName = levelName
             )
-            Log.i("home", "level = $levelNumber lesson = $lessonNumber")
         } else {
             viewModel.noHpMessage(requireContext())
         }

@@ -90,5 +90,9 @@ val dataModule = module {
         androidApplication().applicationContext.getSharedPreferences(PrefConst.LAST_USER_FRAGMENT, Context.MODE_PRIVATE)
     }
 
+    single(named(PrefConst.GLOBAL_TIME)) {
+        androidApplication().applicationContext.getSharedPreferences(PrefConst.GLOBAL_TIME, Context.MODE_PRIVATE)
+    }
+
     single<UserSettings> { UserSettings }
 }

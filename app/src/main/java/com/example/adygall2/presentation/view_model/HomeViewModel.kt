@@ -78,12 +78,14 @@ class HomeViewModel(
         level: Int,
         lesson: Int,
         tasks: List<Task>,
-        navController: NavController
+        navController: NavController,
+        levelName: String
     ) {
         val gameAction = FragmentHomePageDirections.actionHomePageToTaskContainer(
             levelProgress = level,
             lessonProgress = lesson,
-            tasks = tasks.toTypedArray()
+            tasks = tasks.toTypedArray(),
+            levelName = levelName
         )
         navController.navigate(gameAction)
     }

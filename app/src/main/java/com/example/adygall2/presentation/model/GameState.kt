@@ -3,6 +3,7 @@ package com.example.adygall2.presentation.model
 data class GameState(
     val levelProgress: Int = 0,
     val lessonProgress: Int = 0,
+    val levelName: String = "",
     val lessonTitle: String = "",
     val userAnswer: String = "",
     val rightAnswer: String = "",

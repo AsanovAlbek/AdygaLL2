@@ -61,7 +61,8 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
             context = requireContext().applicationContext,
             tasks = gameArgs.tasks.toList(),
             lesson = gameArgs.lessonProgress,
-            level = gameArgs.levelProgress
+            level = gameArgs.levelProgress,
+            levelName = gameArgs.levelName
         )
 
         taskContainerBinding.taskViewPager.apply {
@@ -82,16 +83,16 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
      * При скрытии фрагмента чистится кэш картинок
      */
     override fun onPause() {
-        super.onPause()
         viewModel.clearGlideCache()
         taskContainerBinding.taskBottomBar.apply {
             viewModel.saveUserStates(hp = hp.progress, coins = exp.progress)
         }
+        super.onPause()
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         tasksAdapter.clear()
+        super.onDestroyView()
     }
 
     private fun hillHp() {
