@@ -14,6 +14,6 @@ class GetAllOrdersUseCase(
     private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend operator fun invoke() = withContext(ioDispatcher) {
-        return@withContext repository.getAllOrders()
+        repository.getAllOrders()
     }
 }

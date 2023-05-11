@@ -2,33 +2,59 @@ package com.example.adygall2.presentation.view_model
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.adygall2.data.models.ResourceProvider
-import com.example.adygall2.data.models.settings.UserInfo
-import com.example.adygall2.domain.usecases.UserSettingsUseCase
-import com.example.adygall2.presentation.const.LastNavigationPage.SIGN_UP_SCREEN
+import com.example.adygall2.domain.model.User
+import com.example.adygall2.domain.usecases.UserUseCase
+import com.example.adygall2.presentation.activities.UserChangeListener
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AuthViewModel(
     private val resourceProvider: ResourceProvider,
-    private val userSettingsUseCase: UserSettingsUseCase
+    private val userUseCase: UserUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
+    private val mainDispatcher: CoroutineDispatcher
 ): ViewModel() {
 
     companion object {
         private const val TAG = "AuthVM"
     }
 
-    val savedUser: UserInfo get() = userSettingsUseCase.userInfo()
+    lateinit var savedUser: User
 
-    fun logInUser(userName: String) = userSettingsUseCase.updateUserInfo(
-            name = userName.replace("\n", ""),
-            userIsSignUp = true
-        )
+    init {
+        viewModelScope.launch {
+            withContext(mainDispatcher) {
+                savedUser = if (userUseCase.isUserExist()) userUseCase.getUser() else User()
+            }
+        }
+    }
+
+    fun logInUser(userName: String, userChangeListener: UserChangeListener) {
+        viewModelScope.launch {
+            withContext(mainDispatcher) {
+                Log.i("user", "user name = $userName")
+                savedUser = savedUser.copy(
+                    name = userName,
+                    isUserSignUp = true
+                )
+                Log.i("user", "user is $savedUser")
+                userUseCase.updateUser(savedUser)
+                userChangeListener.onUserChange(savedUser)
+            }
+        }
+    }
 
     fun savePhotoInCache(image: Bitmap? = null, uri: Uri = Uri.EMPTY) {
-        userSettingsUseCase.savePhoto(image = image, uri = uri, resourceProvider = resourceProvider)
+        userUseCase.saveUserImage(image = image, uri = uri, resourceProvider = resourceProvider)
     }
 
     fun getPhotoFromCache(): Bitmap {
-        return userSettingsUseCase.photo(resourceProvider)
+        return userUseCase.getUserImage(resourceProvider = resourceProvider)
     }
 }

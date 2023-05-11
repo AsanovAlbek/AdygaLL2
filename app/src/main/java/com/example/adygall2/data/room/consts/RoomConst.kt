@@ -17,6 +17,8 @@ object RoomConst {
     const val SOUNDS_TABLE_NAME = "sounds"
     const val SOUND_EFFECT_TABLE_NAME = "sound_effect"
 
+    const val USER_TABLE = "user"
+
     // Названия полей
     const val ID = "id"
     const val TASK_ID = "task_id"
@@ -32,4 +34,12 @@ object RoomConst {
     const val LEVEL = "level"
     const val LESSON = "lesson"
     const val EXERCISE = "exercise"
+
+    const val HP = "hp"
+    const val COINS = "coins"
+    const val IS_USER_SIGN_UP = "is_user_sign_up"
+    const val LAST_ONLINE = "last_online"
+    const val LEARNED_WORDS = "learned_words"
+    const val LEARNING_PROGRESS = "learning_progress"
+    const val GLOBAL_PLAYED_TIME = "global_played_time"
 }

@@ -14,6 +14,6 @@ class AnswersByTaskIdUseCase(
     private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend operator fun invoke(taskId: Int) = withContext(ioDispatcher) {
-        return@withContext repository.getAnswersByTaskId(taskId)
+        repository.getAnswersByTaskId(taskId)
     }
 }

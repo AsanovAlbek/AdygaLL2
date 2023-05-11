@@ -1,22 +1,27 @@
 package com.example.adygall2.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.bumptech.glide.Glide
-import com.example.adygall2.data.room.dao.AnswerDao
-import com.example.adygall2.data.room.dao.OrderDao
-import com.example.adygall2.data.room.dao.PictureDao
-import com.example.adygall2.data.room.dao.SoundEffectDao
-import com.example.adygall2.data.room.dao.SoundsDao
-import com.example.adygall2.data.room.dao.TaskDao
+import com.example.adygall2.data.room.gamebase.dao.AnswerDao
+import com.example.adygall2.data.room.gamebase.dao.OrderDao
+import com.example.adygall2.data.room.gamebase.dao.PictureDao
+import com.example.adygall2.data.room.gamebase.dao.SoundEffectDao
+import com.example.adygall2.data.room.gamebase.dao.SoundsDao
+import com.example.adygall2.data.room.gamebase.dao.TaskDao
+import com.example.adygall2.data.room.userbase.dao.UserDao
 import com.example.adygall2.data.toAnswer
+import com.example.adygall2.data.toEntity
 import com.example.adygall2.data.toOrder
 import com.example.adygall2.data.toSource
 import com.example.adygall2.data.toTask
+import com.example.adygall2.data.toUser
 import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.domain.model.ComplexAnswer
 import com.example.adygall2.domain.model.Order
 import com.example.adygall2.domain.model.Source
 import com.example.adygall2.domain.model.Task
+import com.example.adygall2.domain.model.User
 import com.example.adygall2.domain.repository.Repository
 
 /**
@@ -29,12 +34,27 @@ class RepositoryImpl(
     private val pictureDao: PictureDao,
     private val taskDao: TaskDao,
     private val soundsDao: SoundsDao,
-    private val soundEffectDao: SoundEffectDao
+    private val soundEffectDao: SoundEffectDao,
+    private val userDao: UserDao
 ) : Repository {
 
     // Answer
     override suspend fun getAnswersByTaskId(taskId: Int): MutableList<Answer> =
         answerDao.getTaskAnswers(taskId).map { it.toAnswer() }.toMutableList()
+
+    // User
+    override suspend fun getUser(): User {
+        val user = userDao.getUser().toUser()
+        Log.i("repository", "getted user is $user")
+        return user
+    }
+
+    override suspend fun updateUser(user: User) {
+        Log.i("repository", "upserted user is $user")
+        userDao.upsertUser(user.toEntity())
+    }
+
+    override suspend fun isUserExist(): Boolean = userDao.isUserExist()
 
     // Order
 

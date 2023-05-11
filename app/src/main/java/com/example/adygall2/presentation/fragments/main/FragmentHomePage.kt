@@ -1,7 +1,6 @@
 package com.example.adygall2.presentation.fragments.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentNewHomePageBinding
 import com.example.adygall2.domain.model.Task
+import com.example.adygall2.domain.model.User
 import com.example.adygall2.presentation.adapters.LevelsAdapter
 import com.example.adygall2.presentation.view_model.HomeViewModel
 import kotlinx.coroutines.launch
@@ -38,7 +38,7 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
 
         _homePageBinding = FragmentNewHomePageBinding.inflate(inflater, container, false)
 
-        getUserStates()
+        //getUserStates()
         observe()
 
         return homePageBinding.root
@@ -57,18 +57,28 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
     }
 
     /** Получение шкалы здоровья и опыта */
-    private fun getUserStates() {
+    /*private fun getUserStates() {
         homePageBinding.homeBottomBar.apply {
-            hp.progress = viewModel.user.hp
-            exp.progress = viewModel.user.coins
-            userNameTv.text = viewModel.user.name
+            hp.progress = viewModel.you.hp
+            exp.progress = viewModel.you.coins
+            userNameTv.text = viewModel.you.name
             userAvatar.setImageBitmap(viewModel.getPhotoFromCache())
         }
-    }
+    }*/
 
     private fun observe() {
         viewModel.tasksListFromDb.observe(viewLifecycleOwner, ::levelsTree)
+        viewModel.observableUser.observe(viewLifecycleOwner, ::observeUser)
         viewModel.getTasksFromOrder()
+    }
+
+    private fun observeUser(user: User) {
+        homePageBinding.homeBottomBar.apply {
+            userNameTv.text = user.name
+            hp.progress = user.hp
+            exp.progress = user.coins
+            userAvatar.setImageBitmap(viewModel.getPhotoFromCache())
+        }
     }
 
     private fun levelsTree(list: List<Task>) {

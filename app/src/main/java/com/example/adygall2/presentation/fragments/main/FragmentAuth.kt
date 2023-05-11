@@ -7,9 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment.STYLE_NORMAL
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentAuthorizeBinding
 import com.example.adygall2.presentation.activities.MainActivity
+import com.example.adygall2.presentation.activities.UserChangeListener
 import com.example.adygall2.presentation.fragments.bottomsheet.AuthBottomSheetFragment
 import com.example.adygall2.presentation.view_model.AuthViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -25,19 +27,21 @@ class FragmentAuth : Fragment(R.layout.fragment_authorize) {
     private val authBinding get() = _authBinding!!
     private val viewModel by viewModel<AuthViewModel>()
     private var bottomSheet: AuthBottomSheetFragment? = null
+    private lateinit var userChangeCallback: UserChangeListener
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _authBinding = FragmentAuthorizeBinding.inflate(inflater, container, false)
+        userChangeCallback = requireActivity() as MainActivity
         return authBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initBottomSheet()
         setClickListeners()
-        authBinding.authLoginEt.setText(viewModel.savedUser.name)
+        //authBinding.authLoginEt.setText(viewModel.savedUser.name)
     }
 
     override fun onResume() {
@@ -54,9 +58,11 @@ class FragmentAuth : Fragment(R.layout.fragment_authorize) {
     private fun setClickListeners() {
         authBinding.apply {
             authSingInButton.setOnClickListener {
-                viewModel.logInUser(userName = authBinding.authLoginEt.text.toString())
-                (requireActivity() as MainActivity).updateUserStates()
-                findNavController().navigate(R.id.action_authorize_to_homePage)
+                viewModel.logInUser(
+                    userName = authBinding.authLoginEt.text.toString(),
+                    userChangeListener = userChangeCallback
+                )
+                findNavController().navigate(R.id.homePage)
             }
 
             userAvatar.setOnClickListener { openBottomSheet() }

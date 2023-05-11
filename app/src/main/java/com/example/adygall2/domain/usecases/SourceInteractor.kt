@@ -11,18 +11,18 @@ class SourceInteractor(
     ) {
     /** Чистка кэша Glide */
     suspend fun clearGlideCaches() = withContext(ioDispatcher) {
-        return@withContext repository.clearPicturesInCache()
+        repository.clearPicturesInCache()
     }
     /** Получение озвучки по [sourceId] */
     suspend fun soundSourceById(sourceId : Int) = withContext(ioDispatcher) {
-        return@withContext repository.getSourceSoundById(sourceId)
+        repository.getSourceSoundById(sourceId)
     }
     /** Получение звукового эффекта для правильного ответа */
     suspend fun rightAnswerSource() = withContext(ioDispatcher) {
-        return@withContext repository.rightAnswerSource()
+        repository.rightAnswerSource()
     }
     /** Получение звукового эффекта для неправильного ответа */
     suspend fun wrongAnswerSource() = withContext(ioDispatcher) {
-        return@withContext repository.wrongAnswerSource()
+        repository.wrongAnswerSource()
     }
 }

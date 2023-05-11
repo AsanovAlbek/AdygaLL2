@@ -5,11 +5,19 @@ import com.example.adygall2.domain.model.ComplexAnswer
 import com.example.adygall2.domain.model.Order
 import com.example.adygall2.domain.model.Source
 import com.example.adygall2.domain.model.Task
+import com.example.adygall2.domain.model.User
 
 /**
  * Репозиторий для работы с бд
  */
 interface Repository {
+    // User
+    suspend fun getUser(): User
+
+    suspend fun updateUser(user: User)
+
+    suspend fun isUserExist(): Boolean
+
     // Orders
 
     /** Получение всех Order */

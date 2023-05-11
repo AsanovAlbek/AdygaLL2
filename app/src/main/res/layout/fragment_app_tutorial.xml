@@ -1,19 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/tutorialText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/fake_text"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:padding="8dp"
-        android:scrollbars="vertical" />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp">
+        <TextView
+            android:id="@+id/firstQuestionTypeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Подсказка к первому заданию"
+            android:padding="8dp"
+            android:layout_gravity="center"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:id="@+id/firstQuestionTypeGif"
+            android:src="@drawable/logo"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center" />
+        <TextView
+            android:id="@+id/secondQuestionTypeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Подсказка к первому заданию"
+            android:padding="8dp"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:id="@+id/secondQuestionTypeGif"
+            android:src="@drawable/logo"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/thirdQuestionTypeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Подсказка к первому заданию"
+            android:padding="8dp"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:id="@+id/thirdQuestionTypeGif"
+            android:src="@drawable/logo"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/fourthQuestionTypeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Подсказка к первому заданию"
+            android:padding="8dp"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:id="@+id/fourthQuestionTypeGif"
+            android:src="@drawable/logo"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/fiveQuestionTypeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Подсказка к первому заданию"
+            android:padding="8dp"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:id="@+id/fiveQuestionTypeGif"
+            android:src="@drawable/logo"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/sixthQuestionTypeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Подсказка к первому заданию"
+            android:padding="8dp"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:id="@+id/sixthQuestionTypeGif"
+            android:src="@drawable/logo"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/seventhQuestionTypeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Подсказка к первому заданию"
+            android:padding="8dp"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:id="@+id/seventhQuestionTypeGif"
+            android:src="@drawable/logo"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/eightQuestionTypeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Подсказка к первому заданию"
+            android:padding="8dp"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:id="@+id/eightQuestionTypeGif"
+            android:src="@drawable/logo"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/ninthQuestionTypeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Подсказка к первому заданию"
+            android:padding="8dp"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:id="@+id/ninthQuestionTypeGif"
+            android:src="@drawable/logo"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.core.widget.NestedScrollView>

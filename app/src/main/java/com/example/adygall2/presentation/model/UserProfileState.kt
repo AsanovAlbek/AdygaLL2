@@ -8,6 +8,6 @@ data class UserProfileState(
     val learnedWordsCount: Int = 0,
     val levelProgress: Int = 0,
     val lessonProgress: Int = 0,
-    val weekPlayingHours: Long = 0,
-    val globalPlayingHours: Long = 0
+    val globalPlayingHours: Long = 0,
+    val isUserSignUp: Boolean = false
 )

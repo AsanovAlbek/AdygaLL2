@@ -71,7 +71,6 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         }
 
         taskContainerBinding.taskBottomBar.apply {
-            userNameTv.text = viewModel.user.name
             userAvatar.setImageBitmap(viewModel.getPhotoFromCache())
             viewModel.initAutoHill(hp.progress)
         }
@@ -116,6 +115,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
 
     private fun observeGameState(gameState: GameState) {
         taskContainerBinding.apply {
+            taskBottomBar.userNameTv.text = gameState.userName
             taskViewPager.currentItem = gameState.currentQuestionPosition
             soundTaskSkip.isVisible = gameState.canSkipTask
             taskTopBar.LevelNumber.text = gameState.lessonTitle

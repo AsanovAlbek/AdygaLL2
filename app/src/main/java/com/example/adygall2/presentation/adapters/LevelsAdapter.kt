@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
-import com.example.adygall2.data.models.settings.ProgressItem
+import com.example.adygall2.data.room.userbase.ProgressItem
 import com.example.adygall2.domain.model.Task
 import com.example.adygall2.databinding.ItemLessonInLevelBinding
 import com.example.adygall2.databinding.ItemLevelBinding
@@ -125,5 +125,5 @@ class LessonsAdapter(
         holder.bind(number = position + 1, lessonTasks = tasksInLevel.chunked(15)[position])
     }
 
-    override fun getItemCount(): Int = 3
+    override fun getItemCount(): Int = tasksInLevel.size / 15
 }

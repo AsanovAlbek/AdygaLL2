@@ -8,12 +8,12 @@ apply plugin: 'kotlin-parcelize'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.adygall2"
         minSdk 29
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -50,7 +50,7 @@ dependencies {
 
 
     def lifecycle = "2.4.1"
-    def room_version = "2.4.2"
+    def room_version = "2.5.1"
     def nav_version = "2.4.2"
     def fragment_version = "1.4.1"
 

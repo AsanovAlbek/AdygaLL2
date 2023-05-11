@@ -14,7 +14,7 @@ class GetComplexAnswerUseCase(
 ) {
     suspend operator fun invoke(answers: MutableList<Answer>) : List<ComplexAnswer> =
         withContext(ioDispatcher) {
-            return@withContext answers.map { repository.answerToComplexAnswer(it) }
+            answers.map { repository.answerToComplexAnswer(it) }
         }
 
 }

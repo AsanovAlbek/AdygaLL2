@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentEditUserBinding
 import com.example.adygall2.presentation.activities.MainActivity
+import com.example.adygall2.presentation.activities.UserChangeListener
 import com.example.adygall2.presentation.model.UserProfileState
 import com.example.adygall2.presentation.view_model.EditUserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -29,6 +30,7 @@ class FragmentEditUser : Fragment(R.layout.fragment_edit_user) {
     private lateinit var galleryAction: ActivityResultLauncher<String>
     private lateinit var cameraPermission: ActivityResultLauncher<String>
     private lateinit var galleryPermission: ActivityResultLauncher<String>
+    private lateinit var onUserChangeListener: UserChangeListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +43,7 @@ class FragmentEditUser : Fragment(R.layout.fragment_edit_user) {
         savedInstanceState: Bundle?
     ): View {
         _editUserBinding = FragmentEditUserBinding.inflate(inflater, container, false)
+        onUserChangeListener = requireActivity() as MainActivity
         return editUserBinding.root
     }
 
@@ -52,8 +55,11 @@ class FragmentEditUser : Fragment(R.layout.fragment_edit_user) {
             galleryButton.setOnClickListener { galleryAction() }
             saveButton.setOnClickListener {
                 viewModel.updateUserName(editName.text.toString())
-                viewModel.acceptChanges(requireView(), findNavController())
-                (requireActivity() as MainActivity).updateUserStates()
+                viewModel.acceptChanges(
+                    view = requireView(),
+                    navController = findNavController(),
+                    listener = onUserChangeListener
+                )
             }
         }
     }

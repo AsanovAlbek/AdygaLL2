@@ -16,6 +16,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.adygall2.R
 import com.example.adygall2.databinding.ActivityMainBinding
+import com.example.adygall2.domain.model.User
 import com.example.adygall2.presentation.model.UserProfileState
 import com.example.adygall2.presentation.view_model.MainViewModel
 import de.hdodenhof.circleimageview.CircleImageView
@@ -25,7 +26,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * Класс - Activity для создания и взаимодействия с окнами
  */
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), UserChangeListener {
 
     private lateinit var _binding: ActivityMainBinding
     private val binding get() = _binding
@@ -35,30 +36,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var drawerHeader: View? = null
 
-    // При открытии приложения вычисляется, сколько восстановить здоровья игроку
-    override fun onStart() {
-        super.onStart()
-        viewModel.regenerateHealthOffline()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         navHost = supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
         navController = navHost.navController
+        setupStartDestination(viewModel.isUserLogIn())
         setupDrawer()
-        setupStartDestination()
         setupToolbarVisible()
         observe()
-        viewModel.userStates()
-    }
-
-    // Метод для того, чтобы вызвать его после изменения данных пользователя и обновить данные хидера
-    // Вызывается из фрагментов FragmentAuth и FragmentEditUser
-    fun updateUserStates() {
-        viewModel.userStates()
     }
 
     // Установка видимости тулбара
@@ -77,17 +64,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hideActionBar() {
-        // Прячет Action Bar
-        /*if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-            supportActionBar?.hide()
-            window.insetsController?.hide(WindowInsetsCompat.Type.systemBars())
-        } else {
-            supportActionBar?.hide()
-            @Suppress("DEPRECATION")
-            window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
-            @Suppress("DEPRECATION")
-            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        }*/
         supportActionBar?.hide()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         WindowInsetsControllerCompat(window, binding.root).let { controller ->
@@ -97,17 +73,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showActionBar() {
-        // Показывает Action Bar
-        /*if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-            supportActionBar?.show()
-            window.insetsController?.show(WindowInsetsCompat.Type.systemBars())
-        } else {
-            supportActionBar?.show()
-            @Suppress("DEPRECATION")
-            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            @Suppress("DEPRECATION")
-            window.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
-        }*/
         supportActionBar?.show()
         WindowCompat.setDecorFitsSystemWindows(window, true)
         WindowInsetsControllerCompat(window, binding.root).show(WindowInsetsCompat.Type.systemBars())
@@ -160,7 +125,7 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    // Кастомизация нажатия кнопки назад
+    // Кастомизация нажатия кнопки наза
     override fun onBackPressed() {
         when (navController.currentDestination?.id) {
             // Диалоговое окно с выходом из приложения
@@ -179,12 +144,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     // В зависимости от того, зарегистрирован ли пользователь, показать ему нужный экран
-    private fun setupStartDestination() {
+    private fun setupStartDestination(isUserSignIn: Boolean) {
         // Получаем граф навигации
         val navGraph = navController.navInflater.inflate(R.navigation.game_nav)
         // Получаем данные о пользователе, авторизировался ли он
-        val isUserSignUp = viewModel.user.isUserSignUp
-        if (isUserSignUp) {
+        if (isUserSignIn) {
             // Если да, то начинаем сразу с главного экрана
             navGraph.setStartDestination(R.id.homePage)
         } else {
@@ -198,5 +162,9 @@ class MainActivity : AppCompatActivity() {
         // Во избежание утечек в памяти, обнуляем хидер бокового меню
         drawerHeader = null
         super.onDestroy()
+    }
+
+    override fun onUserChange(user: User) {
+        viewModel.userChange(user)
     }
 }

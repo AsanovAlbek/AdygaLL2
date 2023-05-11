@@ -7,9 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.adygall2.R
 import com.example.adygall2.data.models.ResourceProvider
-import com.example.adygall2.domain.usecases.UserSettingsUseCase
+import com.example.adygall2.domain.usecases.UserUseCase
 import com.example.adygall2.presentation.model.UserProfileState
-import java.util.Calendar
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,8 +16,9 @@ import kotlinx.coroutines.withContext
 
 class UserProfileViewModel(
     private val resourceProvider: ResourceProvider,
-    private val userSettingsUseCase: UserSettingsUseCase,
-    private val mainDispatcher: CoroutineDispatcher
+    private val userUseCase: UserUseCase,
+    private val mainDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val userProfile = MutableLiveData<UserProfileState>()
     val profile: LiveData<UserProfileState> get() = userProfile
@@ -27,19 +27,18 @@ class UserProfileViewModel(
 
     init {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val user = userSettingsUseCase.userInfo()
+            withContext(ioDispatcher) {
+                val user = userUseCase.getUser()
                 val levels = user.learningProgressSet.groupBy { it.level }
                     .filter { it.value.size == 15 }.size
                 withContext(mainDispatcher) {
                     currentProfile = UserProfileState(
                         name = user.name,
-                        photo = userSettingsUseCase.photo(resourceProvider),
+                        photo = userUseCase.getUserImage(resourceProvider),
                         learnedWordsCount = user.learnedWords.count(),
                         levelProgress = levels,
                         lessonProgress = user.learningProgressSet.size,
-                        globalPlayingHours = user.globalPlayingTime,
-                        weekPlayingHours = 1
+                        globalPlayingHours = user.globalPlayingTimeInMillis
                     )
                     userProfile.value = currentProfile
                 }

@@ -16,7 +16,7 @@ class FragmentGameResults : Fragment(R.layout.fragment_lesson_results) {
 
     private lateinit var _lessonResultBinding : FragmentLessonResultsBinding
     private val lessonResultsBinding get() = _lessonResultBinding
-    private val resultsArgs: FragmentGameResultsArgs by navArgs()
+    private val resultsArgs: FragmentGameResultsArgs by navArgs<FragmentGameResultsArgs>()
     private val viewModel by viewModel<GameResultViewModel>()
 
     override fun onCreateView(

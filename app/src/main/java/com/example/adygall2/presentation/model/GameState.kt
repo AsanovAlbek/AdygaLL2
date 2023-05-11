@@ -5,6 +5,7 @@ data class GameState(
     val lessonProgress: Int = 0,
     val levelName: String = "",
     val lessonTitle: String = "",
+    val userName: String = "",
     val userAnswer: String = "",
     val rightAnswer: String = "",
     val startTime: Long = 0L,

@@ -2,6 +2,7 @@ package com.example.adygall2.di
 
 import com.example.adygall2.di.DiConst.IO_DISPATCHER
 import com.example.adygall2.di.DiConst.MAIN_DISPATCHER
+import com.example.adygall2.presentation.view_model.AppTutorialViewModel
 import com.example.adygall2.presentation.view_model.AuthViewModel
 import com.example.adygall2.presentation.view_model.EditUserViewModel
 import com.example.adygall2.presentation.view_model.GameResultViewModel
@@ -11,6 +12,7 @@ import com.example.adygall2.presentation.view_model.MainViewModel
 import com.example.adygall2.presentation.view_model.UserProfileViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
+import org.koin.core.scope.get
 import org.koin.dsl.module
 
 val presentationModule = module {
@@ -21,7 +23,7 @@ val presentationModule = module {
             answerFormatterDelegate = get(),
             sourceInteractor = get(),
             resourceProvider = get(),
-            userSettingsUseCase = get(),
+            userUseCase = get(),
             soundsPlayer = get(),
             mainDispatcher = get(named(MAIN_DISPATCHER)),
             ioDispatcher = get(named(IO_DISPATCHER))
@@ -30,14 +32,16 @@ val presentationModule = module {
 
     viewModel {
         AuthViewModel(
-            userSettingsUseCase = get(),
-            resourceProvider = get()
+            userUseCase = get(),
+            resourceProvider = get(),
+            ioDispatcher = get(named(IO_DISPATCHER)),
+            mainDispatcher = get(named(MAIN_DISPATCHER))
         )
     }
 
     viewModel {
         HomeViewModel(
-            userSettingsUseCase = get(),
+            userUseCase = get(),
             getAllOrdersUseCase = get(),
             tasksByOrdersUseCase = get(),
             resourceProvider = get(),
@@ -49,7 +53,7 @@ val presentationModule = module {
     viewModel {
         GameResultViewModel(
             resourceProvider = get(),
-            userSettingsUseCase = get()
+            userUseCase = get()
         )
     }
 
@@ -58,7 +62,7 @@ val presentationModule = module {
             resourceProvider = get(),
             mainDispatcher = get(named(MAIN_DISPATCHER)),
             ioDispatcher = get(named(IO_DISPATCHER)),
-            userSettingsUseCase = get()
+            userUseCase = get()
         )
     }
 
@@ -66,14 +70,22 @@ val presentationModule = module {
         EditUserViewModel(
             resourceProvider = get(),
             mainDispatcher = get(named(MAIN_DISPATCHER)),
-            userSettingsUseCase = get()
+            userUseCase = get(),
+            ioDispatcher = get(named(IO_DISPATCHER))
         )
     }
 
     viewModel {
         UserProfileViewModel(
             resourceProvider = get(),
-            userSettingsUseCase = get(),
+            userUseCase = get(),
+            mainDispatcher = get(named(MAIN_DISPATCHER)),
+            ioDispatcher = get(named(IO_DISPATCHER))
+        )
+    }
+
+    viewModel {
+        AppTutorialViewModel(
             mainDispatcher = get(named(MAIN_DISPATCHER))
         )
     }

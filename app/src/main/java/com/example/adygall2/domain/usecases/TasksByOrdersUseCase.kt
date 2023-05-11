@@ -16,6 +16,6 @@ class TasksByOrdersUseCase(
     private val ioDispatcher: CoroutineDispatcher
 ){
     suspend operator fun invoke(orders: List<Order>) = withContext(ioDispatcher) {
-        return@withContext repository.getTasksFromOrder(orders)
+        repository.getTasksFromOrder(orders)
     }
 }
