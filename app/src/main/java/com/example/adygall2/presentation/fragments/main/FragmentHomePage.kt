@@ -56,16 +56,6 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
         }
     }
 
-    /** Получение шкалы здоровья и опыта */
-    /*private fun getUserStates() {
-        homePageBinding.homeBottomBar.apply {
-            hp.progress = viewModel.you.hp
-            exp.progress = viewModel.you.coins
-            userNameTv.text = viewModel.you.name
-            userAvatar.setImageBitmap(viewModel.getPhotoFromCache())
-        }
-    }*/
-
     private fun observe() {
         viewModel.tasksListFromDb.observe(viewLifecycleOwner, ::levelsTree)
         viewModel.observableUser.observe(viewLifecycleOwner, ::observeUser)

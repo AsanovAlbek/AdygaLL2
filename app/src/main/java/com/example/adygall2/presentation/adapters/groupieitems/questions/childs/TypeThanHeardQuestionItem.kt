@@ -23,13 +23,6 @@ class TypeThanHeardQuestionItem(
 
     override val rightAnswer: String = answers.joinToString { it.answer.answer }
 
-//    override val onNextQuestion: () -> Unit
-//        get() = {
-//            _userAnswer = ""
-//            textField.setText("")
-//            player = null
-//        }
-
     override fun getLayout(): Int = R.layout.fragment_type_that_heard
 
     override fun initializeViewBinding(view: View): FragmentTypeThatHeardBinding =

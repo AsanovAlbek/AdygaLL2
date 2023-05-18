@@ -30,7 +30,7 @@ class UserProfileViewModel(
             withContext(ioDispatcher) {
                 val user = userUseCase.getUser()
                 val levels = user.learningProgressSet.groupBy { it.level }
-                    .filter { it.value.size == 15 }.size
+                    .filter { it.value.size == 12 }.size
                 withContext(mainDispatcher) {
                     currentProfile = UserProfileState(
                         name = user.name,

@@ -32,12 +32,6 @@ class SentenceBuildQuestionItem(
     override val rightAnswer: String =
         answers.first().answer.correctAnswer
 
-//    override val onNextQuestion: () -> Unit
-//        get() = {
-//            _userAnswer = ""
-//            player = null
-//        }
-
     override fun bind(viewBinding: FragmentWordsQuestionBinding, position: Int) {
         viewBinding.apply {
             wordsTaskText.text = title

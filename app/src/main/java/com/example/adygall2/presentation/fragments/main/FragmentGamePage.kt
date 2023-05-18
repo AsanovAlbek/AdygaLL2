@@ -95,7 +95,6 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
     }
 
     private fun hillHp() {
-        if (taskContainerBinding.taskBottomBar.hp.progress < 100) {
             viewModel.viewModelScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.autoHillHp()
@@ -104,7 +103,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                     }
                 }
             }
-        }
+
     }
 
     private fun observe() {

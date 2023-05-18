@@ -32,12 +32,6 @@ class TranslateTextQuestionItem(
 
     override val rightAnswer: String = answers.first().answer.correctAnswer
 
-//    override val onNextQuestion: () -> Unit
-//        get() = {
-//            _userAnswer = ""
-//            tooltipBar?.removeAllViews()
-//        }
-
     override fun getLayout(): Int = R.layout.fragment_translate_the_text
 
     override fun initializeViewBinding(view: View): FragmentTranslateTheTextBinding =

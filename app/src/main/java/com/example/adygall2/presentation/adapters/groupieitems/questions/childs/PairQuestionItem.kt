@@ -27,13 +27,6 @@ class PairQuestionItem(
 
     override val rightAnswer: String get() = _rightAnswer
 
-//    override val onNextQuestion: () -> Unit
-//        get() = {
-//            _userAnswer = ""
-//            userPairs.clear()
-//            rightPairs.clear()
-//        }
-
     override fun getLayout(): Int = R.layout.fragment_pairs_of_words
 
     override fun initializeViewBinding(view: View): FragmentPairsOfWordsBinding =

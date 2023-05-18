@@ -44,12 +44,6 @@ class FourImagesQuestionItem(
     override fun initializeViewBinding(view: View): FragmentFourImageQuestionBinding =
         FragmentFourImageQuestionBinding.bind(view)
 
-//    override val onNextQuestion: () -> Unit
-//        get() = {
-//            _userAnswer = ""
-//            onClearImages?.let { imageAdapter.onClearImages(it) }
-//        }
-
     override val rightAnswer: String =
         answers.first { it.answer.correctAnswer.lowercase().toBoolean() }.answer.answer
 

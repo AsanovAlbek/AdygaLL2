@@ -43,15 +43,13 @@ class TypeTranslateQuestionItem(
     private fun taskTitleWithHints() {
         val hintsList = title.split(" ")
         hintsList.forEach {
-            val addedWord = SpannableString(it)
-            addedWord.setSpan(UnderlineSpan(), 0, addedWord.length, 0)
             val addedTextView = TextView(context)
-            setTextViewParams(addedTextView, addedWord)
+            setTextViewParams(addedTextView, it)
             tooltips?.addView(addedTextView)
         }
     }
 
-    private fun setTextViewParams(textView: TextView, textInView: SpannableString) {
+    private fun setTextViewParams(textView: TextView, textInView: String) {
         textView.apply {
             text = textInView
             setTextColor(Color.BLACK)
@@ -61,10 +59,6 @@ class TypeTranslateQuestionItem(
         }
     }
 
-//    override val onNextQuestion: () -> Unit
-//        get() = {
-//            _userAnswer = ""
-//        }
     override val rightAnswer: String = currentAnswer
     override fun clear() {
         _userAnswer = ""

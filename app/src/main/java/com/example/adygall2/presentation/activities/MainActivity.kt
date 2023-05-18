@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity(), UserChangeListener {
         setupDrawer()
         setupToolbarVisible()
         observe()
+        //viewModel.regenerateHealthOffline()
     }
 
     // Установка видимости тулбара

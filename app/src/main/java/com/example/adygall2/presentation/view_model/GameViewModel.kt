@@ -63,6 +63,8 @@ class GameViewModel(
         private const val TAG = "GameFragment"
     }
 
+    private var isLessonRepeated = false
+
     /** Данные о пользователе, хранимые в памяти телефона */
     private var _user = User()
     val user get() = _user
@@ -124,6 +126,7 @@ class GameViewModel(
 
                 _user = userUseCase.getUser()
                 withContext(mainDispatcher) {
+                    isLessonRepeated = user.learningProgressSet.contains(ProgressItem(level, lesson))
                     currentQuestionItems = questions.toMutableList()
                     questionItems.value = currentQuestionItems
                     soundsPlayer.setCompletionListener { soundsPlayer.stopPlay() }
@@ -307,16 +310,16 @@ class GameViewModel(
                 AlertDialog.Builder(context)
                     .setMessage(R.string.exit_from_level_question)
                     .setPositiveButton(R.string.yes) { _, _ ->
-                        currentGameState.apply {
+                        currentGameState = currentGameState.copy(finishTime = System.currentTimeMillis())
+                        _gameState.value = currentGameState
+                        currentGameState.run {
                             onNextQuestion()
                             _user = _user.copy(
                                 coins = currentGameState.coins,
-                                globalPlayingTimeInMillis = user.globalPlayingTimeInMillis + currentGameState.finishTime - currentGameState.startTime
+                                globalPlayingTimeInMillis = user.globalPlayingTimeInMillis + (currentGameState.finishTime - currentGameState.startTime)
                             )
                             viewModelScope.launch {
-                                withContext(ioDispatcher) {
                                     userUseCase.updateUser(user)
-                                }
                             }
                             val navigateToHome =
                                 FragmentGamePageDirections.actionTaskContainerToHomePage(
@@ -439,7 +442,7 @@ class GameViewModel(
                 _user = _user.copy(
                     hp = hp,
                     coins = coins,
-                    globalPlayingTimeInMillis = user.globalPlayingTimeInMillis + currentGameState.finishTime - currentGameState.startTime,
+                    globalPlayingTimeInMillis = user.globalPlayingTimeInMillis + (currentGameState.finishTime - currentGameState.startTime),
                     learningProgressSet = user.learningProgressSet.apply { add(ProgressItem(level, lesson)) }
                 )
                 userUseCase.updateUser(user)
@@ -474,7 +477,6 @@ class GameViewModel(
                     canSkipTask = canSkipCurrentQuestion()
                 )
                 _gameState.value = currentGameState
-                //onNextQuestion()
                 refreshLessonTitle()
             }
         }
@@ -511,9 +513,11 @@ class GameViewModel(
     private fun giveMoney() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                currentGameState =
-                    currentGameState.copy(coins = currentGameState.coins + MONEY_INCREMENT)
-                _gameState.value = currentGameState
+                if (!isLessonRepeated) {
+                    currentGameState =
+                        currentGameState.copy(coins = currentGameState.coins + MONEY_INCREMENT)
+                    _gameState.value = currentGameState
+                }
             }
         }
     }
@@ -530,6 +534,7 @@ class GameViewModel(
     fun initAutoHill(value: Int) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
+                Log.i("game", "init auto hill")
                 _hpHill.value = value
             }
         }
@@ -540,9 +545,10 @@ class GameViewModel(
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 while (isActive) {
-                    delay(30_000)
+                    delay(3_000)
                     if (_hpHill.value < 100) {
                         _hpHill.value += 10
+                        Log.i("game", "hill hp")
                     }
                 }
             }
@@ -552,13 +558,14 @@ class GameViewModel(
     /** Сохранение статистики пользователя после выхода */
     fun saveUserStates(hp: Int, coins: Int) {
         viewModelScope.launch {
-            withContext(ioDispatcher) {
+            withContext(mainDispatcher) {
                 currentGameState = currentGameState.copy(finishTime = System.currentTimeMillis())
                 _user = _user.copy(
                     hp = hp,
                     coins = coins,
-                    globalPlayingTimeInMillis = user.globalPlayingTimeInMillis + currentGameState.finishTime - currentGameState.startTime
+                    globalPlayingTimeInMillis = user.globalPlayingTimeInMillis + (currentGameState.finishTime - currentGameState.startTime)
                 )
+                Log.i("user", "save and exit game")
                 userUseCase.updateUser(user)
             }
         }
@@ -609,6 +616,7 @@ class GameViewModel(
                         newWordsCount = _user.learnedWords.size - oldWordsCount
                     )
                     _gameState.value = currentGameState
+                    Log.i("user", "update words and save")
                     userUseCase.updateUser(user)
                 }
             }

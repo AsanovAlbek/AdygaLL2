@@ -29,13 +29,6 @@ class FillPassQuestionItem(
     override val rightAnswer: String =
         answers.first { it.answer.correctAnswer.lowercase().toBoolean() }.answer.answer
 
-//    override val onNextQuestion: () -> Unit
-//        get() = {
-//            _userAnswer = ""
-//            textViewField.text = ""
-//            textContainer.removeAllViews()
-//        }
-
     override fun bind(viewBinding: FragmentFillInThePassBinding, position: Int) {
         val mutableList = answers.map { it.answer.answer }.toMutableList()
         textContainer = viewBinding.flexbox
@@ -95,6 +88,7 @@ class FillPassQuestionItem(
         width = 270
         textSize = 18F
         gravity = Gravity.CENTER
+        setBackgroundResource(R.drawable.pair_words_slot)
         setBackgroundColor(Color.WHITE)
         setTextColor(Color.BLACK)
         typeface = context.resources.getFont(R.font.pt_sans_bold)

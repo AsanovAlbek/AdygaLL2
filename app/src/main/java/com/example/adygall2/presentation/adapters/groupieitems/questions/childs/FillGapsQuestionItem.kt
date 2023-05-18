@@ -25,12 +25,6 @@ class FillGapsQuestionItem(
 
     override val rightAnswer: String = answers.first().answer.answer
 
-    /*override val onNextQuestion: () -> Unit
-        get() = {
-            _userAnswer = mutableListOf()
-            textContainer.removeAllViews()
-        }*/
-
     override fun bind(viewBinding: FragmentFillGapsBinding, position: Int) {
         viewBinding.apply {
             textContainer = viewBinding.flexbox
@@ -69,6 +63,7 @@ class FillGapsQuestionItem(
         typeface = context.resources.getFont(R.font.pt_sans_bold)
         gravity = Gravity.CENTER
         setTextColor(Color.BLACK)
+        setBackgroundResource(R.drawable.pair_words_slot)
         setBackgroundColor(Color.WHITE)
         setPadding(0, 0 , 10, 0)
         isSingleLine = true

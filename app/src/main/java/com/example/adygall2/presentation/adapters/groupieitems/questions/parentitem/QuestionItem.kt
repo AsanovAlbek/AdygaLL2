@@ -40,8 +40,6 @@ abstract class QuestionItem<T:ViewBinding>: BindableItem<T>() {
             else -> UNKNOWN
         }
 
-    //abstract val onNextQuestion: () -> Unit
-
     abstract fun clear()
 
     val canSkipQuestion = when(taskType) {
