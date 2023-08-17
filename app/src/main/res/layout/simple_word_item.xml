@@ -5,7 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="10dp"
     android:layout_marginBottom="28dp"
-    android:id="@+id/simple_word_container">
+    android:id="@+id/simple_word_container"
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/simple_word"

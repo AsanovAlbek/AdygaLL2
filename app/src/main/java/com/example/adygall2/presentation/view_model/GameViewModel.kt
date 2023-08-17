@@ -1,11 +1,16 @@
 package com.example.adygall2.presentation.view_model
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
+import android.inputmethodservice.KeyboardView
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,12 +28,14 @@ import com.example.adygall2.domain.usecases.AnswersByTaskIdUseCase
 import com.example.adygall2.domain.usecases.GetComplexAnswerUseCase
 import com.example.adygall2.domain.usecases.SourceInteractor
 import com.example.adygall2.domain.usecases.UserUseCase
+import com.example.adygall2.presentation.activities.UserChangeListener
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.createQuestion
 import com.example.adygall2.presentation.fragments.main.FragmentGamePageDirections
 import com.example.adygall2.presentation.model.DialogState
 import com.example.adygall2.presentation.model.GameState
 import com.google.android.material.snackbar.Snackbar
+import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -86,10 +93,6 @@ class GameViewModel(
     val dialogState: LiveData<DialogState> get() = _dialogState
     private var currentDialogState = DialogState()
 
-    /** Значение здоровья, восстанавливающегося во время сессии */
-    private var _hpHill = MutableStateFlow(0)
-    val hpHill get() = _hpHill.asStateFlow()
-
     private fun isLastQuestion() =
         currentGameState.currentQuestionPosition == currentQuestionItems.size - 1
 
@@ -109,7 +112,8 @@ class GameViewModel(
         tasks: List<Task>,
         level: Int,
         lesson: Int,
-        levelName: String
+        levelName: String,
+        handleKeyboard: (EditText) -> Unit
     ) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
@@ -120,7 +124,8 @@ class GameViewModel(
                         answers = getComplexAnswerUseCase(answersByTaskIdUseCase(task.id)),
                         soundsPlayer = soundsPlayer,
                         onClearImageCaches = ::clearGlideCache,
-                        playerSource = sourceInteractor.soundSourceById(task.soundId)
+                        playerSource = sourceInteractor.soundSourceById(task.soundId),
+                        handleKeyboard = handleKeyboard
                     )
                 }
 
@@ -147,7 +152,6 @@ class GameViewModel(
                 }
             }
         }
-
     }
 
     /** Основная функция вычисления ответа пользователя и игрового процесса
@@ -168,7 +172,9 @@ class GameViewModel(
         lesson: Int,
         coinsBeforeLesson: Int,
         coins: Int,
-        hp: Int
+        hp: Int,
+        keyboardView: KeyboardView,
+        userHealthHandle: UserChangeListener
     ) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
@@ -217,13 +223,13 @@ class GameViewModel(
                                     _gameState.value = currentGameState
                                     // Если счётчик превысил допустимое значение, то прогресс сбрасывается
                                     if (currentGameState.mistakesCounter >= MISTAKES_LIMIT) {
-                                        restartLesson()
+                                        restartLesson(keyboardView = keyboardView)
                                     } else {
                                         // Иначе переход на следующий вопрос
-                                        nextTask()
+                                        nextTask(keyboardView = keyboardView)
                                     }
                                     // Получение урона за неправильный ответ
-                                    damage()
+                                    damage(userHealthHandle)
                                     // Если при этом закончилось здоровье, то выход из игры
                                     if (currentGameState.hp <= 0) {
                                         fail(
@@ -234,7 +240,7 @@ class GameViewModel(
                                 } else if (isRight()) {
                                     // Иначе даём монеты и направляем на следующий уровень
                                     giveMoney()
-                                    nextTask()
+                                    nextTask(keyboardView = keyboardView)
                                 }
                             }
                         }
@@ -254,13 +260,13 @@ class GameViewModel(
                         _gameState.value = currentGameState
                         // Если превышен лимит ошибок - сброс прогресса
                         if (currentGameState.mistakesCounter >= MISTAKES_LIMIT) {
-                            restartLesson()
+                            restartLesson(keyboardView = keyboardView)
                         } else {
                             // Иначе следующий вопрос
-                            nextTask()
+                            nextTask(keyboardView = keyboardView)
                         }
                         // Урон
-                        damage()
+                        damage(userHealthHandle)
                     }
                     // Даём монетки за пройденный урок
                     giveMoney()
@@ -379,11 +385,12 @@ class GameViewModel(
         }
     }
 
-    private fun nextQuestionAll() {
+    private fun nextQuestionAll(keyboardView: KeyboardView) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 currentQuestionItems.forEach { it?.clear() }
                 questionItems.value = currentQuestionItems
+                keyboardView.isVisible = false
             }
         }
     }
@@ -396,7 +403,8 @@ class GameViewModel(
         coinsBeforeLesson: Int,
         navController: NavController,
         coins: Int,
-        hp: Int
+        hp: Int,
+        keyboardView: KeyboardView
     ) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
@@ -411,7 +419,7 @@ class GameViewModel(
                         hp = hp
                     )
                 } else {
-                    nextTask()
+                    nextTask(keyboardView = keyboardView)
                 }
                 soundsPlayer.stopPlay()
             }
@@ -465,10 +473,11 @@ class GameViewModel(
     }
 
     /** Метод для начала урока заново, если пользователь превысил лимит ошибок */
-    private fun restartLesson() {
+    private fun restartLesson(keyboardView: KeyboardView) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                nextQuestionAll()
+                nextQuestionAll(keyboardView = keyboardView)
+
                 //onNextQuestion()
                 currentGameState = currentGameState.copy(
                     mistakesCounter = 0,
@@ -478,12 +487,13 @@ class GameViewModel(
                 )
                 _gameState.value = currentGameState
                 refreshLessonTitle()
+
             }
         }
     }
 
     /** Метод перехода к следующему занятию */
-    private fun nextTask() {
+    private fun nextTask(keyboardView: KeyboardView) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 onNextQuestion()
@@ -496,15 +506,15 @@ class GameViewModel(
                 _gameState.value = currentGameState
             }
             refreshLessonTitle()
+            keyboardView.isVisible = false
         }
     }
 
     /** Получение урона за неправильный ответ*/
-    private fun damage() {
+    private fun damage(userHealthHandle: UserChangeListener) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                currentGameState = currentGameState.copy(hp = currentGameState.hp - HP_DAMAGE)
-                _gameState.value = currentGameState
+                userHealthHandle.damage()
             }
         }
     }
@@ -528,38 +538,16 @@ class GameViewModel(
         currentGameState.finishTime - currentGameState.startTime
     ).toString()
 
-
-
-    /** получение последнего сохраненного значения здоровья */
-    fun initAutoHill(value: Int) {
-        viewModelScope.launch {
-            withContext(mainDispatcher) {
-                Log.i("game", "init auto hill")
-                _hpHill.value = value
-            }
-        }
-    }
-
-    /** функция процесса восстановления здоровья*/
-    fun autoHillHp() {
-        viewModelScope.launch {
-            withContext(mainDispatcher) {
-                while (isActive) {
-                    delay(3_000)
-                    if (_hpHill.value < 100) {
-                        _hpHill.value += 10
-                        Log.i("game", "hill hp")
-                    }
-                }
-            }
-        }
-    }
-
     /** Сохранение статистики пользователя после выхода */
     fun saveUserStates(hp: Int, coins: Int) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 currentGameState = currentGameState.copy(finishTime = System.currentTimeMillis())
+                if (Date().time - _user.lastOnlineTimeInMillis >= 300_000) {
+                    _user = _user.copy(
+                        lastOnlineTimeInMillis = Date().time
+                    )
+                }
                 _user = _user.copy(
                     hp = hp,
                     coins = coins,
@@ -569,7 +557,6 @@ class GameViewModel(
                 userUseCase.updateUser(user)
             }
         }
-
     }
 
     /** Проигрывание аудио эффекта */
@@ -642,4 +629,14 @@ class GameViewModel(
 
     /** Получение фото пользователя из кэша приложения */
     fun getPhotoFromCache() = userUseCase.getUserImage(resourceProvider)
+
+    fun hideSystemKeyboard(editText: EditText, activity: Activity) {
+        viewModelScope.launch {
+            withContext(mainDispatcher) {
+                delay(200)
+                (activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                    .hideSoftInputFromWindow(editText.windowToken, 0)
+            }
+        }
+    }
 }

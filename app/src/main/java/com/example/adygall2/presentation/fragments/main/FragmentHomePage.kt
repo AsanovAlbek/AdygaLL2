@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
@@ -14,8 +15,12 @@ import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentNewHomePageBinding
 import com.example.adygall2.domain.model.Task
 import com.example.adygall2.domain.model.User
+import com.example.adygall2.presentation.activities.MainActivity
+import com.example.adygall2.presentation.activities.UserChangeListener
 import com.example.adygall2.presentation.adapters.LevelsAdapter
 import com.example.adygall2.presentation.view_model.HomeViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -26,9 +31,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
 
-    private lateinit var _homePageBinding: FragmentNewHomePageBinding
-    private val homePageBinding get() = _homePageBinding
+    private var _homePageBinding: FragmentNewHomePageBinding? = null
+    private val homePageBinding get() = _homePageBinding!!
     private val viewModel by viewModel<HomeViewModel>()
+    private var userChangeListener: UserChangeListener? = null
 
     // метод жизненного цикла, вызывается при создании фрагмента (при открытии окна)
     override fun onCreateView(
@@ -37,16 +43,13 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
     ): View {
 
         _homePageBinding = FragmentNewHomePageBinding.inflate(inflater, container, false)
-
-        //getUserStates()
+        userChangeListener = requireActivity() as MainActivity
         observe()
 
         return homePageBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.initAutoHill(homePageBinding.homeBottomBar.hp.progress)
-        hillHp()
     }
 
     override fun onStop() {
@@ -56,16 +59,27 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
         }
     }
 
+    override fun onDestroy() {
+        userChangeListener?.getUserHealthLiveData()?.removeObservers(viewLifecycleOwner)
+        _homePageBinding = null
+        userChangeListener = null
+        super.onDestroy()
+    }
+
     private fun observe() {
         viewModel.tasksListFromDb.observe(viewLifecycleOwner, ::levelsTree)
         viewModel.observableUser.observe(viewLifecycleOwner, ::observeUser)
         viewModel.getTasksFromOrder()
+        userChangeListener?.getUserHealthLiveData()?.observe(viewLifecycleOwner, ::observeHp)
+    }
+
+    private fun observeHp(health: Int) {
+        homePageBinding.homeBottomBar.hp.progress = health
     }
 
     private fun observeUser(user: User) {
         homePageBinding.homeBottomBar.apply {
             userNameTv.text = user.name
-            hp.progress = user.hp
             exp.progress = user.coins
             userAvatar.setImageBitmap(viewModel.getPhotoFromCache())
         }
@@ -83,7 +97,12 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
         homePageBinding.levelItems.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    private fun openTasks(levelNumber: Int, lessonNumber: Int, tasks: List<Task>, levelName: String) {
+    private fun openTasks(
+        levelNumber: Int,
+        lessonNumber: Int,
+        tasks: List<Task>,
+        levelName: String
+    ) {
         if (homePageBinding.homeBottomBar.hp.progress > 0) {
             viewModel.openLesson(
                 level = levelNumber,
@@ -94,19 +113,6 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
             )
         } else {
             viewModel.noHpMessage(requireContext())
-        }
-    }
-
-    private fun hillHp() {
-        if (homePageBinding.homeBottomBar.hp.progress < 100) {
-            viewModel.viewModelScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    viewModel.autoHillHp()
-                    viewModel.hpHill.collect {
-                        homePageBinding.homeBottomBar.hp.progress = it
-                    }
-                }
-            }
         }
     }
 }

@@ -11,10 +11,16 @@
         android:orientation="vertical"
         android:padding="8dp">
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/game_hint"
+            android:padding="8dp"
+            android:layout_gravity="center"/>
+        <TextView
             android:id="@+id/firstQuestionTypeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Подсказка к первому заданию"
+            android:text="@string/first_question_type_hint"
             android:padding="8dp"
             android:layout_gravity="center"/>
 
@@ -29,7 +35,7 @@
             android:id="@+id/secondQuestionTypeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Подсказка к первому заданию"
+            android:text="@string/second_question_type_hint"
             android:padding="8dp"
             android:layout_gravity="center"/>
 
@@ -44,7 +50,7 @@
             android:id="@+id/thirdQuestionTypeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Подсказка к первому заданию"
+            android:text="@string/third_question_type_hint"
             android:padding="8dp"
             android:layout_gravity="center"/>
 
@@ -59,7 +65,7 @@
             android:id="@+id/fourthQuestionTypeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Подсказка к первому заданию"
+            android:text="@string/fourth_question_type_hint"
             android:padding="8dp"
             android:layout_gravity="center"/>
 
@@ -74,7 +80,7 @@
             android:id="@+id/fiveQuestionTypeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Подсказка к первому заданию"
+            android:text="@string/five_question_type_hint"
             android:padding="8dp"
             android:layout_gravity="center"/>
 
@@ -89,7 +95,7 @@
             android:id="@+id/sixthQuestionTypeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Подсказка к первому заданию"
+            android:text="@string/sixth_question_type_hint"
             android:padding="8dp"
             android:layout_gravity="center"/>
 
@@ -104,7 +110,7 @@
             android:id="@+id/seventhQuestionTypeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Подсказка к первому заданию"
+            android:text="@string/seventh_question_type_hint"
             android:padding="8dp"
             android:layout_gravity="center"/>
 
@@ -119,7 +125,7 @@
             android:id="@+id/eightQuestionTypeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Подсказка к первому заданию"
+            android:text="@string/eight_question_type_hint"
             android:padding="8dp"
             android:layout_gravity="center"/>
 
@@ -134,7 +140,7 @@
             android:id="@+id/ninthQuestionTypeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Подсказка к первому заданию"
+            android:text="@string/ninth_question_type_hint"
             android:padding="8dp"
             android:layout_gravity="center"/>
 

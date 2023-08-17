@@ -50,11 +50,13 @@ val dataModule = module {
         )
     }
     factory<AnswerFormatter> { AnswerFormatterImpl() }
-    factory<SoundsPlayer>{ SoundsPlayer(
-        androidApplication().applicationContext,
-        FilesHandler(androidApplication().applicationContext),
-        MediaPlayer()
-    ) }
+    factory<SoundsPlayer> {
+        SoundsPlayer(
+            androidApplication().applicationContext,
+            FilesHandler(androidApplication().applicationContext),
+            MediaPlayer()
+        )
+    }
     factory {
         ResourceProvider(androidApplication().applicationContext)
     }
@@ -63,6 +65,9 @@ val dataModule = module {
     }
 
     single(named(PrefConst.IS_USER_SIGN_UP)) {
-        androidApplication().applicationContext.getSharedPreferences(PrefConst.IS_USER_SIGN_UP, Context.MODE_PRIVATE)
+        androidApplication().applicationContext.getSharedPreferences(
+            PrefConst.IS_USER_SIGN_UP,
+            Context.MODE_PRIVATE
+        )
     }
 }

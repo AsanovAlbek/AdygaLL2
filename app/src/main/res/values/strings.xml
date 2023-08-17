@@ -84,23 +84,11 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="open_drawer">Открыть боковое меню</string>
     <string name="close_drawer">Закрыть боковое меню</string>
-    <string name="fake_text">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Gravida in fermentum et sollicitudin ac orci phasellus egestas tellus. Ut lectus arcu bibendum at varius vel. Dui nunc mattis enim ut tellus. Bibendum at varius vel pharetra. Enim sit amet venenatis urna cursus eget. Eu scelerisque felis imperdiet proin fermentum leo vel orci porta. Auctor eu augue ut lectus arcu bibendum at varius. Pulvinar etiam non quam lacus suspendisse. Suspendisse sed nisi lacus sed. At quis risus sed vulputate odio ut. Eros donec ac odio tempor orci dapibus ultrices in iaculis. Semper risus in hendrerit gravida rutrum quisque non tellus. Nulla facilisi etiam dignissim diam.
-
-Nunc sed blandit libero volutpat sed. Purus faucibus ornare suspendisse sed nisi lacus sed viverra tellus. Mattis ullamcorper velit sed ullamcorper morbi. At quis risus sed vulputate odio ut enim blandit. Accumsan sit amet nulla facilisi morbi tempus iaculis. Laoreet id donec ultrices tincidunt arcu non sodales. Lacinia at quis risus sed vulputate odio ut. Urna neque viverra justo nec ultrices dui sapien. Eu ultrices vitae auctor eu augue ut lectus arcu. Lectus magna fringilla urna porttitor rhoncus dolor purus. Sed velit dignissim sodales ut eu.
-
-Nibh tellus molestie nunc non blandit massa enim nec dui. Non consectetur a erat nam at lectus urna. Enim blandit volutpat maecenas volutpat blandit aliquam. Gravida cum sociis natoque penatibus et magnis dis parturient montes. Sit amet mattis vulputate enim. Blandit cursus risus at ultrices mi. Ut tortor pretium viverra suspendisse potenti. Risus pretium quam vulputate dignissim suspendisse in est. Purus faucibus ornare suspendisse sed nisi lacus sed viverra. Augue neque gravida in fermentum et. Fermentum dui faucibus in ornare quam viverra orci sagittis eu. Vitae nunc sed velit dignissim sodales.
-
-In nibh mauris cursus mattis molestie a iaculis at erat. Et netus et malesuada fames ac. Arcu dictum varius duis at consectetur lorem. Dolor sed viverra ipsum nunc aliquet bibendum enim facilisis. Mi tempus imperdiet nulla malesuada pellentesque elit. Aliquam sem et tortor consequat id porta nibh. Id ornare arcu odio ut sem nulla. Ac tortor dignissim convallis aenean. Commodo sed egestas egestas fringilla phasellus faucibus scelerisque. Sed viverra tellus in hac. Vestibulum mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa. Et magnis dis parturient montes. Nam libero justo laoreet sit.
-
-Venenatis tellus in metus vulputate eu scelerisque. Nulla aliquet porttitor lacus luctus accumsan tortor. Aliquam etiam erat velit scelerisque in dictum. Diam sit amet nisl suscipit adipiscing bibendum est ultricies integer. Dolor purus non enim praesent. Enim sit amet venenatis urna cursus eget nunc scelerisque viverra. Eget egestas purus viverra accumsan. Imperdiet sed euismod nisi porta lorem mollis aliquam ut. Urna id volutpat lacus laoreet non curabitur gravida arcu. Mollis nunc sed id semper. Posuere ac ut consequat semper. Nunc eget lorem dolor sed viverra ipsum nunc. Tristique senectus et netus et malesuada fames ac. Ut sem viverra aliquet eget sit.
-    </string>
     <string name="global_date_format">%d д, %d ч, %d м</string>
     <string name="company_name">Разработано КБНЦ РАН по заказу\n Адыгейского института</string>
     <string name="release_date">Дата релиза 01.06.2023</string>
@@ -114,4 +102,54 @@ Venenatis tellus in metus vulputate eu scelerisque. Nulla aliquet porttitor lacu
     <string name="right_answer_is">Правильный ответ:</string>
     <string name="not_right_answer">Неправильный ответ</string>
     <string name="homePageTitle">Главная</string>
+    <string name="ime_label">AdygeIME</string>
+    <string name="first_question_type_hint">
+        Первый тип заданий, с которым вы столкнётесь, представляет из себя
+четыре картинки, с соответсвующими ими названиями. Выберите ту картинку, которая обозначает заданное в задании слово.
+    </string>
+    <string name="second_question_type_hint">
+        Второй тип заданий представляет собой три слова.
+Вам предстоит выбрать то слово, которое является правильным переводом заданному слову.
+    </string>
+    <string name="third_question_type_hint">
+        Третий тип заданий состоит из списка слов, части экрана,
+в которую нужно их поместить, кнопок для воспроизведения и остановки звука, а так же,
+возможности пропустить вопрос. Ваша задача поставить слова в таком порядке, в котором вы их услышали, либо перевести
+услышанное предложение с помощью отдельных слов и словосочетаний. Если вы не можете слушать задание, то вы можете пропустить
+его, за это у вас не отнимутся жизни, но и не прибавятся монеты.
+    </string>
+    <string name="fourth_question_type_hint">
+Четвёртый тип заданий схож с третьим, но вместо воспроизведения звука вам даётся текст.
+Вам нужно составить предложение из слов и словосочетаний ниже, чтобы пройти уровень.
+На текст задания можно нажать, при этом появится подсказка к нажатому слову или словосочетанию.
+    </string>
+    <string name="five_question_type_hint">
+        Пятый тип заданий. Здесь вам нужно перевести слово или предложение, вводя его с помощью клавиатуры в
+специальное для этого поле. Предложение можно прослушать с помощью специальных звуковых кнопок.
+    </string>
+    <string name="sixth_question_type_hint">
+        Шестой тип заданий. Вам даётся колонка со словами слева и слова снизу. Нужно сопоставить слова так, чтобы они стояли по порядку
+с переводами этих слов.
+    </string>
+    <string name="seventh_question_type_hint">
+        Седьмой тип заданий представляет собой предложение с одним пропущенным словом и тремя вариантами ответа снизу.
+Вам нужно поставить на место пропуска то слово, которое по смыслу подходит для данного предложения.
+    </string>
+    <string name="eight_question_type_hint">
+        Восьмой тип заданий немного похож на седьмой, однако здесь у вас
+может быть от одного и более пропущенных слов, которые нужно написать в
+места пропусков с помощью клавиатуры, слова должны подходить по смыслу в предложении.
+    </string>
+    <string name="ninth_question_type_hint">
+        Девятый тип заданий. Пятый тип заданий. Здесь вам нужно перевести слово или предложение, вводя его с помощью клавиатуры в
+специальное для этого поле. Так же вам доступны подсказки при нажатии на данное слово.
+    </string>
+    <string name="game_hint">
+        При входе в приложение вам предоставляется выбор уровней, уровни состоят из 12 уроков, связанных тематикой уровня.
+При нажатии на урок вы можете его пройти. Урок состоит из 15 вопросов различной сложности. После выбора или ввода правильного ответа, вам нужно
+нажать на кнопку "Ответить" снизу, или, в вопросах с аудированием, вы можете пропустить задание, нажав на текст "Пропустить задание".
+За каждый правильный ответ вы получите монетку, а за каждый неправильный у вас отнимут здоровье, оно восстанавливается каждые 5 минут.
+Так же, после ответа, вы узнаете, ответили ли вы правильно. В противном случае, вы сможете узнать какой же ответ был правильным.
+За пропуск ответа ничего не происходит, вы переходите к следующему заданию. В конце урока вы можете посмотреть на статистику урока, где есть статистика о пройденном уроке.
+    </string>
 </resources>

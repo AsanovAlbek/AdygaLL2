@@ -21,7 +21,6 @@ class UserUseCase(
     private val ioDispatcher: CoroutineDispatcher,
     private val isUserLogIn: SharedPreferences
 ) {
-
     fun isUserLogIn(): Boolean = isUserLogIn.getBoolean(PrefConst.IS_USER_SIGN_UP, false)
 
     fun getUserImage(resourceProvider: ResourceProvider) =

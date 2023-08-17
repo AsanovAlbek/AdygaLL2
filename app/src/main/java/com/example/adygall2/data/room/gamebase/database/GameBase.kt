@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.adygall2.data.room.consts.RoomConst.FULL_BASE
-import com.example.adygall2.data.room.consts.RoomConst.SECOND_BASE
 import com.example.adygall2.data.room.gamebase.dao.AnswerDao
 import com.example.adygall2.data.room.gamebase.dao.OrderDao
 import com.example.adygall2.data.room.gamebase.dao.PictureDao

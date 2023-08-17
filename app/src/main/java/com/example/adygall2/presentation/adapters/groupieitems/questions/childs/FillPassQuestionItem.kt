@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentFillInThePassBinding
 import com.example.adygall2.domain.model.ComplexAnswer
@@ -13,6 +15,9 @@ import com.example.adygall2.presentation.adapters.groupieitems.questions.parenti
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 
 class FillPassQuestionItem(
     private val context: Context,
@@ -66,7 +71,8 @@ class FillPassQuestionItem(
             textViewField.apply {
                 this?.let {
                     text = word
-                    background = context.getDrawable(R.drawable.rounded_button2)
+                    //background = ContextCompat.getDrawable(context, R.drawable.pair_words_slot)
+                    //setBackgroundColor(Color.WHITE)
                 }
 
             }
@@ -88,7 +94,6 @@ class FillPassQuestionItem(
         width = 270
         textSize = 18F
         gravity = Gravity.CENTER
-        setBackgroundResource(R.drawable.pair_words_slot)
         setBackgroundColor(Color.WHITE)
         setTextColor(Color.BLACK)
         typeface = context.resources.getFont(R.font.pt_sans_bold)

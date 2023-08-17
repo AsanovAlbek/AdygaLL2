@@ -16,7 +16,8 @@ import com.google.android.flexbox.FlexboxLayout
 class FillGapsQuestionItem(
     private val context: Context,
     private val title: String,
-    private val answers: List<ComplexAnswer>
+    private val answers: List<ComplexAnswer>,
+    private val handleKeyboard: (EditText) -> Unit
 ): QuestionItem<FragmentFillGapsBinding>() {
 
     private var _userAnswer = mutableListOf<EditText>()
@@ -42,6 +43,7 @@ class FillGapsQuestionItem(
             if (index < textViews.size - 1) {
                 val addedField = EditText(context)
                 addedField.setup(context)
+                handleKeyboard(addedField)
                 textContainer?.addView(addedField)
                 _userAnswer.add(addedField)
             }
@@ -63,8 +65,7 @@ class FillGapsQuestionItem(
         typeface = context.resources.getFont(R.font.pt_sans_bold)
         gravity = Gravity.CENTER
         setTextColor(Color.BLACK)
-        setBackgroundResource(R.drawable.pair_words_slot)
-        setBackgroundColor(Color.WHITE)
+        setBackgroundResource(R.drawable.edit_text_rounded)
         setPadding(0, 0 , 10, 0)
         isSingleLine = true
     }

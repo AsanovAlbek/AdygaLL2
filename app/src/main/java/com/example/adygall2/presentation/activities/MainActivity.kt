@@ -3,11 +3,13 @@ package com.example.adygall2.presentation.activities
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -35,6 +37,7 @@ class MainActivity : AppCompatActivity(), UserChangeListener {
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var drawerHeader: View? = null
+    var hp: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +49,11 @@ class MainActivity : AppCompatActivity(), UserChangeListener {
         setupDrawer()
         setupToolbarVisible()
         observe()
-        //viewModel.regenerateHealthOffline()
+        backPressed()
+        if (viewModel.isUserLogIn()) {
+            viewModel.regenerateHealthOffline()
+        }
+        viewModel.hillPeriodic()
     }
 
     // Установка видимости тулбара
@@ -59,6 +66,7 @@ class MainActivity : AppCompatActivity(), UserChangeListener {
                 R.id.homePage,
                 R.id.appTutorial,
                 R.id.contactUs -> showActionBar()
+
                 else -> hideActionBar()
             }
         }
@@ -69,14 +77,18 @@ class MainActivity : AppCompatActivity(), UserChangeListener {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         WindowInsetsControllerCompat(window, binding.root).let { controller ->
             controller.hide(WindowInsetsCompat.Type.systemBars())
-            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 
     private fun showActionBar() {
         supportActionBar?.show()
         WindowCompat.setDecorFitsSystemWindows(window, true)
-        WindowInsetsControllerCompat(window, binding.root).show(WindowInsetsCompat.Type.systemBars())
+        WindowInsetsControllerCompat(
+            window,
+            binding.root
+        ).show(WindowInsetsCompat.Type.systemBars())
     }
 
     private fun observe() {
@@ -117,7 +129,7 @@ class MainActivity : AppCompatActivity(), UserChangeListener {
 
     // При закрытии приложения записывается время выхода
     override fun onStop() {
-        viewModel.saveExitTime()
+
         super.onStop()
     }
 
@@ -126,21 +138,25 @@ class MainActivity : AppCompatActivity(), UserChangeListener {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    // Кастомизация нажатия кнопки наза
-    override fun onBackPressed() {
-        when (navController.currentDestination?.id) {
-            // Диалоговое окно с выходом из приложения
-            R.id.homePage, R.id.authorize -> viewModel.exitFromAppDialog(this)
-            // Диалоговое окно с выходом из урока
-            R.id.taskContainer -> viewModel.exitFromLessonDialog(this, navController)
-            // Просто возврат на главную страницу
-            R.id.taskResults,
-            R.id.userProfile,
-            R.id.appTutorial,
-            R.id.aboutApp,
-            R.id.contactUs -> navController.navigate(R.id.homePage)
-            // Иначе ничего не меняем
-            else -> super.onBackPressed()
+    private fun backPressed() {
+        onBackPressedDispatcher.addCallback {
+            when (navController.currentDestination?.id) {
+                // Диалоговое окно с выходом из приложения
+                R.id.homePage, R.id.authorize -> viewModel.exitFromAppDialog(this@MainActivity)
+                // Диалоговое окно с выходом из урока
+                R.id.taskContainer -> viewModel.exitFromLessonDialog(
+                    this@MainActivity,
+                    navController
+                )
+                // Просто возврат на главную страницу
+                R.id.taskResults,
+                R.id.userProfile,
+                R.id.appTutorial,
+                R.id.aboutApp,
+                R.id.contactUs -> navController.navigate(R.id.homePage)
+                // Иначе ничего не меняем
+                else -> onBackPressedDispatcher.onBackPressed()
+            }
         }
     }
 
@@ -160,6 +176,7 @@ class MainActivity : AppCompatActivity(), UserChangeListener {
     }
 
     override fun onDestroy() {
+        viewModel.saveExitTime()
         // Во избежание утечек в памяти, обнуляем хидер бокового меню
         drawerHeader = null
         super.onDestroy()
@@ -167,5 +184,17 @@ class MainActivity : AppCompatActivity(), UserChangeListener {
 
     override fun onUserChange(user: User) {
         viewModel.userChange(user)
+    }
+
+    override fun getUserHealthLiveData(): LiveData<Int> {
+        return viewModel.health
+    }
+
+    override fun setUserHealthLiveData(value: Int) {
+        viewModel.health.value = value
+    }
+
+    override fun damage() {
+        viewModel.damage()
     }
 }

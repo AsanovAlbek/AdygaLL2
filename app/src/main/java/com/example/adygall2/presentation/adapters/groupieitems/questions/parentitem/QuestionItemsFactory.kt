@@ -1,6 +1,7 @@
 package com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem
 
 import android.content.Context
+import android.widget.EditText
 import androidx.viewbinding.ViewBinding
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.data.room.consts.TaskType
@@ -23,7 +24,8 @@ fun Task.createQuestion(
     answers: List<ComplexAnswer>,
     soundsPlayer: SoundsPlayer,
     onClearImageCaches: () -> Unit,
-    playerSource: Source
+    playerSource: Source,
+    handleKeyboard: (EditText) -> Unit
 ): QuestionItem<out ViewBinding>? = when(taskType) {
     TaskType.IMAGE -> FourImagesQuestionItem(
         context = context,
@@ -42,7 +44,8 @@ fun Task.createQuestion(
     TaskType.TYPE_TRANSLATE -> TypeTranslateQuestionItem(
         context = context,
         title = title,
-        currentAnswer = answers.first().answer.correctAnswer
+        currentAnswer = answers.first().answer.correctAnswer,
+        handleKeyboard = handleKeyboard
     )
 
     TaskType.SENTENCE_BUILD -> SentenceBuildQuestionItem(
@@ -55,7 +58,8 @@ fun Task.createQuestion(
     TaskType.FILL_IN_THE_GAPS -> FillGapsQuestionItem(
         context = context,
         title = title,
-        answers = answers
+        answers = answers,
+        handleKeyboard = handleKeyboard
     )
 
     TaskType.FILL_IN_THE_PASS -> FillPassQuestionItem(
@@ -67,7 +71,8 @@ fun Task.createQuestion(
     TaskType.TYPE_THAT_YOUR_HEARD -> TypeThanHeardQuestionItem(
         context = context,
         answers = answers,
-        playerSource = playerSource
+        playerSource = playerSource,
+        handleKeyboard = handleKeyboard
     )
 
     TaskType.TRANSLATE_SENTENCE -> TranslateTextQuestionItem(

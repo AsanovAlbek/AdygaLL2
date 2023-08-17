@@ -17,6 +17,7 @@ import com.example.adygall2.domain.usecases.GetAllOrdersUseCase
 import com.example.adygall2.domain.usecases.TasksByOrdersUseCase
 import com.example.adygall2.domain.usecases.UserUseCase
 import com.example.adygall2.presentation.fragments.main.FragmentHomePageDirections
+import java.util.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,10 +41,6 @@ class HomeViewModel(
 
     lateinit var user: User
 
-    /** Значение здоровья, восстанавливающегося во время сессии */
-    private var _hpHill = MutableStateFlow(0)
-    val hpHill get() = _hpHill.asStateFlow()
-
     private val userLiveData = MutableLiveData<User>()
     val observableUser: LiveData<User> get() = userLiveData
 
@@ -65,35 +62,17 @@ class HomeViewModel(
     fun saveUserStates(hp: Int, coins: Int) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
+                if (Date().time - user.lastOnlineTimeInMillis >= 300_000) {
+                    user = user.copy(
+                        lastOnlineTimeInMillis = Date().time
+                    )
+                }
                 user = user.copy(
                     hp = hp,
                     coins = coins
                 )
                 userLiveData.value = user
                 userUseCase.updateUser(user)
-            }
-        }
-    }
-
-    /** получение последнего сохраненного значения здоровья */
-    fun initAutoHill(value: Int) {
-        viewModelScope.launch {
-            withContext(mainDispatcher) {
-                _hpHill.value = value
-            }
-        }
-    }
-
-    /** функция процесса восстановления здоровья*/
-    fun autoHillHp() {
-        viewModelScope.launch {
-            withContext(mainDispatcher) {
-                while (isActive) {
-                    delay(fiveMinuteInMills)
-                    if (_hpHill.value < 100) {
-                        _hpHill.value += 10
-                    }
-                }
             }
         }
     }

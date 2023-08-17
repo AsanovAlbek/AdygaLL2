@@ -7,7 +7,6 @@ object RoomConst {
     private const val DATABASE_DIRECTORY = "game_db_alpha"
     // Название базы данных
     const val FULL_BASE = "$DATABASE_DIRECTORY/game_base.db"
-    const val SECOND_BASE = "$DATABASE_DIRECTORY/second_base.db"
 
     // Названия таблиц
     const val ANSWER_TABLE_NAME = "answers"

@@ -76,10 +76,10 @@ class LevelsAdapter(
         )
 
     override fun onBindViewHolder(holder: LevelHolder, position: Int) {
-        holder.bind(position, levelTitle = levelsNames[position], taskList = tasks)
+        holder.bind(position, levelTitle = levelsNames[position], taskList = tasks.chunked(180)[position])
     }
 
-    override fun getItemCount(): Int = levelsNames.size
+    override fun getItemCount(): Int = tasks.chunked(180).size
 }
 
 // Адаптер подменю

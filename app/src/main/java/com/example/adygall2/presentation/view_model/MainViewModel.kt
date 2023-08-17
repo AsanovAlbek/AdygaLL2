@@ -13,12 +13,19 @@ import com.example.adygall2.data.models.ResourceProvider
 import com.example.adygall2.domain.model.User
 import com.example.adygall2.domain.usecases.UserUseCase
 import com.example.adygall2.presentation.model.UserProfileState
-import java.util.Date
+import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlin.concurrent.timerTask
 
 class MainViewModel(
     private val userUseCase: UserUseCase,
@@ -39,6 +46,11 @@ class MainViewModel(
     private var tempUser = User()
     val user get() = tempUser
 
+    val health = MutableLiveData<Int>(100)
+    private var currentHealth = 100
+    private var timer: Timer? = null
+    private var hillJob = Job()
+
     init {
         viewModelScope.launch {
             withContext(ioDispatcher) {
@@ -53,7 +65,30 @@ class MainViewModel(
                 )
                 withContext(mainDispatcher) {
                     userState.value = current
+                    health.value = tempUser.hp
                 }
+            }
+        }
+    }
+
+    private fun hill() {
+        viewModelScope.launch {
+            withContext(mainDispatcher) {
+                withContext(mainDispatcher) {
+                    health.value = health.value!! + HEALTH_REGENERATE_VALUE
+                }
+            }
+        }
+
+    }
+
+    fun hillPeriodic() {
+        viewModelScope.launch {
+            withContext(mainDispatcher) {
+                timer = Timer()
+                timer?.schedule(timerTask {
+                    hill()
+                }, 300_000)
             }
         }
     }
@@ -78,26 +113,34 @@ class MainViewModel(
         }
     }
 
+    fun damage() {
+        viewModelScope.launch {
+            withContext(mainDispatcher) {
+                health.value = health.value!! - 10
+            }
+        }
+    }
+
     fun regenerateHealthOffline() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                var userHealth = user.hp
+                Log.i("user", "user hp for live data = ${tempUser.hp}")
+                var userHealth = tempUser.hp
                 // Разница во времени между выходом и в
                 val now = Date()
                 // Время последнего выхода
                 val lastExitTimeMillis = user.lastOnlineTimeInMillis
-                // Значение здоровья пользователяходом
+                // Время, которое отсутствовал пользователь
                 val period = now.time - lastExitTimeMillis
+                Log.i("user", "now = ${now.time} last = ${lastExitTimeMillis} seconds = ${period / 1000}")
                 // В минутах
                 val minutes = period / MILLIS_IN_SECOND / SECOND_IN_MINUTE
                 // Высчитываем, сколько раз прошло по 5 минут и восстанавливаем здоровье на 10 за каждые 5 минут
                 userHealth += ((minutes / HEALTH_REGENERATE_TIME).toInt() * HEALTH_REGENERATE_VALUE)
                 // Если получилось значение больше 100, то делаем значение 100
                 if (userHealth > MAX_HP) userHealth = MAX_HP
-                // Записываем здоровье в SharedPreference
-                tempUser = tempUser.copy(hp = userHealth)
-                userUseCase.updateUser(tempUser)
-                tempUser = userUseCase.getUser()
+                // Записываем здоровье в LiveData
+                health.value = userHealth
             }
         }
     }
@@ -105,7 +148,14 @@ class MainViewModel(
     fun saveExitTime() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                tempUser = tempUser.copy(lastOnlineTimeInMillis = Date().time)
+                if (Date().time - tempUser.lastOnlineTimeInMillis >= 300_000) {
+                    tempUser = tempUser.copy(
+                        lastOnlineTimeInMillis = Date().time
+                    )
+                }
+                tempUser = tempUser.copy(
+                    hp = health.value!!
+                )
                 Log.i("user", "save $tempUser and exit")
                 userUseCase.updateUser(tempUser)
             }
@@ -133,5 +183,12 @@ class MainViewModel(
             .setNeutralButton(R.string.no) { dialog, _ -> dialog.cancel() }
             .create()
             .show()
+    }
+
+    override fun onCleared() {
+        timer?.cancel()
+        timer?.purge()
+        timer = null
+        super.onCleared()
     }
 }

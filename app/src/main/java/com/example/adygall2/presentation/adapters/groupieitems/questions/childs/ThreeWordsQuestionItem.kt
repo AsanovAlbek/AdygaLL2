@@ -37,7 +37,7 @@ class ThreeWordsQuestionItem(
 
 
     override val rightAnswer: String =
-        answers.map { it.answer }.first { it.correctAnswer.toBoolean() }.answer
+        answers.map { it.answer }.first { it.correctAnswer.lowercase().toBoolean() }.answer
 
     override fun clear() {
         _userAnswer = ""
