@@ -22,7 +22,7 @@ class FillGapsQuestionItem(
 
     private var _userAnswer = mutableListOf<EditText>()
     private var textContainer: FlexboxLayout? = null
-    override val userAnswer: String get() = _userAnswer.joinToString { it.text }
+    override val userAnswer: String get() = _userAnswer.joinToString(separator = " ", postfix = ".") { it.text }
 
     override val rightAnswer: String = answers.first().answer.answer
 
@@ -43,7 +43,6 @@ class FillGapsQuestionItem(
             if (index < textViews.size - 1) {
                 val addedField = EditText(context)
                 addedField.setup(context)
-                handleKeyboard(addedField)
                 textContainer?.addView(addedField)
                 _userAnswer.add(addedField)
             }
@@ -68,6 +67,11 @@ class FillGapsQuestionItem(
         setBackgroundResource(R.drawable.edit_text_rounded)
         setPadding(0, 0 , 10, 0)
         isSingleLine = true
+        setOnFocusChangeListener { view, b ->
+            if (b) {
+                handleKeyboard(this)
+            }
+        }
     }
 
     override fun getLayout(): Int = R.layout.fragment_fill_gaps

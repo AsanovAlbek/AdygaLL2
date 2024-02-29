@@ -117,21 +117,31 @@ class GameViewModel(
     ) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
+                tasks.forEach { task ->
+                    Log.i("corr", """
+                        task id = ${task.id}
+                        task type = ${task.taskType}
+                    """.trimIndent())
+                }
+
                 val questions = tasks.map { task ->
+                    val answers = getComplexAnswerUseCase(answersByTaskIdUseCase(task.id))
                     task.createQuestion(
                         context = context,
                         title = task.task,
-                        answers = getComplexAnswerUseCase(answersByTaskIdUseCase(task.id)),
+                        answers = answers,
                         soundsPlayer = soundsPlayer,
                         onClearImageCaches = ::clearGlideCache,
                         playerSource = sourceInteractor.soundSourceById(task.soundId),
                         handleKeyboard = handleKeyboard
                     )
                 }
+                Log.i("corr", questions.joinToString { it?.rightAnswer ?: "NULL" })
 
                 _user = userUseCase.getUser()
                 withContext(mainDispatcher) {
-                    isLessonRepeated = user.learningProgressSet.contains(ProgressItem(level, lesson))
+                    isLessonRepeated =
+                        user.learningProgressSet.contains(ProgressItem(level, lesson))
                     currentQuestionItems = questions.toMutableList()
                     questionItems.value = currentQuestionItems
                     soundsPlayer.setCompletionListener { soundsPlayer.stopPlay() }
@@ -178,6 +188,7 @@ class GameViewModel(
     ) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
+                requireView.clearFocus()
                 // Получение правильного ответа и ответа пользователя
                 currentQuestion().let { question ->
                     currentGameState = currentGameState.copy(
@@ -316,7 +327,8 @@ class GameViewModel(
                 AlertDialog.Builder(context)
                     .setMessage(R.string.exit_from_level_question)
                     .setPositiveButton(R.string.yes) { _, _ ->
-                        currentGameState = currentGameState.copy(finishTime = System.currentTimeMillis())
+                        currentGameState =
+                            currentGameState.copy(finishTime = System.currentTimeMillis())
                         _gameState.value = currentGameState
                         currentGameState.run {
                             onNextQuestion()
@@ -325,7 +337,7 @@ class GameViewModel(
                                 globalPlayingTimeInMillis = user.globalPlayingTimeInMillis + (currentGameState.finishTime - currentGameState.startTime)
                             )
                             viewModelScope.launch {
-                                    userUseCase.updateUser(user)
+                                userUseCase.updateUser(user)
                             }
                             val navigateToHome =
                                 FragmentGamePageDirections.actionTaskContainerToHomePage(
@@ -451,7 +463,14 @@ class GameViewModel(
                     hp = hp,
                     coins = coins,
                     globalPlayingTimeInMillis = user.globalPlayingTimeInMillis + (currentGameState.finishTime - currentGameState.startTime),
-                    learningProgressSet = user.learningProgressSet.apply { add(ProgressItem(level, lesson)) }
+                    learningProgressSet = user.learningProgressSet.apply {
+                        add(
+                            ProgressItem(
+                                level,
+                                lesson
+                            )
+                        )
+                    }
                 )
                 userUseCase.updateUser(user)
                 getAllNewWords(tasks)
@@ -615,12 +634,15 @@ class GameViewModel(
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 currentGameState = currentGameState.copy(
-                    lessonTitle = resourceProvider.getString(
+                    lessonTitle = "${currentGameState.levelName}. " +
+                            "Урок ${currentGameState.lessonProgress}. " +
+                            "Задание ${currentGameState.currentQuestionPosition + 1}."
+                    /*lessonTitle = resourceProvider.getString(
                         R.string.lesson_title_mask,
                         currentGameState.levelName,
                         currentGameState.lessonProgress,
                         currentGameState.currentQuestionPosition + 1
-                    )
+                    )*/
                 )
                 _gameState.value = currentGameState
             }
@@ -633,9 +655,11 @@ class GameViewModel(
     fun hideSystemKeyboard(editText: EditText, activity: Activity) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
+                editText.clearFocus()
                 delay(200)
                 (activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                     .hideSoftInputFromWindow(editText.windowToken, 0)
+
             }
         }
     }

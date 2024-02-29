@@ -44,14 +44,21 @@
         android:layout_gravity="bottom"
         android:orientation="vertical">
 
-        <include
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/getAnswerButton"
-            layout="@layout/get_answer_button"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_height="wrap_content"
+            android:text="@string/get_answer"
+            app:cornerRadius="8dp"
+            android:fontFamily="@font/pt_sans_regular"
+            android:shadowColor="@color/black"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginBottom="8dp"/>
 
         <TextView
             android:id="@+id/soundTaskSkip"

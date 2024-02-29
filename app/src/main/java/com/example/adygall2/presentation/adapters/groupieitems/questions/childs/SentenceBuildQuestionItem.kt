@@ -30,7 +30,7 @@ class SentenceBuildQuestionItem(
     private var player: SoundsPlayer? = null
 
     override val rightAnswer: String =
-        answers.first().answer.correctAnswer
+    answers.first().answer.correctAnswer
 
     override fun bind(viewBinding: FragmentWordsQuestionBinding, position: Int) {
         viewBinding.apply {
@@ -96,13 +96,13 @@ class SentenceBuildQuestionItem(
         userAdapter?.clickAction = {
             userAdapter?.removeAnswer(it)
             answerAdapter?.addAnswer(it, -1)
-            _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+            _userAnswer = answerAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
         }
 
         answerAdapter?.clickAction = {
             answerAdapter?.removeAnswer(it)
             userAdapter?.addAnswer(it, -1)
-            _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+            _userAnswer = answerAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
         }
 
         val answerLayoutManager = FlexboxLayoutManager(context).apply {
@@ -149,7 +149,7 @@ class SentenceBuildQuestionItem(
             answerAdapter?.addAnswer(item, position)
             userAdapter?.removeAnswer(item)
         }
-        _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+        _userAnswer = answerAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
     }
 
     override fun clear() {

@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.BIND_INPUT_METHOD" />
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -37,7 +36,8 @@
             android:label="@string/ime_label"
             android:permission="android.permission.BIND_INPUT_METHOD"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:foregroundServiceType="dataSync">
 
             <meta-data android:name="android.view.im" android:resource="@xml/method"/>
             <intent-filter>

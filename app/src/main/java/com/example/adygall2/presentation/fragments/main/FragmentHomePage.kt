@@ -103,16 +103,23 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
         tasks: List<Task>,
         levelName: String
     ) {
-        if (homePageBinding.homeBottomBar.hp.progress > 0) {
-            viewModel.openLesson(
+//        if (homePageBinding.homeBottomBar.hp.progress > 0) {
+//            viewModel.openLesson(
+//                level = levelNumber,
+//                lesson = lessonNumber,
+//                tasks = tasks,
+//                navController = findNavController(),
+//                levelName = levelName
+//            )
+//        } else {
+//            viewModel.noHpMessage(requireContext())
+//        }
+        viewModel.openLesson(
                 level = levelNumber,
                 lesson = lessonNumber,
                 tasks = tasks,
                 navController = findNavController(),
                 levelName = levelName
             )
-        } else {
-            viewModel.noHpMessage(requireContext())
-        }
     }
 }

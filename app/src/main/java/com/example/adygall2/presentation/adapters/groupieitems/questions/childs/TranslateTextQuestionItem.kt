@@ -29,6 +29,7 @@ class TranslateTextQuestionItem(
     private var userAdapter: SentenceAdapter? = null
     private var answerAdapter: SentenceAdapter? = null
     private var tooltipBar: FlexboxLayout? = null
+    private val tooltipManagers = mutableListOf<ToolTipsManager>()
 
     override val rightAnswer: String = answers.first().answer.correctAnswer
 
@@ -50,7 +51,7 @@ class TranslateTextQuestionItem(
             userAdapter?.removeAnswer(item)
             answerAdapter?.addAnswer(item, position)
         }
-        _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+        _userAnswer = answerAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
     }
 
     private fun setAdapters(viewBinding: FragmentTranslateTheTextBinding) {
@@ -71,13 +72,13 @@ class TranslateTextQuestionItem(
         answerAdapter?.clickAction = {
             answerAdapter?.removeAnswer(it)
             userAdapter?.addAnswer(it, -1)
-            _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+            _userAnswer = answerAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
         }
 
         userAdapter?.clickAction = {
             userAdapter?.removeAnswer(it)
             answerAdapter?.addAnswer(it, -1)
-            _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+            _userAnswer = answerAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
 
         }
 
@@ -112,7 +113,7 @@ class TranslateTextQuestionItem(
 
     private fun setTaskText(viewBinding: FragmentTranslateTheTextBinding) {
         tooltipBar = viewBinding.wordsWithTooltip
-        val tooltipManagers = mutableListOf<ToolTipsManager>()
+
         val taskParts = title.split("*")
         val hints = taskParts[1].split("#")
         taskParts.first().split("#").forEachIndexed { index, item ->
@@ -162,5 +163,6 @@ class TranslateTextQuestionItem(
     override fun clear() {
         _userAnswer = ""
         tooltipBar?.removeAllViews()
+        tooltipManagers.clear()
     }
 }

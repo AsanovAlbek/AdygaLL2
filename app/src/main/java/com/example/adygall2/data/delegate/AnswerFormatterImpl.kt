@@ -21,7 +21,7 @@ class AnswerFormatterImpl : AnswerFormatter {
         str.lowercase()
             .trim()
             .split(complexSplit)
-            .joinToString()
+            .joinToString(separator = " ")
             .replace("ё", "е").replace("i", "I")
             .trim()
 }

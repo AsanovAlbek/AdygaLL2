@@ -13,7 +13,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.adygall2.R
+import com.example.adygall2.data.worker.UserHillWorker
 import com.example.adygall2.databinding.TaskContainerBinding
 import com.example.adygall2.presentation.activities.MainActivity
 import com.example.adygall2.presentation.activities.UserChangeListener
@@ -23,6 +26,7 @@ import com.example.adygall2.presentation.fragments.onKeyActionDefault
 import com.example.adygall2.presentation.model.DialogState
 import com.example.adygall2.presentation.model.GameState
 import com.xwray.groupie.GroupieAdapter
+import java.util.concurrent.TimeUnit
 
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -142,6 +146,11 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         userChangeListener?.getUserHealthLiveData()?.observe(viewLifecycleOwner, ::observeHealth)
     }
 
+    private fun initWorker() {
+        val workRequest = PeriodicWorkRequestBuilder<UserHillWorker>(10, TimeUnit.MINUTES)
+        WorkManager.getInstance(requireContext()).enqueue(workRequest.build())
+    }
+
     private fun observeHealth(healthValue: Int) {
         taskContainerBinding.taskBottomBar.hp.progress = healthValue
     }
@@ -177,7 +186,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                 nextButton.setOnClickListener { dialogState.buttonAction() }
             }
             taskViewPager.isEnabled = dialogState.viewPagerEnabled
-            getAnswerButton.root.isEnabled = dialogState.answerButtonEnabled
+            getAnswerButton.isEnabled = dialogState.answerButtonEnabled
         }
     }
 
@@ -191,7 +200,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
      */
     private fun setListeners() {
         taskContainerBinding.apply {
-            getAnswerButton.answerBtn.setOnClickListener {
+            getAnswerButton.setOnClickListener {
                 viewModel.getAnswerButtonClickAction(
                     requireView = requireView(),
                     navController = findNavController(),

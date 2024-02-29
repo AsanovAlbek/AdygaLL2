@@ -48,7 +48,7 @@ class MainViewModel(
 
     val health = MutableLiveData<Int>(100)
     private var currentHealth = 100
-    private var timer: Timer? = null
+    private var timer: Timer = Timer()
     private var hillJob = Job()
 
     init {
@@ -74,9 +74,7 @@ class MainViewModel(
     private fun hill() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                withContext(mainDispatcher) {
-                    health.value = health.value!! + HEALTH_REGENERATE_VALUE
-                }
+                health.value = health.value!! + HEALTH_REGENERATE_VALUE
             }
         }
 
@@ -85,10 +83,9 @@ class MainViewModel(
     fun hillPeriodic() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                timer = Timer()
-                timer?.schedule(timerTask {
+                timer.schedule(timerTask {
                     hill()
-                }, 300_000)
+                }, 3000)
             }
         }
     }
@@ -132,7 +129,10 @@ class MainViewModel(
                 val lastExitTimeMillis = user.lastOnlineTimeInMillis
                 // Время, которое отсутствовал пользователь
                 val period = now.time - lastExitTimeMillis
-                Log.i("user", "now = ${now.time} last = ${lastExitTimeMillis} seconds = ${period / 1000}")
+                Log.i(
+                    "user",
+                    "now = ${now.time} last = ${lastExitTimeMillis} seconds = ${period / 1000}"
+                )
                 // В минутах
                 val minutes = period / MILLIS_IN_SECOND / SECOND_IN_MINUTE
                 // Высчитываем, сколько раз прошло по 5 минут и восстанавливаем здоровье на 10 за каждые 5 минут
@@ -186,9 +186,8 @@ class MainViewModel(
     }
 
     override fun onCleared() {
-        timer?.cancel()
-        timer?.purge()
-        timer = null
+        timer.cancel()
+        timer.purge()
         super.onCleared()
     }
 }

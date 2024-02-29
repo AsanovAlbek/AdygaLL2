@@ -40,8 +40,8 @@ class PairQuestionItem(
             bottomAdapter?.addAnswer(item, position)
             rightAdapter?.removeAnswer(item)
         }
-        _userAnswer = rightAdapter?.adapterItems!!.joinToString()
-        _rightAnswer = answers.joinToString { it.answer.answer.split("*")[1] }
+        _userAnswer = rightAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
+        _rightAnswer = answers.joinToString(separator = " ", postfix = ".") { it.answer.answer.split("*")[1] }
     }
 
     override fun bind(viewBinding: FragmentPairsOfWordsBinding, position: Int) {
@@ -77,14 +77,14 @@ class PairQuestionItem(
         rightAdapter?.clickEvent = { word ->
             rightAdapter?.removeAnswer(word)
             bottomAdapter?.addAnswer(word, -1)
-            _userAnswer = rightAdapter?.adapterItems!!.joinToString()
-            _rightAnswer = answers.joinToString { it.answer.answer.split("*")[1] }
+            _userAnswer = rightAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
+            _rightAnswer = answers.joinToString(separator = " ", postfix = ".") { it.answer.answer.split("*")[1] }
         }
         bottomAdapter?.clickEvent = { word ->
             bottomAdapter?.removeAnswer(word)
             rightAdapter?.addAnswer(word, -1)
-            _userAnswer = rightAdapter?.adapterItems!!.joinToString()
-            _rightAnswer = answers.joinToString { it.answer.answer.split("*")[1] }
+            _userAnswer = rightAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
+            _rightAnswer = answers.joinToString(separator = " ", postfix = ".") { it.answer.answer.split("*")[1] }
         }
 
         viewBinding.apply {
