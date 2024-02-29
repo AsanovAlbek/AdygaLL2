@@ -132,7 +132,12 @@
             android:codes="32"
             android:isRepeatable="true"
             android:keyLabel="Adyga"
-            android:keyWidth="100%p" />
+            android:keyWidth="70%p" />
+        <Key
+            android:codes="-4"
+            android:isRepeatable="false"
+            android:keyLabel="Ответить"
+            android:keyWidth="30%p"/>
     </Row>
 
 </Keyboard>

@@ -24,7 +24,7 @@ fun Fragment.log(message: String) {
     Log.i(tag, message)
 }
 
-fun KeyboardView.onKeyActionDefault(editText: EditText, isCaps: Boolean) {
+fun KeyboardView.onKeyActionDefault(editText: EditText, isCaps: Boolean, onAnswerClick: () -> Unit = {}) {
 
     var caps = isCaps
 
@@ -52,6 +52,7 @@ fun KeyboardView.onKeyActionDefault(editText: EditText, isCaps: Boolean) {
         override fun onKey(keyCode: Int, codes: IntArray) {
             val connection = editText.onCreateInputConnection(EditorInfo())
             when (keyCode) {
+                Keyboard.KEYCODE_DONE -> onAnswerClick()
                 Keyboard.KEYCODE_DELETE -> deleteClick(connection = connection!!)
                 Keyboard.KEYCODE_SHIFT -> shiftClick()
                 else -> simpleClick(code = keyCode, connection = connection!!)

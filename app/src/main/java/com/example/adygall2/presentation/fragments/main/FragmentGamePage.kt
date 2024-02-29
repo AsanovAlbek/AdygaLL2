@@ -73,7 +73,22 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         handleKeyboardFromQuestion = { editText ->
             keyboardView.onKeyActionDefault(
                 editText = editText,
-                isCaps = false
+                isCaps = false,
+                onAnswerClick = {
+                    viewModel.getAnswerButtonClickAction(
+                        requireView = requireView(),
+                        navController = findNavController(),
+                        context = requireContext(),
+                        tasks = gameArgs.tasks.toList(),
+                        level = gameArgs.levelProgress,
+                        lesson = gameArgs.lessonProgress,
+                        coinsBeforeLesson = viewModel.user.coins,
+                        coins = taskContainerBinding.taskBottomBar.exp.progress,
+                        hp = taskContainerBinding.taskBottomBar.hp.progress,
+                        keyboardView = taskContainerBinding.keyboardInGame.customAdygeKeyboard,
+                        userHealthHandle = userChangeListener!!
+                    )
+                }
             )
             editText.run {
                 setOnClickListener {
