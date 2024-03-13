@@ -9,6 +9,6 @@
     android:background="@color/white"
     android:keyPreviewLayout="@layout/keyboard_preview"
     android:layout_alignParentBottom="true"
-    android:paddingVertical="8dp">
+    android:paddingBottom="16dp">
 
 </android.inputmethodservice.KeyboardView>

@@ -49,14 +49,14 @@ class MainViewModel(
     val health = MutableLiveData<Int>(100)
     private var currentHealth = 100
     private var timer: Timer = Timer()
-    private var hillJob = Job()
+    private var hillJob: Job = Job()
 
     init {
         viewModelScope.launch {
             withContext(ioDispatcher) {
                 Log.i("user", "user exists fun return ${userUseCase.isUserExist()}")
                 tempUser = if (userUseCase.isUserExist()) userUseCase.getUser() else User()
-                Log.i("user", "user from db = $tempUser")
+                Log.i("user", "user from db = ${tempUser.name}")
                 Log.i("user", "user exists is ${tempUser.isUserSignUp}")
                 current = current.copy(
                     name = tempUser.name,
@@ -66,6 +66,9 @@ class MainViewModel(
                 withContext(mainDispatcher) {
                     userState.value = current
                     health.value = tempUser.hp
+                }
+                if (userUseCase.isUserExist()) {
+                    regenerateHealthOffline()
                 }
             }
         }
@@ -81,11 +84,16 @@ class MainViewModel(
     }
 
     fun hillPeriodic() {
-        viewModelScope.launch {
-            withContext(mainDispatcher) {
-                timer.schedule(timerTask {
-                    hill()
-                }, 3000)
+        hillJob = viewModelScope.launch {
+            withContext(ioDispatcher) {
+                while (isActive) {
+                    if (health.value != null && health.value!!.compareTo(100) == -1) {
+                        delay(15000)
+                        withContext(mainDispatcher) {
+                            hill()
+                        }
+                    }
+                }
             }
         }
     }
@@ -131,7 +139,7 @@ class MainViewModel(
                 val period = now.time - lastExitTimeMillis
                 Log.i(
                     "user",
-                    "now = ${now.time} last = ${lastExitTimeMillis} seconds = ${period / 1000}"
+                    "now = ${now.time} last = $lastExitTimeMillis seconds = ${period / 1000}"
                 )
                 // В минутах
                 val minutes = period / MILLIS_IN_SECOND / SECOND_IN_MINUTE
@@ -148,7 +156,7 @@ class MainViewModel(
     fun saveExitTime() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                if (Date().time - tempUser.lastOnlineTimeInMillis >= 300_000) {
+                if (Date().time - tempUser.lastOnlineTimeInMillis >= 60000) {
                     tempUser = tempUser.copy(
                         lastOnlineTimeInMillis = Date().time
                     )
@@ -156,7 +164,7 @@ class MainViewModel(
                 tempUser = tempUser.copy(
                     hp = health.value!!
                 )
-                Log.i("user", "save $tempUser and exit")
+                Log.i("user", "save ${tempUser.name} and exit")
                 userUseCase.updateUser(tempUser)
             }
         }
@@ -188,6 +196,7 @@ class MainViewModel(
     override fun onCleared() {
         timer.cancel()
         timer.purge()
+        hillJob.cancel()
         super.onCleared()
     }
 }

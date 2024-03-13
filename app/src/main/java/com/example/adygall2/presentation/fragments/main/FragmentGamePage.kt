@@ -1,6 +1,5 @@
 package com.example.adygall2.presentation.fragments.main
 
-import android.inputmethodservice.Keyboard
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +21,6 @@ import com.example.adygall2.presentation.activities.MainActivity
 import com.example.adygall2.presentation.activities.UserChangeListener
 import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
-import com.example.adygall2.presentation.fragments.onKeyActionDefault
 import com.example.adygall2.presentation.model.DialogState
 import com.example.adygall2.presentation.model.GameState
 import com.xwray.groupie.GroupieAdapter
@@ -40,7 +38,6 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
     private val viewModel by viewModel<GameViewModel>()
     private val gameArgs: FragmentGamePageArgs by navArgs()
     private lateinit var tasksAdapter: GroupieAdapter
-    private var handleKeyboardFromQuestion: (EditText) -> Unit = {}
     private var userChangeListener: UserChangeListener? = null
 
     override fun onCreateView(
@@ -65,53 +62,6 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
             )
         }
 
-        val keyboard = Keyboard(requireContext(), R.xml.keyboard)
-        val keyboardView = taskContainerBinding.keyboardInGame.customAdygeKeyboard
-        keyboardView.keyboard = keyboard
-        keyboardView.isVisible = false
-
-        handleKeyboardFromQuestion = { editText ->
-            keyboardView.onKeyActionDefault(
-                editText = editText,
-                isCaps = false,
-                onAnswerClick = {
-                    viewModel.getAnswerButtonClickAction(
-                        requireView = requireView(),
-                        navController = findNavController(),
-                        context = requireContext(),
-                        tasks = gameArgs.tasks.toList(),
-                        level = gameArgs.levelProgress,
-                        lesson = gameArgs.lessonProgress,
-                        coinsBeforeLesson = viewModel.user.coins,
-                        coins = taskContainerBinding.taskBottomBar.exp.progress,
-                        hp = taskContainerBinding.taskBottomBar.hp.progress,
-                        keyboardView = taskContainerBinding.keyboardInGame.customAdygeKeyboard,
-                        userHealthHandle = userChangeListener!!
-                    )
-                }
-            )
-            editText.run {
-                setOnClickListener {
-                    this.requestFocus()
-                    showKeyboard(editText = this)
-                }
-                setOnFocusChangeListener { _, focus ->
-                    if (focus) {
-                        showKeyboard(editText = this)
-                    } else {
-                        keyboardView.isVisible = false
-                    }
-                }
-                requireActivity().onBackPressedDispatcher.addCallback {
-                    if (keyboardView.isVisible) {
-                        keyboardView.isVisible = false
-                    } else {
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
-                    }
-                }
-            }
-        }
-
         tasksAdapter = GroupieAdapter()
         viewModel.start(
             context = requireContext().applicationContext,
@@ -119,7 +69,6 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
             lesson = gameArgs.lessonProgress,
             level = gameArgs.levelProgress,
             levelName = gameArgs.levelName,
-            handleKeyboard = handleKeyboardFromQuestion
         )
 
         taskContainerBinding.taskViewPager.apply {
@@ -226,7 +175,6 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                     coinsBeforeLesson = viewModel.user.coins,
                     coins = taskContainerBinding.taskBottomBar.exp.progress,
                     hp = taskContainerBinding.taskBottomBar.hp.progress,
-                    keyboardView = keyboardInGame.customAdygeKeyboard,
                     userHealthHandle = userChangeListener!!
                 )
             }
@@ -239,17 +187,8 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                     coins = taskContainerBinding.taskBottomBar.exp.progress,
                     hp = taskContainerBinding.taskBottomBar.hp.progress,
                     navController = findNavController(),
-                    keyboardView = keyboardInGame.customAdygeKeyboard
                 )
             }
         }
-    }
-
-    private fun showKeyboard(editText: EditText) {
-        viewModel.hideSystemKeyboard(
-            activity = requireActivity(),
-            editText = editText
-        )
-        taskContainerBinding.keyboardInGame.customAdygeKeyboard.isVisible = true
     }
 }

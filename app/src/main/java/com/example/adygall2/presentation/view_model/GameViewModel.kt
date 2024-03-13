@@ -3,7 +3,6 @@ package com.example.adygall2.presentation.view_model
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
-import android.inputmethodservice.KeyboardView
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.View
@@ -37,10 +36,6 @@ import com.example.adygall2.presentation.model.GameState
 import com.google.android.material.snackbar.Snackbar
 import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -112,8 +107,7 @@ class GameViewModel(
         tasks: List<Task>,
         level: Int,
         lesson: Int,
-        levelName: String,
-        handleKeyboard: (EditText) -> Unit
+        levelName: String
     ) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
@@ -132,8 +126,7 @@ class GameViewModel(
                         answers = answers,
                         soundsPlayer = soundsPlayer,
                         onClearImageCaches = ::clearGlideCache,
-                        playerSource = sourceInteractor.soundSourceById(task.soundId),
-                        handleKeyboard = handleKeyboard
+                        playerSource = sourceInteractor.soundSourceById(task.soundId)
                     )
                 }
                 Log.i("corr", questions.joinToString { it?.rightAnswer ?: "NULL" })
@@ -183,7 +176,6 @@ class GameViewModel(
         coinsBeforeLesson: Int,
         coins: Int,
         hp: Int,
-        keyboardView: KeyboardView,
         userHealthHandle: UserChangeListener
     ) {
         viewModelScope.launch {
@@ -234,10 +226,10 @@ class GameViewModel(
                                     _gameState.value = currentGameState
                                     // Если счётчик превысил допустимое значение, то прогресс сбрасывается
                                     if (currentGameState.mistakesCounter >= MISTAKES_LIMIT) {
-                                        restartLesson(keyboardView = keyboardView)
+                                        restartLesson()
                                     } else {
                                         // Иначе переход на следующий вопрос
-                                        nextTask(keyboardView = keyboardView)
+                                        nextTask()
                                     }
                                     // Получение урона за неправильный ответ
                                     damage(userHealthHandle)
@@ -251,7 +243,7 @@ class GameViewModel(
                                 } else if (isRight()) {
                                     // Иначе даём монеты и направляем на следующий уровень
                                     giveMoney()
-                                    nextTask(keyboardView = keyboardView)
+                                    nextTask()
                                 }
                             }
                         }
@@ -271,10 +263,10 @@ class GameViewModel(
                         _gameState.value = currentGameState
                         // Если превышен лимит ошибок - сброс прогресса
                         if (currentGameState.mistakesCounter >= MISTAKES_LIMIT) {
-                            restartLesson(keyboardView = keyboardView)
+                            restartLesson()
                         } else {
                             // Иначе следующий вопрос
-                            nextTask(keyboardView = keyboardView)
+                            nextTask()
                         }
                         // Урон
                         damage(userHealthHandle)
@@ -397,12 +389,11 @@ class GameViewModel(
         }
     }
 
-    private fun nextQuestionAll(keyboardView: KeyboardView) {
+    private fun nextQuestionAll() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 currentQuestionItems.forEach { it?.clear() }
                 questionItems.value = currentQuestionItems
-                keyboardView.isVisible = false
             }
         }
     }
@@ -416,7 +407,6 @@ class GameViewModel(
         navController: NavController,
         coins: Int,
         hp: Int,
-        keyboardView: KeyboardView
     ) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
@@ -431,7 +421,7 @@ class GameViewModel(
                         hp = hp
                     )
                 } else {
-                    nextTask(keyboardView = keyboardView)
+                    nextTask()
                 }
                 soundsPlayer.stopPlay()
             }
@@ -492,10 +482,10 @@ class GameViewModel(
     }
 
     /** Метод для начала урока заново, если пользователь превысил лимит ошибок */
-    private fun restartLesson(keyboardView: KeyboardView) {
+    private fun restartLesson() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                nextQuestionAll(keyboardView = keyboardView)
+                nextQuestionAll()
 
                 //onNextQuestion()
                 currentGameState = currentGameState.copy(
@@ -512,7 +502,7 @@ class GameViewModel(
     }
 
     /** Метод перехода к следующему занятию */
-    private fun nextTask(keyboardView: KeyboardView) {
+    private fun nextTask() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 onNextQuestion()
@@ -525,7 +515,6 @@ class GameViewModel(
                 _gameState.value = currentGameState
             }
             refreshLessonTitle()
-            keyboardView.isVisible = false
         }
     }
 
@@ -612,7 +601,7 @@ class GameViewModel(
                 val answersAll = tasks.map { task ->
                     answersByTaskIdUseCase(task.id)
                 }.flatten().map { answer ->
-                    transform(answer.answer).split(", ")
+                    transform(answer.answer).split(" ")
                 }.flatten().distinct()
 
                 withContext(mainDispatcher) {
@@ -651,16 +640,4 @@ class GameViewModel(
 
     /** Получение фото пользователя из кэша приложения */
     fun getPhotoFromCache() = userUseCase.getUserImage(resourceProvider)
-
-    fun hideSystemKeyboard(editText: EditText, activity: Activity) {
-        viewModelScope.launch {
-            withContext(mainDispatcher) {
-                editText.clearFocus()
-                delay(200)
-                (activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                    .hideSoftInputFromWindow(editText.windowToken, 0)
-
-            }
-        }
-    }
 }

@@ -14,8 +14,7 @@ import com.example.adygall2.presentation.adapters.groupieitems.questions.parenti
 class TypeThanHeardQuestionItem(
     private val context: Context,
     private val answers: List<ComplexAnswer>,
-    private val playerSource: Source,
-    private val handleKeyboard: (EditText) -> Unit
+    private val playerSource: Source
 ) : QuestionItem<FragmentTypeThatHeardBinding>() {
     private var _userAnswer = ""
     override val userAnswer: String get() = _userAnswer
@@ -32,7 +31,6 @@ class TypeThanHeardQuestionItem(
     override fun bind(viewBinding: FragmentTypeThatHeardBinding, position: Int) {
         player = SoundsPlayer(context)
         setupSoundButtons(viewBinding)
-        handleKeyboard(viewBinding.textInputField)
         textChangedListener(viewBinding)
         viewBinding.taskText.text = "Введите услышанное"
     }

@@ -22,6 +22,6 @@ class AnswerFormatterImpl : AnswerFormatter {
             .trim()
             .split(complexSplit)
             .joinToString(separator = " ")
-            .replace("ё", "е").replace("i", "I")
+            .replace("ё", "е").replace("[1iLlI|]".toRegex(), "I")
             .trim()
 }

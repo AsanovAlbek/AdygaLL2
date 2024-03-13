@@ -16,8 +16,7 @@ import com.google.android.flexbox.FlexboxLayout
 class TypeTranslateQuestionItem(
     private val context: Context,
     private val title: String,
-    private val currentAnswer: String,
-    private val handleKeyboard: (EditText) -> Unit
+    private val currentAnswer: String
 ): QuestionItem<FragmentTypeTranslateBinding>() {
 
     private var _userAnswer = ""
@@ -32,7 +31,6 @@ class TypeTranslateQuestionItem(
             userInputEt.addTextChangedListener {
                 _userAnswer = it.toString()
             }
-            handleKeyboard(userInputEt)
             taskTitleWithHints()
         }
     }

@@ -50,9 +50,9 @@ class MainActivity : AppCompatActivity(), UserChangeListener {
         setupToolbarVisible()
         observe()
         backPressed()
-        if (viewModel.isUserLogIn()) {
-            viewModel.regenerateHealthOffline()
-        }
+//        if (viewModel.isUserLogIn()) {
+//            viewModel.regenerateHealthOffline()
+//        }
         viewModel.hillPeriodic()
     }
 
@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity(), UserChangeListener {
 
     // При закрытии приложения записывается время выхода
     override fun onStop() {
-
+        viewModel.saveExitTime()
         super.onStop()
     }
 
@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity(), UserChangeListener {
     }
 
     override fun onDestroy() {
-        viewModel.saveExitTime()
+//        viewModel.saveExitTime()
         // Во избежание утечек в памяти, обнуляем хидер бокового меню
         drawerHeader = null
         super.onDestroy()

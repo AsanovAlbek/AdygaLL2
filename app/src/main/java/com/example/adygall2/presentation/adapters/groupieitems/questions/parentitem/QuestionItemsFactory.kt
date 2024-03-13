@@ -24,8 +24,7 @@ fun Task.createQuestion(
     answers: List<ComplexAnswer>,
     soundsPlayer: SoundsPlayer,
     onClearImageCaches: () -> Unit,
-    playerSource: Source,
-    handleKeyboard: (EditText) -> Unit
+    playerSource: Source
 ): QuestionItem<out ViewBinding>? = when(taskType) {
     TaskType.IMAGE -> FourImagesQuestionItem(
         context = context,
@@ -44,8 +43,7 @@ fun Task.createQuestion(
     TaskType.TYPE_TRANSLATE -> TypeTranslateQuestionItem(
         context = context,
         title = title,
-        currentAnswer = answers.first().answer.correctAnswer,
-        handleKeyboard = handleKeyboard
+        currentAnswer = answers.first().answer.correctAnswer
     )
 
     TaskType.SENTENCE_BUILD -> SentenceBuildQuestionItem(
@@ -58,8 +56,7 @@ fun Task.createQuestion(
     TaskType.FILL_IN_THE_GAPS -> FillGapsQuestionItem(
         context = context,
         title = title,
-        answers = answers,
-        handleKeyboard = handleKeyboard
+        answers = answers
     )
 
     TaskType.FILL_IN_THE_PASS -> FillPassQuestionItem(
@@ -71,8 +68,7 @@ fun Task.createQuestion(
     TaskType.TYPE_THAT_YOUR_HEARD -> TypeThanHeardQuestionItem(
         context = context,
         answers = answers,
-        playerSource = playerSource,
-        handleKeyboard = handleKeyboard
+        playerSource = playerSource
     )
 
     TaskType.TRANSLATE_SENTENCE -> TranslateTextQuestionItem(

@@ -16,8 +16,7 @@ import com.google.android.flexbox.FlexboxLayout
 class FillGapsQuestionItem(
     private val context: Context,
     private val title: String,
-    private val answers: List<ComplexAnswer>,
-    private val handleKeyboard: (EditText) -> Unit
+    private val answers: List<ComplexAnswer>
 ): QuestionItem<FragmentFillGapsBinding>() {
 
     private var _userAnswer = mutableListOf<EditText>()
@@ -67,11 +66,6 @@ class FillGapsQuestionItem(
         setBackgroundResource(R.drawable.edit_text_rounded)
         setPadding(0, 0 , 10, 0)
         isSingleLine = true
-        setOnFocusChangeListener { view, b ->
-            if (b) {
-                handleKeyboard(this)
-            }
-        }
     }
 
     override fun getLayout(): Int = R.layout.fragment_fill_gaps
@@ -80,7 +74,6 @@ class FillGapsQuestionItem(
         FragmentFillGapsBinding.bind(view)
 
     override fun clear() {
-        _userAnswer = mutableListOf()
         textContainer?.removeAllViews()
     }
 }

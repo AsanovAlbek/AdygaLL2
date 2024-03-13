@@ -135,6 +135,7 @@
             android:keyWidth="70%p" />
         <Key
             android:codes="-4"
+            android:keyBackground="@color/persian_orange"
             android:isRepeatable="false"
             android:keyLabel="Ответить"
             android:keyWidth="30%p"/>
