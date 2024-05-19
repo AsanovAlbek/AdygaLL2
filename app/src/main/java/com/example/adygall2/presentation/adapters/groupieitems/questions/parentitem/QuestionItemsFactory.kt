@@ -67,6 +67,7 @@ fun Task.createQuestion(
 
     TaskType.TYPE_THAT_YOUR_HEARD -> TypeThanHeardQuestionItem(
         context = context,
+        title = title,
         answers = answers,
         playerSource = playerSource
     )

@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import androidx.viewbinding.ViewBinding
 import com.example.adygall2.R
 import com.example.adygall2.data.delegate.AnswerFormatter
+import com.example.adygall2.data.local.levelsNames
 import com.example.adygall2.data.models.ResourceProvider
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.data.room.userbase.ProgressItem
@@ -26,6 +27,7 @@ import com.example.adygall2.domain.model.User
 import com.example.adygall2.domain.usecases.AnswersByTaskIdUseCase
 import com.example.adygall2.domain.usecases.GetComplexAnswerUseCase
 import com.example.adygall2.domain.usecases.SourceInteractor
+import com.example.adygall2.domain.usecases.TasksByLessonUseCase
 import com.example.adygall2.domain.usecases.UserUseCase
 import com.example.adygall2.presentation.activities.UserChangeListener
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
@@ -49,6 +51,7 @@ class GameViewModel(
     private val resourceProvider: ResourceProvider,
     private val soundsPlayer: SoundsPlayer,
     private val userUseCase: UserUseCase,
+    private val tasksByLessonUseCase: TasksByLessonUseCase,
     private val mainDispatcher: CoroutineDispatcher,
     private val ioDispatcher: CoroutineDispatcher,
     private val answerFormatterDelegate: AnswerFormatter
@@ -59,7 +62,7 @@ class GameViewModel(
             300_000L // 5 минут * 60 секунд * 1000 милисекунд. 5 минут в милисекундах
 
         /** Максимальное количество ошибок */
-        private const val MISTAKES_LIMIT = 20
+        private const val MISTAKES_LIMIT = 30
         private const val HP_DAMAGE = 5
         private const val MONEY_INCREMENT = 1
         private const val TAG = "GameFragment"
@@ -94,31 +97,25 @@ class GameViewModel(
     private fun isNotLastQuestion() =
         currentGameState.currentQuestionPosition < currentQuestionItems.size
 
-    private fun isRight() = currentGameState.userAnswer.compareTo(currentGameState.rightAnswer) == 0
+    private fun isRight() = transform(currentGameState.userAnswer).compareTo(transform(currentGameState.rightAnswer)) == 0
 
     /** Получение актуального Question */
     private fun currentQuestion() = currentQuestionItems[currentGameState.currentQuestionPosition]!!
     private fun canSkipCurrentQuestion() = currentQuestion().canSkipQuestion
-    private fun onNextQuestion() = currentQuestion().clear()
+    private fun onNextQuestion() = currentQuestionItems[currentGameState.currentQuestionPosition]!!.clear()
 
     /** Получение всех заданий из урока и преобразование в визуальное представление */
     fun start(
         context: Context,
-        tasks: List<Task>,
         level: Int,
         lesson: Int,
         levelName: String
     ) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                tasks.forEach { task ->
-                    Log.i("corr", """
-                        task id = ${task.id}
-                        task type = ${task.taskType}
-                    """.trimIndent())
-                }
-
-                val questions = tasks.map { task ->
+                currentGameState = currentGameState.copy(isLoading = true)
+                val gameTasks = tasksByLessonUseCase(level, lesson)
+                val questions = gameTasks.map { task ->
                     val answers = getComplexAnswerUseCase(answersByTaskIdUseCase(task.id))
                     task.createQuestion(
                         context = context,
@@ -147,8 +144,10 @@ class GameViewModel(
                         lessonProgress = lesson,
                         levelProgress = level,
                         currentQuestionPosition = 0,
-                        levelName = levelName,
-                        userName = user.name
+                        levelName = levelsNames[level - 1],
+                        userName = user.name,
+                        tasks = gameTasks,
+                        isLoading = false
                     )
                     _gameState.value = currentGameState
                     refreshLessonTitle()
@@ -170,7 +169,6 @@ class GameViewModel(
         requireView: View,
         context: Context,
         navController: NavController,
-        tasks: List<Task>,
         level: Int,
         lesson: Int,
         coinsBeforeLesson: Int,
@@ -184,8 +182,8 @@ class GameViewModel(
                 // Получение правильного ответа и ответа пользователя
                 currentQuestion().let { question ->
                     currentGameState = currentGameState.copy(
-                        userAnswer = transform(question.userAnswer),
-                        rightAnswer = transform(question.rightAnswer),
+                        userAnswer = question.userAnswer,
+                        rightAnswer = question.rightAnswer,
                         canSkipTask = canSkipCurrentQuestion()
                     )
                     Log.i(
@@ -207,7 +205,6 @@ class GameViewModel(
                                 finishLesson(
                                     level = level,
                                     lesson = lesson,
-                                    tasks = tasks,
                                     coinsBeforeLesson = coinsBeforeLesson,
                                     navController = navController,
                                     coins = coins,
@@ -247,6 +244,7 @@ class GameViewModel(
                                 }
                             }
                         }
+
                     } else {
                         // Если пользователь не дал ответ, то показываем сообщение, что надо дать ответ
                         emptyAnswerMessage(requireView)
@@ -402,7 +400,6 @@ class GameViewModel(
     fun skipQuestion(
         level: Int,
         lesson: Int,
-        tasks: List<Task>,
         coinsBeforeLesson: Int,
         navController: NavController,
         coins: Int,
@@ -414,7 +411,6 @@ class GameViewModel(
                     finishLesson(
                         level = level,
                         lesson = lesson,
-                        tasks = tasks,
                         coinsBeforeLesson = coinsBeforeLesson,
                         navController = navController,
                         coins = coins,
@@ -433,7 +429,6 @@ class GameViewModel(
     private fun finishLesson(
         level: Int,
         lesson: Int,
-        tasks: List<Task>,
         coinsBeforeLesson: Int,
         navController: NavController,
         hp: Int,
@@ -463,7 +458,7 @@ class GameViewModel(
                     }
                 )
                 userUseCase.updateUser(user)
-                getAllNewWords(tasks)
+                getAllNewWords(currentGameState.tasks)
                 currentGameState.apply {
                     val navigateToResults =
                         FragmentGamePageDirections.actionTaskContainerToTaskResults(
@@ -486,7 +481,11 @@ class GameViewModel(
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 nextQuestionAll()
-
+                val questions = currentQuestionItems.toList()
+                currentQuestionItems.clear()
+                questionItems.value = currentQuestionItems
+                currentQuestionItems.addAll(questions)
+                questionItems.value = currentQuestionItems
                 //onNextQuestion()
                 currentGameState = currentGameState.copy(
                     mistakesCounter = 0,
@@ -496,7 +495,6 @@ class GameViewModel(
                 )
                 _gameState.value = currentGameState
                 refreshLessonTitle()
-
             }
         }
     }

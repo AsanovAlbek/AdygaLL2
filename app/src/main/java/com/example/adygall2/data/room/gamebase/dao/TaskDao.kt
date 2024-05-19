@@ -3,6 +3,7 @@ package com.example.adygall2.data.room.gamebase.dao
 import androidx.room.Dao
 import androidx.room.Query
 import com.example.adygall2.data.room.consts.RoomConst.TASKS_TABLE_NAME
+import com.example.adygall2.data.room.gamebase.entities.LevelsEntity
 import com.example.adygall2.data.room.gamebase.entities.TaskEntity
 
 /**
@@ -17,4 +18,10 @@ abstract class TaskDao {
     /** Метод для получения задания по id */
     @Query("SELECT * FROM $TASKS_TABLE_NAME WHERE id = :taskId")
     abstract fun getTaskById(taskId : Int) : TaskEntity
+
+    @Query("SELECT * FROM $TASKS_TABLE_NAME WHERE level = :level and lesson = :lesson")
+    abstract fun getTasksByLesson(level: Int, lesson: Int): List<TaskEntity>
+
+    @Query("SELECT level, lesson FROM $TASKS_TABLE_NAME")
+    abstract fun getAllLevelsAndLessons(): List<LevelsEntity>
 }

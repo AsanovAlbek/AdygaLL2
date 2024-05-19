@@ -10,7 +10,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
 import com.example.adygall2.databinding.SentenceItemBinding
+import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.presentation.adapters.adapter_handles.AdapterHandleDragAndDropCallback
+import com.example.adygall2.presentation.adapters.adapter_handles.AdapterHandleDragAndDropCallbackWithAnswer
 import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
 
 /**
@@ -25,21 +27,20 @@ import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndD
  */
 
 class SentenceAdapter(
-    private val context : Context,
     private val isFirstAdapter : Boolean,
-    private val answers : MutableList<String>,
-    private val callback: AdapterHandleDragAndDropCallback
+    private val answers : MutableList<Answer>,
+    private val callback: AdapterHandleDragAndDropCallbackWithAnswer
 ) : RecyclerView.Adapter<SentenceAdapter.SentenceHolder>() {
 
     /** Получение элементов адаптера */
     val adapterItems get() = answers
-    var clickAction: ((String) -> Unit)? = null
+    var clickAction: ((Answer) -> Unit)? = null
 
     /** Добавление элемента ответа в адаптер
      *  @param addedAnswer - добавляемый элемент ответа
      *  @param position - позиция добавляемого элемента ответа
      */
-    fun addAnswer(addedAnswer : String, position: Int) {
+    fun addAnswer(addedAnswer : Answer, position: Int) {
         if (!answers.contains(addedAnswer)) {
             if (position == -1) {
                 val index = answers.size
@@ -56,7 +57,7 @@ class SentenceAdapter(
     /** Удаление элемента ответа из адаптера
      *  @param removedAnswer - удаляемый элемент ответа из адаптера
      */
-    fun removeAnswer(removedAnswer : String) {
+    fun removeAnswer(removedAnswer : Answer) {
         val index = answers.indexOf(removedAnswer)
         if (index != -1) {
             answers.removeAt(index)
@@ -65,20 +66,19 @@ class SentenceAdapter(
     }
 
     inner class SentenceHolder(
-        private val context : Context,
         private val isFirstAdapter : Boolean,
         private val itemBinding: SentenceItemBinding,
-        private val callback: AdapterHandleDragAndDropCallback
+        private val callback: AdapterHandleDragAndDropCallbackWithAnswer
     ) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        fun binding(answer : String) {
+        fun binding(answer : Answer) {
             with(itemBinding) {
-                sentenceWord.text = answer
+                sentenceWord.text = answer.answer
                 with(root) {
                     setOnLongClickListener {
-                        val item = ClipData.Item(answer)
+                        val item = ClipData.Item(answer.answer)
                         val dragData = ClipData(
-                            answer, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item
+                            answer.answer, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item
                         )
                         val shadowDrag = View.DragShadowBuilder(this)
                         startDragAndDrop(dragData, shadowDrag, null, 0)
@@ -90,7 +90,7 @@ class SentenceAdapter(
                     }
 
                     setOnDragListener { _, dragEvent ->
-                        HandleDragAndDropEvent(dragEvent).handle(callback, isFirstAdapter, layoutPosition)
+                        HandleDragAndDropEvent(dragEvent).handleWithAnswer(callback, isFirstAdapter, layoutPosition)
                         true
                     }
                 }
@@ -100,7 +100,6 @@ class SentenceAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SentenceHolder =
         SentenceHolder(
-            context,
             isFirstAdapter,
             SentenceItemBinding.bind(
                 LayoutInflater.from(parent.context).inflate(

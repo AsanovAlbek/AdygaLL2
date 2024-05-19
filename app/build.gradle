@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id "org.jetbrains.kotlin.plugin.serialization" version "1.7.20"
 }
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
@@ -65,6 +66,9 @@ dependencies {
     api 'io.insert-koin:koin-android-ext:3.0.2'
     api "io.insert-koin:koin-core:3.1.5"
     api "io.insert-koin:koin-android-compat:3.1.5"
+
+    // Serialization
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
 
     //LifeCycle
     api "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycle}"

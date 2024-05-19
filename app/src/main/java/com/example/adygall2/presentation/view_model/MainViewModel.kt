@@ -156,7 +156,7 @@ class MainViewModel(
     fun saveExitTime() {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                if (Date().time - tempUser.lastOnlineTimeInMillis >= 60000) {
+                if (Date().time - tempUser.lastOnlineTimeInMillis >= 300_000) {
                     tempUser = tempUser.copy(
                         lastOnlineTimeInMillis = Date().time
                     )

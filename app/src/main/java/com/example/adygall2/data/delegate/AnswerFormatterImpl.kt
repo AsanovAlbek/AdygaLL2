@@ -1,7 +1,7 @@
 package com.example.adygall2.data.delegate
 
 class AnswerFormatterImpl : AnswerFormatter {
-    /** отрицание всех русских букв */
+    /** Отрицание всех русских букв */
     private val notLetters = "[^а-яА-ЯЁёA-Za-z]+"
 
     /** Все пунктуационные знаки */

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentPairsOfWordsBinding
+import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.domain.model.ComplexAnswer
 import com.example.adygall2.presentation.adapters.PairsAdapter
 import com.example.adygall2.presentation.adapters.StaticPairsAdapter
@@ -17,7 +18,7 @@ class PairQuestionItem(
     private val answers: List<ComplexAnswer>
 ) : QuestionItem<FragmentPairsOfWordsBinding>(), AdapterHandleDragAndDropCallback {
     private var _userAnswer = ""
-    override val userAnswer: String get() = _userAnswer
+    override val userAnswer: String get() = _userAnswer.replace("[1iLlI|]".toRegex(), "I")
     private var _rightAnswer = ""
     private var userPairs = mutableListOf<String>()
     private var rightPairs = mutableListOf<String>()
@@ -25,7 +26,7 @@ class PairQuestionItem(
     private var rightAdapter: PairsAdapter? = null
     private var bottomAdapter: PairsAdapter? = null
 
-    override val rightAnswer: String get() = _rightAnswer
+    override val rightAnswer: String get() = _rightAnswer.replace("[1iLlI|]".toRegex(), "I")
 
     override fun getLayout(): Int = R.layout.fragment_pairs_of_words
 
@@ -40,7 +41,8 @@ class PairQuestionItem(
             bottomAdapter?.addAnswer(item, position)
             rightAdapter?.removeAnswer(item)
         }
-        _userAnswer = rightAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
+        //_userAnswer = rightAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
+        _userAnswer = leftAdapter!!.adapterItems.zip(rightAdapter?.adapterItems!!).joinToString { "${it.first}-${it.second}" }
         _rightAnswer = answers.joinToString(separator = " ", postfix = ".") { it.answer.answer.split("*")[1] }
     }
 
@@ -77,14 +79,14 @@ class PairQuestionItem(
         rightAdapter?.clickEvent = { word ->
             rightAdapter?.removeAnswer(word)
             bottomAdapter?.addAnswer(word, -1)
-            _userAnswer = rightAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
-            _rightAnswer = answers.joinToString(separator = " ", postfix = ".") { it.answer.answer.split("*")[1] }
+            _userAnswer = leftAdapter!!.adapterItems.zip(rightAdapter?.adapterItems!!).joinToString { "${it.first}-${it.second}" }
+            _rightAnswer = answers.joinToString(separator = " ", postfix = ".") { it.answer.answer.replace("*", "-") }
         }
         bottomAdapter?.clickEvent = { word ->
             bottomAdapter?.removeAnswer(word)
             rightAdapter?.addAnswer(word, -1)
-            _userAnswer = rightAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
-            _rightAnswer = answers.joinToString(separator = " ", postfix = ".") { it.answer.answer.split("*")[1] }
+            _userAnswer = leftAdapter!!.adapterItems.zip(rightAdapter?.adapterItems!!).joinToString { "${it.first}-${it.second}" }
+            _rightAnswer = answers.joinToString(separator = " ", postfix = ".") { it.answer.answer.replace("*", "-") }
         }
 
         viewBinding.apply {

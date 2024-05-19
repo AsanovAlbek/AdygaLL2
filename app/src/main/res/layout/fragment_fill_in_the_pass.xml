@@ -22,7 +22,6 @@
         android:id="@+id/flexbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:layout_marginTop="70dp"
         android:layout_marginStart="70dp"
         app:flexDirection="row"

@@ -17,13 +17,18 @@ class FillGapsQuestionItem(
     private val context: Context,
     private val title: String,
     private val answers: List<ComplexAnswer>
-): QuestionItem<FragmentFillGapsBinding>() {
+) : QuestionItem<FragmentFillGapsBinding>() {
 
     private var _userAnswer = mutableListOf<EditText>()
     private var textContainer: FlexboxLayout? = null
-    override val userAnswer: String get() = _userAnswer.joinToString(separator = " ", postfix = ".") { it.text }
+    override val userAnswer: String
+        get() = _userAnswer.joinToString(
+            separator = " ",
+            postfix = "."
+        ) { it.text }.replace("[1iLlI|]".toRegex(), "I")
 
-    override val rightAnswer: String = answers.first().answer.answer
+    override val rightAnswer: String =
+        answers.first().answer.answer.replace("[1iLlI|]".toRegex(), "I")
 
     override fun bind(viewBinding: FragmentFillGapsBinding, position: Int) {
         viewBinding.apply {
@@ -51,6 +56,7 @@ class FillGapsQuestionItem(
     private fun TextView.setup(context: Context, textInView: String) = apply {
         text = textInView
         textSize = 18F
+        maxLines = 1
         typeface = context.resources.getFont(R.font.pt_sans_bold)
         setBackgroundColor(context.getColor(R.color.gray_91))
         setPadding(0, 0, 10, 0)
@@ -64,7 +70,7 @@ class FillGapsQuestionItem(
         gravity = Gravity.CENTER
         setTextColor(Color.BLACK)
         setBackgroundResource(R.drawable.edit_text_rounded)
-        setPadding(0, 0 , 10, 0)
+        setPadding(0, 0, 10, 0)
         isSingleLine = true
     }
 
@@ -74,6 +80,7 @@ class FillGapsQuestionItem(
         FragmentFillGapsBinding.bind(view)
 
     override fun clear() {
+        _userAnswer.clear()
         textContainer?.removeAllViews()
     }
 }

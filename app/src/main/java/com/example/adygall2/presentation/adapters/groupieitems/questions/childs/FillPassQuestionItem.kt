@@ -2,11 +2,17 @@ package com.example.adygall2.presentation.adapters.groupieitems.questions.childs
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar.LayoutParams
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.allViews
+import androidx.core.view.contains
+import androidx.core.view.marginRight
 import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentFillInThePassBinding
 import com.example.adygall2.domain.model.ComplexAnswer
@@ -23,20 +29,27 @@ class FillPassQuestionItem(
     private val context: Context,
     private val title: String,
     private val answers: List<ComplexAnswer>
-): QuestionItem<FragmentFillInThePassBinding>() {
+) : QuestionItem<FragmentFillInThePassBinding>() {
 
     private var _userAnswer = ""
-    override val userAnswer get() = _userAnswer
+    override val userAnswer get() = _userAnswer.replace("[1iLlI|]".toRegex(), "I")
     private var userAdapter: SimpleSentenceAdapter? = null
     private var textViewField: TextView? = null
     private var textContainer: FlexboxLayout? = null
 
     override val rightAnswer: String =
-        answers.first { it.answer.correctAnswer.lowercase().toBoolean() }.answer.answer
+        answers.first {
+            it.answer.correctAnswer.lowercase().toBoolean()
+        }.answer.answer.replace("[1iLlI|]".toRegex(), "I")
 
     override fun bind(viewBinding: FragmentFillInThePassBinding, position: Int) {
         val mutableList = answers.map { it.answer.answer }.toMutableList()
         textContainer = viewBinding.flexbox
+        textContainer?.removeAllViews()
+        Log.d(
+            "GAME",
+            "text container before ${textContainer?.allViews?.joinToString { it::class.toString() }}"
+        )
         userAdapter = SimpleSentenceAdapter(mutableList)
         val manager = FlexboxLayoutManager(context).apply {
             flexDirection = FlexDirection.ROW
@@ -47,6 +60,7 @@ class FillPassQuestionItem(
         }
 
         val textViews = title.split("****")
+        Log.d("GAME", "Pass items ${textViews.joinToString(separator = "|")}")
         textViews.forEachIndexed { index, item ->
             val addedTextView = TextView(context)
             addedTextView.setup(context, item)
@@ -60,6 +74,10 @@ class FillPassQuestionItem(
             }
             setupUserAdapter(context)
         }
+        Log.d(
+            "GAME",
+            "text container ${textContainer?.allViews?.joinToString { if (it is TextView) it.text else "not text view" }}"
+        )
     }
 
     private fun setupUserAdapter(context: Context) {
@@ -84,6 +102,7 @@ class FillPassQuestionItem(
     private fun TextView.setup(context: Context, textInView: String) = apply {
         text = textInView
         textSize = 18F
+        maxLines = 1
         typeface = context.resources.getFont(R.font.pt_sans_bold)
         setBackgroundColor(context.getColor(R.color.gray_91))
         setPadding(0, 0, 10, 0)
@@ -91,8 +110,14 @@ class FillPassQuestionItem(
     }
 
     private fun TextView.setupField(context: Context) = apply {
+        val layoutParams =
+            FlexboxLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+                setMargins(0, 0, 10, 0)
+            }
+        setLayoutParams(layoutParams)
         width = 270
         textSize = 18F
+        maxLines = 1
         gravity = Gravity.CENTER
         setBackgroundColor(Color.WHITE)
         setTextColor(Color.BLACK)

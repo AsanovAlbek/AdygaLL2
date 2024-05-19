@@ -21,7 +21,7 @@ class FourImagesQuestionItem(
 
     private var imageAdapter: ImageAdapter? = null
     private var _userAnswer = ""
-    override val userAnswer get() = _userAnswer
+    override val userAnswer get() = _userAnswer.replace("[1iLlI|]".toRegex(), "I")
 
     override fun bind(viewBinding: FragmentFourImageQuestionBinding, position: Int) {
         viewBinding.apply {
@@ -45,7 +45,7 @@ class FourImagesQuestionItem(
         FragmentFourImageQuestionBinding.bind(view)
 
     override val rightAnswer: String =
-        answers.first { it.answer.correctAnswer.lowercase().toBoolean() }.answer.answer
+        answers.first { it.answer.correctAnswer.lowercase().toBoolean() }.answer.answer.replace("[1iLlI|]".toRegex(), "I")
 
     override fun clear() {
         _userAnswer = ""

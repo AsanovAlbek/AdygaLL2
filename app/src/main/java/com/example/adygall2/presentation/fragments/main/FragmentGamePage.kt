@@ -65,7 +65,6 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         tasksAdapter = GroupieAdapter()
         viewModel.start(
             context = requireContext().applicationContext,
-            tasks = gameArgs.tasks.toList(),
             lesson = gameArgs.lessonProgress,
             level = gameArgs.levelProgress,
             levelName = gameArgs.levelName,
@@ -122,6 +121,8 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
     private fun observeGameState(gameState: GameState) {
         taskContainerBinding.apply {
             //taskBottomBar.hp.progress = gameState.hp
+            loading.isVisible = gameState.isLoading
+            gameContent.isVisible = !gameState.isLoading
             taskBottomBar.userNameTv.text = gameState.userName
             taskViewPager.currentItem = gameState.currentQuestionPosition
             soundTaskSkip.isVisible = gameState.canSkipTask
@@ -169,7 +170,6 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                     requireView = requireView(),
                     navController = findNavController(),
                     context = requireContext(),
-                    tasks = gameArgs.tasks.toList(),
                     level = gameArgs.levelProgress,
                     lesson = gameArgs.lessonProgress,
                     coinsBeforeLesson = viewModel.user.coins,
@@ -180,7 +180,6 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
             }
             soundTaskSkip.setOnClickListener {
                 viewModel.skipQuestion(
-                    tasks = gameArgs.tasks.toList(),
                     level = gameArgs.levelProgress,
                     lesson = gameArgs.lessonProgress,
                     coinsBeforeLesson = viewModel.user.coins,

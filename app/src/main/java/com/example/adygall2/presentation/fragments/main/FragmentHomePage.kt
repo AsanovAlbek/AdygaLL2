@@ -5,23 +5,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.adygall2.R
+import com.example.adygall2.data.local.levelsNames
 import com.example.adygall2.databinding.FragmentNewHomePageBinding
-import com.example.adygall2.domain.model.Task
 import com.example.adygall2.domain.model.User
 import com.example.adygall2.presentation.activities.MainActivity
 import com.example.adygall2.presentation.activities.UserChangeListener
 import com.example.adygall2.presentation.adapters.LevelsAdapter
+import com.example.adygall2.presentation.model.HomeState
 import com.example.adygall2.presentation.view_model.HomeViewModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -44,12 +39,13 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
 
         _homePageBinding = FragmentNewHomePageBinding.inflate(inflater, container, false)
         userChangeListener = requireActivity() as MainActivity
-        observe()
 
         return homePageBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        observe()
+        viewModel.getTasksFromOrder()
     }
 
     override fun onStop() {
@@ -67,9 +63,8 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
     }
 
     private fun observe() {
-        viewModel.tasksListFromDb.observe(viewLifecycleOwner, ::levelsTree)
         viewModel.observableUser.observe(viewLifecycleOwner, ::observeUser)
-        viewModel.getTasksFromOrder()
+        viewModel.homeState.observe(viewLifecycleOwner, ::levelsTree)
         userChangeListener?.getUserHealthLiveData()?.observe(viewLifecycleOwner, ::observeHp)
     }
 
@@ -85,14 +80,23 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
         }
     }
 
-    private fun levelsTree(list: List<Task>) {
+    private fun levelsTree(state: HomeState) {
+        homePageBinding.levelItems.isVisible = !state.loading
+        homePageBinding.progressBar.isVisible = state.loading
         val adapter = LevelsAdapter(
-            tasks = list,
-            lessonClickEvent = { levelNumber, number, adapterList, levelName ->
-                openTasks(levelNumber, number, adapterList, levelName)
+            levelsAndLessons = state.levelsAndLessons,
+            lessonClickEvent = { levelNumber, number ->
+                openTasks(levelNumber, number, levelsNames[levelNumber - 1])
             },
             userProgress = viewModel.user.learningProgressSet
         )
+//        val adapter = LevelsAdapter(
+//            tasks = state.tasks,
+//            lessonClickEvent = { levelNumber, number, adapterList, levelName ->
+//                openTasks(levelNumber, number, adapterList, levelName)
+//            },
+//            userProgress = viewModel.user.learningProgressSet
+//        )
         homePageBinding.levelItems.adapter = adapter
         homePageBinding.levelItems.layoutManager = LinearLayoutManager(requireContext())
     }
@@ -100,7 +104,6 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
     private fun openTasks(
         levelNumber: Int,
         lessonNumber: Int,
-        tasks: List<Task>,
         levelName: String
     ) {
 //        if (homePageBinding.homeBottomBar.hp.progress > 0) {
@@ -117,7 +120,6 @@ class FragmentHomePage : Fragment(R.layout.fragment_new_home_page) {
         viewModel.openLesson(
                 level = levelNumber,
                 lesson = lessonNumber,
-                tasks = tasks,
                 navController = findNavController(),
                 levelName = levelName
             )
