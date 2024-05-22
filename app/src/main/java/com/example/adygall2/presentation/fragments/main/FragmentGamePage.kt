@@ -4,23 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.adygall2.R
+import com.example.adygall2.data.worker.UserHillWorker
 import com.example.adygall2.databinding.TaskContainerBinding
+import com.example.adygall2.presentation.activities.MainActivity
+import com.example.adygall2.presentation.activities.UserChangeListener
 import com.example.adygall2.presentation.view_model.GameViewModel
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.example.adygall2.presentation.model.DialogState
 import com.example.adygall2.presentation.model.GameState
 import com.xwray.groupie.GroupieAdapter
-import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -34,6 +38,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
     private val viewModel by viewModel<GameViewModel>()
     private val gameArgs: FragmentGamePageArgs by navArgs()
     private lateinit var tasksAdapter: GroupieAdapter
+    private var userChangeListener: UserChangeListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,6 +46,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         savedInstanceState: Bundle?,
     ): View {
         _taskContainerBinding = TaskContainerBinding.inflate(inflater, container, false)
+        userChangeListener = requireActivity() as MainActivity
         return taskContainerBinding.root
     }
 
@@ -59,10 +65,9 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
         tasksAdapter = GroupieAdapter()
         viewModel.start(
             context = requireContext().applicationContext,
-            tasks = gameArgs.tasks.toList(),
             lesson = gameArgs.lessonProgress,
             level = gameArgs.levelProgress,
-            levelName = gameArgs.levelName
+            levelName = gameArgs.levelName,
         )
 
         taskContainerBinding.taskViewPager.apply {
@@ -72,10 +77,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
 
         taskContainerBinding.taskBottomBar.apply {
             userAvatar.setImageBitmap(viewModel.getPhotoFromCache())
-            viewModel.initAutoHill(hp.progress)
         }
-
-        hillHp()
     }
 
     /**
@@ -83,42 +85,48 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
      */
     override fun onPause() {
         viewModel.clearGlideCache()
+        super.onPause()
+    }
+
+    override fun onStop() {
         taskContainerBinding.taskBottomBar.apply {
             viewModel.saveUserStates(hp = hp.progress, coins = exp.progress)
         }
-        super.onPause()
+        super.onStop()
     }
 
     override fun onDestroyView() {
         tasksAdapter.clear()
+        userChangeListener?.getUserHealthLiveData()?.removeObservers(viewLifecycleOwner)
+        userChangeListener = null
         super.onDestroyView()
-    }
-
-    private fun hillHp() {
-            viewModel.viewModelScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    viewModel.autoHillHp()
-                    viewModel.hpHill.collect {
-                        taskContainerBinding.taskBottomBar.hp.progress = it
-                    }
-                }
-            }
-
     }
 
     private fun observe() {
         viewModel.items.observe(viewLifecycleOwner, ::observeItems)
         viewModel.gameState.observe(viewLifecycleOwner, ::observeGameState)
         viewModel.dialogState.observe(viewLifecycleOwner, ::observeDialogState)
+        userChangeListener?.getUserHealthLiveData()?.observe(viewLifecycleOwner, ::observeHealth)
+    }
+
+    private fun initWorker() {
+        val workRequest = PeriodicWorkRequestBuilder<UserHillWorker>(10, TimeUnit.MINUTES)
+        WorkManager.getInstance(requireContext()).enqueue(workRequest.build())
+    }
+
+    private fun observeHealth(healthValue: Int) {
+        taskContainerBinding.taskBottomBar.hp.progress = healthValue
     }
 
     private fun observeGameState(gameState: GameState) {
         taskContainerBinding.apply {
+            //taskBottomBar.hp.progress = gameState.hp
+            loading.isVisible = gameState.isLoading
+            gameContent.isVisible = !gameState.isLoading
             taskBottomBar.userNameTv.text = gameState.userName
             taskViewPager.currentItem = gameState.currentQuestionPosition
             soundTaskSkip.isVisible = gameState.canSkipTask
             taskTopBar.LevelNumber.text = gameState.lessonTitle
-            taskBottomBar.hp.progress = gameState.hp
             taskBottomBar.exp.progress = gameState.coins
             taskTopBar.progressIndicator.progress = gameState.currentQuestionPosition + 1
         }
@@ -130,7 +138,12 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
             dialogShowAnswer.apply {
                 root.isVisible = dialogState.rootVisible
                 accuracy.setText(dialogState.accuracy)
-                accuracy.setTextColor(ContextCompat.getColor(requireContext(), dialogState.accuracyTextColor))
+                accuracy.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        dialogState.accuracyTextColor
+                    )
+                )
                 correctAnswer.text = dialogState.correctAnswer
                 icon.setImageResource(dialogState.iconId)
                 rightTextIs.isVisible = dialogState.rightTextVisible
@@ -138,7 +151,7 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
                 nextButton.setOnClickListener { dialogState.buttonAction() }
             }
             taskViewPager.isEnabled = dialogState.viewPagerEnabled
-            getAnswerButton.root.isEnabled = dialogState.answerButtonEnabled
+            getAnswerButton.isEnabled = dialogState.answerButtonEnabled
         }
     }
 
@@ -152,28 +165,27 @@ class FragmentGamePage : Fragment(R.layout.task_container) {
      */
     private fun setListeners() {
         taskContainerBinding.apply {
-            getAnswerButton.answerBtn.setOnClickListener {
+            getAnswerButton.setOnClickListener {
                 viewModel.getAnswerButtonClickAction(
                     requireView = requireView(),
                     navController = findNavController(),
                     context = requireContext(),
-                    tasks = gameArgs.tasks.toList(),
-                    level = gameArgs.levelProgress,
-                    lesson = gameArgs.lessonProgress,
-                    coinsBeforeLesson = viewModel.user.coins,
-                    coins = taskContainerBinding.taskBottomBar.exp.progress,
-                    hp = taskContainerBinding.taskBottomBar.hp.progress
-                )
-            }
-            soundTaskSkip.setOnClickListener {
-                viewModel.skipQuestion(
-                    tasks = gameArgs.tasks.toList(),
                     level = gameArgs.levelProgress,
                     lesson = gameArgs.lessonProgress,
                     coinsBeforeLesson = viewModel.user.coins,
                     coins = taskContainerBinding.taskBottomBar.exp.progress,
                     hp = taskContainerBinding.taskBottomBar.hp.progress,
-                    navController = findNavController()
+                    userHealthHandle = userChangeListener!!
+                )
+            }
+            soundTaskSkip.setOnClickListener {
+                viewModel.skipQuestion(
+                    level = gameArgs.levelProgress,
+                    lesson = gameArgs.lessonProgress,
+                    coinsBeforeLesson = viewModel.user.coins,
+                    coins = taskContainerBinding.taskBottomBar.exp.progress,
+                    hp = taskContainerBinding.taskBottomBar.hp.progress,
+                    navController = findNavController(),
                 )
             }
         }

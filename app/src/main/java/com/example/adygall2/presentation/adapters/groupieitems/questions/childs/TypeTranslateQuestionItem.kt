@@ -20,7 +20,7 @@ class TypeTranslateQuestionItem(
 ): QuestionItem<FragmentTypeTranslateBinding>() {
 
     private var _userAnswer = ""
-    override val userAnswer get() = _userAnswer
+    override val userAnswer get() = _userAnswer.replace("[1iLlI|]".toRegex(), "I")
     private var tooltips: FlexboxLayout? = null
     private var editText: EditText? = null
 
@@ -52,6 +52,7 @@ class TypeTranslateQuestionItem(
     private fun setTextViewParams(textView: TextView, textInView: String) {
         textView.apply {
             text = textInView
+            maxLines = 1
             setTextColor(Color.BLACK)
             setPadding(10, 10, 10, 10)
             textSize = 18f
@@ -59,7 +60,7 @@ class TypeTranslateQuestionItem(
         }
     }
 
-    override val rightAnswer: String = currentAnswer
+    override val rightAnswer: String = currentAnswer.replace("[1iLlI|]".toRegex(), "I")
     override fun clear() {
         _userAnswer = ""
         editText?.text?.clear()

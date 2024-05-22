@@ -14,6 +14,8 @@ import com.example.adygall2.databinding.PairWordItemBinding
 class StaticPairsAdapter(
     private val answers : MutableList<String>
 ) : RecyclerView.Adapter<StaticPairsAdapter.StaticPairsViewHolder>() {
+
+    val adapterItems get() = answers
     inner class StaticPairsViewHolder(private val itemBinding: PairWordItemBinding) :
             RecyclerView.ViewHolder(itemBinding.root) {
                 fun bind(answer : String) {

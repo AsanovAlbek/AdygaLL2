@@ -1,9 +1,13 @@
 package com.example.adygall2.presentation.view_model
 
+import android.app.Activity
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.core.graphics.drawable.toBitmap
@@ -21,6 +25,7 @@ import com.example.adygall2.presentation.fragments.menu.FragmentEditUserDirectio
 import com.example.adygall2.presentation.model.UserProfileState
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -89,6 +94,16 @@ class EditUserViewModel(
             withContext(mainDispatcher) {
                 current = current.copy(name = userInputText.trim().replace("\n", ""))
                 userChanges.value = current
+            }
+        }
+    }
+
+    fun hideSystemKeyboard(activity: Activity, editText: EditText) {
+        viewModelScope.launch {
+            withContext(mainDispatcher) {
+                delay(200)
+                (activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                    .hideSoftInputFromWindow(editText.windowToken, 0)
             }
         }
     }

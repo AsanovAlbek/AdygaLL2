@@ -8,9 +8,11 @@ import android.view.View
 import android.widget.TextView
 import com.example.adygall2.R
 import com.example.adygall2.databinding.FragmentTranslateTheTextBinding
+import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.domain.model.ComplexAnswer
 import com.example.adygall2.presentation.adapters.SentenceAdapter
 import com.example.adygall2.presentation.adapters.adapter_handles.AdapterHandleDragAndDropCallback
+import com.example.adygall2.presentation.adapters.adapter_handles.AdapterHandleDragAndDropCallbackWithAnswer
 import com.example.adygall2.presentation.adapters.adapter_handles.HandleDragAndDropEvent
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.google.android.flexbox.FlexDirection
@@ -23,14 +25,15 @@ class TranslateTextQuestionItem(
     private val context: Context,
     private val title: String,
     private val answers: List<ComplexAnswer>
-) : QuestionItem<FragmentTranslateTheTextBinding>(), AdapterHandleDragAndDropCallback {
+) : QuestionItem<FragmentTranslateTheTextBinding>(), AdapterHandleDragAndDropCallbackWithAnswer {
     private var _userAnswer = ""
-    override val userAnswer: String get() = _userAnswer
+    override val userAnswer: String get() = _userAnswer.replace("[1iLlI|]".toRegex(), "I")
     private var userAdapter: SentenceAdapter? = null
     private var answerAdapter: SentenceAdapter? = null
     private var tooltipBar: FlexboxLayout? = null
+    private val tooltipManagers = mutableListOf<ToolTipsManager>()
 
-    override val rightAnswer: String = answers.first().answer.correctAnswer
+    override val rightAnswer: String = answers.first().answer.correctAnswer.replace("[1iLlI|]".toRegex(), "I")
 
     override fun getLayout(): Int = R.layout.fragment_translate_the_text
 
@@ -42,7 +45,7 @@ class TranslateTextQuestionItem(
         setTaskText(viewBinding)
     }
 
-    override fun change(isFirstAdapter: Boolean, item: String, position: Int) {
+    override fun changeWithAnswer(isFirstAdapter: Boolean, item: Answer, position: Int) {
         if (isFirstAdapter) {
             userAdapter?.addAnswer(item, position)
             answerAdapter?.removeAnswer(item)
@@ -50,19 +53,17 @@ class TranslateTextQuestionItem(
             userAdapter?.removeAnswer(item)
             answerAdapter?.addAnswer(item, position)
         }
-        _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+        _userAnswer = answerAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
     }
 
     private fun setAdapters(viewBinding: FragmentTranslateTheTextBinding) {
-        val mutableAnswers = answers.map { it.answer.answer }.toMutableList()
+        val mutableAnswers = answers.map { it.answer }.toMutableList()
         userAdapter = SentenceAdapter(
-            context = context,
             isFirstAdapter = true,
             answers = mutableAnswers,
             callback = this
         )
         answerAdapter = SentenceAdapter(
-            context = context,
             isFirstAdapter = false,
             answers = mutableListOf(),
             callback = this
@@ -71,13 +72,13 @@ class TranslateTextQuestionItem(
         answerAdapter?.clickAction = {
             answerAdapter?.removeAnswer(it)
             userAdapter?.addAnswer(it, -1)
-            _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+            _userAnswer = answerAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
         }
 
         userAdapter?.clickAction = {
             userAdapter?.removeAnswer(it)
             answerAdapter?.addAnswer(it, -1)
-            _userAnswer = answerAdapter?.adapterItems!!.joinToString()
+            _userAnswer = answerAdapter?.adapterItems!!.joinToString(separator = " ", postfix = ".")
 
         }
 
@@ -85,8 +86,8 @@ class TranslateTextQuestionItem(
             answersRecycler.apply {
                 adapter = answerAdapter
                 setOnDragListener { _, dragEvent ->
-                    HandleDragAndDropEvent(dragEvent).handle(
-                        callback = this@TranslateTextQuestionItem,
+                    HandleDragAndDropEvent(dragEvent).handleWithAnswer(
+                        callbackWithAnswer = this@TranslateTextQuestionItem,
                         isFirstAdapter = false,
                         position = -1
                     )
@@ -98,8 +99,8 @@ class TranslateTextQuestionItem(
             userBarRecycler.apply {
                 adapter = userAdapter
                 setOnDragListener { _, dragEvent ->
-                    HandleDragAndDropEvent(dragEvent).handle(
-                        callback = this@TranslateTextQuestionItem,
+                    HandleDragAndDropEvent(dragEvent).handleWithAnswer(
+                        callbackWithAnswer = this@TranslateTextQuestionItem,
                         isFirstAdapter = true,
                         position = -1
                     )
@@ -112,7 +113,8 @@ class TranslateTextQuestionItem(
 
     private fun setTaskText(viewBinding: FragmentTranslateTheTextBinding) {
         tooltipBar = viewBinding.wordsWithTooltip
-        val tooltipManagers = mutableListOf<ToolTipsManager>()
+        tooltipManagers.forEach { it.dismissAll() }
+
         val taskParts = title.split("*")
         val hints = taskParts[1].split("#")
         taskParts.first().split("#").forEachIndexed { index, item ->
@@ -126,7 +128,8 @@ class TranslateTextQuestionItem(
             tooltipManagers.add(toolTipsManager)
             addedTextView.setOnClickListener {
                 tooltipManagers.forEach { it.dismissAll() }
-                toolTipsManager.show(tooltipBuilder.build())
+                //toolTipsManager.show(tooltipBuilder.build())
+                tooltipManagers.find { it == toolTipsManager }?.show(tooltipBuilder.build())
             }
             tooltipBar?.addView(addedTextView)
         }
@@ -153,6 +156,7 @@ class TranslateTextQuestionItem(
 
     private fun TextView.setup(context: Context, word: SpannableString) = apply {
         text = word
+        maxLines = 1
         setBackgroundColor(context.getColor(R.color.gray_91))
         setPadding(0, 0, 10, 0)
         textSize = 18F
@@ -161,6 +165,10 @@ class TranslateTextQuestionItem(
 
     override fun clear() {
         _userAnswer = ""
+        tooltipManagers.forEach { it.dismissAll() }
         tooltipBar?.removeAllViews()
+        tooltipManagers.clear()
+        tooltipBar?.invalidate()
+        tooltipBar = null
     }
 }

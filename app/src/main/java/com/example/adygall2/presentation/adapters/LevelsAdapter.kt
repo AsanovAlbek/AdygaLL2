@@ -1,43 +1,27 @@
 package com.example.adygall2.presentation.adapters
 
-import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adygall2.R
+import com.example.adygall2.data.local.levelsNames
 import com.example.adygall2.data.room.userbase.ProgressItem
-import com.example.adygall2.domain.model.Task
 import com.example.adygall2.databinding.ItemLessonInLevelBinding
 import com.example.adygall2.databinding.ItemLevelBinding
-import com.google.android.material.button.MaterialButton
+import com.example.adygall2.domain.model.LevelAndLesson
 
-/**
- * Адаптер уровней, в котором содержится адаптер уроков
- * */
 class LevelsAdapter(
-    private val tasks : List<Task>,
-    private val lessonClickEvent : ((Int,Int, List<Task>, String) -> Unit),
+    private val levelsAndLessons: List<LevelAndLesson>,
+    private val lessonClickEvent: ((Int, Int) -> Unit),
     private val userProgress: Set<ProgressItem>
 ) : RecyclerView.Adapter<LevelsAdapter.LevelHolder>() {
 
     private lateinit var lessonsAdapter: LessonsAdapter
-    private val levelsNames = listOf(
-        "Основы", "Выражения", "Семья", "Знакомства", "Еда", "Фрукты",
-        "Овощи", "Животные", "Прилагательные", "Множественное число",
-        "Одежда", "Цвета", "Природа", "Птицы", "Дом (интерьер)",
-        "Предметы", "Части тела", "Местоимение", "Числительные",
-        "Дата и время", "Профессии", "Глагол (настоящее время)",
-        "Чувства. Эмоции", "Глагол (будущее время)", "Глагол (прошедшее время)",
-        "Отрицательная форма", "Вопросительные предложения", "Повелительная  форма  глагола",
-        "Наречие", "Республика Адыгея"
-    )
 
-    inner class LevelHolder(
-        private val itemBinding: ItemLevelBinding
-    ) : RecyclerView.ViewHolder(itemBinding.root) {
-        fun bind(position: Int, levelTitle: String, taskList: List<Task>) {
+    inner class LevelHolder(private val itemBinding: ItemLevelBinding) :
+        RecyclerView.ViewHolder(itemBinding.root) {
+        fun bind(position: Int, levelTitle: String, levelsAndLesson: List<LevelAndLesson>) {
             itemBinding.apply {
                 levelButton.text = levelTitle
                 levelButton.setOnClickListener {
@@ -52,53 +36,60 @@ class LevelsAdapter(
                     }
                 }
 
-                val availableLessons = userProgress.filter { it.level == position + 1 }.map { it.lesson }
+                val availableLessons =
+                    userProgress.filter { it.level == position + 1 }.map { it.lesson }
                 itemBinding.root.isEnabled = userProgress.map { it.level }.contains(position)
+                val levels = levelsAndLesson.groupBy { it.level }
 
                 // Присваиваем адаптер и подаём ему список заданий
                 lessonsAdapter = LessonsAdapter(
-                    tasksInLevel = taskList,
                     lessonItemClickEvent = lessonClickEvent,
                     userProgressInLesson = availableLessons,
                     chosenLevelNum = position + 1,
-                    lessonName = levelsNames[position]
+                    levelsAndLesson = levels.getOrDefault(levelsAndLesson[position].level, emptyList())
                 )
                 lessonsList.adapter = lessonsAdapter
             }
         }
+
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LevelHolder =
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): LevelsAdapter.LevelHolder =
         LevelHolder(
             ItemLevelBinding.bind(
                 LayoutInflater.from(parent.context).inflate(R.layout.item_level, parent, false)
             )
         )
 
-    override fun onBindViewHolder(holder: LevelHolder, position: Int) {
-        holder.bind(position, levelTitle = levelsNames[position], taskList = tasks)
+    override fun onBindViewHolder(holder: LevelsAdapter.LevelHolder, position: Int) {
+        holder.bind(
+            position,
+            levelTitle = levelsNames[position],
+            levelsAndLesson = levelsAndLessons
+        )
     }
 
-    override fun getItemCount(): Int = levelsNames.size
+    override fun getItemCount(): Int = levelsAndLessons.groupBy { it.level }.size
 }
 
-// Адаптер подменю
 class LessonsAdapter(
-    private val tasksInLevel: List<Task>,
-    private val lessonItemClickEvent: ((Int, Int, List<Task>, String) -> Unit),
+    private val levelsAndLesson: List<LevelAndLesson>,
+    private val lessonItemClickEvent: ((Int, Int) -> Unit),
     private val userProgressInLesson: List<Int>,
-    private val chosenLevelNum: Int,
-    private val lessonName: String
-): RecyclerView.Adapter<LessonsAdapter.LessonViewHolder>() {
+    private val chosenLevelNum: Int
+) : RecyclerView.Adapter<LessonsAdapter.LessonViewHolder>() {
 
     inner class LessonViewHolder(
         private val lessonBinding: ItemLessonInLevelBinding
-    ): RecyclerView.ViewHolder(lessonBinding.root) {
-        fun bind(number: Int, lessonTasks: List<Task>) {
+    ) : RecyclerView.ViewHolder(lessonBinding.root) {
+        fun bind(number: Int, levelsAndLesson: List<LevelAndLesson>) {
             lessonBinding.apply {
                 root.isClickable = userProgressInLesson.contains(number)
                 lessonItem.setOnClickListener {
-                    lessonItemClickEvent(chosenLevelNum, number, lessonTasks, lessonName)
+                    lessonItemClickEvent(chosenLevelNum, number)
                 }
 
                 if (userProgressInLesson.contains(number)) {
@@ -122,8 +113,9 @@ class LessonsAdapter(
 
     override fun onBindViewHolder(holder: LessonViewHolder, position: Int) {
         // Получаем позицию каждого элемента, по ней находим урок
-        holder.bind(number = position + 1, lessonTasks = tasksInLevel.chunked(15)[position])
+        holder.bind(number = position + 1, levelsAndLesson = levelsAndLesson.groupBy { it.lesson }.getOrDefault(position + 1, emptyList()))
     }
 
-    override fun getItemCount(): Int = tasksInLevel.size / 15
+    override fun getItemCount(): Int = levelsAndLesson.groupBy { it.lesson }.size
 }
+

@@ -40,9 +40,6 @@
         <argument
             android:name="lesson_progress"
             app:argType="integer"/>
-        <argument
-            android:name="tasks"
-            app:argType="com.example.adygall2.domain.model.Task[]" />
         <action
             android:id="@+id/action_taskContainer_to_taskResults"
             app:destination="@id/taskResults"/>

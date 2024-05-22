@@ -7,6 +7,7 @@ import com.example.adygall2.domain.usecases.AnswersByTaskIdUseCase
 import com.example.adygall2.domain.usecases.GetAllOrdersUseCase
 import com.example.adygall2.domain.usecases.GetComplexAnswerUseCase
 import com.example.adygall2.domain.usecases.SourceInteractor
+import com.example.adygall2.domain.usecases.TasksByLessonUseCase
 import com.example.adygall2.domain.usecases.TasksByOrdersUseCase
 import com.example.adygall2.domain.usecases.UserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
@@ -37,4 +38,5 @@ val domainModule = module {
             isUserLogIn = get(named(PrefConst.IS_USER_SIGN_UP))
         )
     }
+    factory { TasksByLessonUseCase(repository = get(), ioDispatcher = get(named(IO_DISPATCHER))) }
 }

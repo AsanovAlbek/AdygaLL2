@@ -26,6 +26,7 @@ val presentationModule = module {
             userUseCase = get(),
             soundsPlayer = get(),
             mainDispatcher = get(named(MAIN_DISPATCHER)),
+            tasksByLessonUseCase = get(),
             ioDispatcher = get(named(IO_DISPATCHER))
         )
     }
@@ -42,9 +43,8 @@ val presentationModule = module {
     viewModel {
         HomeViewModel(
             userUseCase = get(),
-            getAllOrdersUseCase = get(),
-            tasksByOrdersUseCase = get(),
             resourceProvider = get(),
+            tasksByLessonUseCase = get(),
             mainDispatcher = get(named(MAIN_DISPATCHER)),
             ioDispatcher = get(named(IO_DISPATCHER))
         )

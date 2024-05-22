@@ -24,4 +24,5 @@ object TaskType {
     const val FILL_IN_THE_GAPS = 8
     /** Задание с набором перевода текста с клавиатуры */
     const val TYPE_TRANSLATE = 10
+    const val SENTENCE_BUILD_2 = 31
 }

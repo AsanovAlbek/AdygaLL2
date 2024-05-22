@@ -14,21 +14,20 @@ import com.example.adygall2.data.models.ResourceProvider
 import com.example.adygall2.domain.model.Task
 import com.example.adygall2.domain.model.User
 import com.example.adygall2.domain.usecases.GetAllOrdersUseCase
+import com.example.adygall2.domain.usecases.TasksByLessonUseCase
 import com.example.adygall2.domain.usecases.TasksByOrdersUseCase
 import com.example.adygall2.domain.usecases.UserUseCase
 import com.example.adygall2.presentation.fragments.main.FragmentHomePageDirections
+import com.example.adygall2.presentation.model.HomeState
+import java.util.*
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HomeViewModel(
     private val userUseCase: UserUseCase,
-    private val tasksByOrdersUseCase: TasksByOrdersUseCase,
-    private val getAllOrdersUseCase: GetAllOrdersUseCase,
+    private val tasksByLessonUseCase: TasksByLessonUseCase,
     private val resourceProvider: ResourceProvider,
     private val mainDispatcher: CoroutineDispatcher,
     private val ioDispatcher: CoroutineDispatcher
@@ -38,18 +37,15 @@ class HomeViewModel(
         private const val fiveMinuteInMills = 300_000L // 5 минут * 60 секунд * 1000 милисекунд. 5 минут в милисекундах
     }
 
-    lateinit var user: User
-
-    /** Значение здоровья, восстанавливающегося во время сессии */
-    private var _hpHill = MutableStateFlow(0)
-    val hpHill get() = _hpHill.asStateFlow()
+    var user: User = User()
 
     private val userLiveData = MutableLiveData<User>()
     val observableUser: LiveData<User> get() = userLiveData
 
     /** Лист заданий из бд */
-    private var _tasksListFromDb = MutableLiveData<List<Task>>()
-    val tasksListFromDb : LiveData<List<Task>> get() = _tasksListFromDb
+    private var _homeState = MutableLiveData<HomeState>(HomeState())
+    val homeState : LiveData<HomeState> get() = _homeState
+    private var homeStateTemp = HomeState()
 
     init {
         viewModelScope.launch {
@@ -65,6 +61,11 @@ class HomeViewModel(
     fun saveUserStates(hp: Int, coins: Int) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
+                if (Date().time - user.lastOnlineTimeInMillis >= 300_000) {
+                    user = user.copy(
+                        lastOnlineTimeInMillis = Date().time
+                    )
+                }
                 user = user.copy(
                     hp = hp,
                     coins = coins
@@ -75,40 +76,15 @@ class HomeViewModel(
         }
     }
 
-    /** получение последнего сохраненного значения здоровья */
-    fun initAutoHill(value: Int) {
-        viewModelScope.launch {
-            withContext(mainDispatcher) {
-                _hpHill.value = value
-            }
-        }
-    }
-
-    /** функция процесса восстановления здоровья*/
-    fun autoHillHp() {
-        viewModelScope.launch {
-            withContext(mainDispatcher) {
-                while (isActive) {
-                    delay(fiveMinuteInMills)
-                    if (_hpHill.value < 100) {
-                        _hpHill.value += 10
-                    }
-                }
-            }
-        }
-    }
-
     fun openLesson(
         level: Int,
         lesson: Int,
-        tasks: List<Task>,
         navController: NavController,
         levelName: String
     ) {
         val gameAction = FragmentHomePageDirections.actionHomePageToTaskContainer(
             levelProgress = level,
             lessonProgress = lesson,
-            tasks = tasks.toTypedArray(),
             levelName = levelName
         )
         navController.navigate(gameAction)
@@ -125,9 +101,10 @@ class HomeViewModel(
     fun getTasksFromOrder() {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val tasks = tasksByOrdersUseCase(getAllOrdersUseCase())
+                val levelsAndLessons = tasksByLessonUseCase.allLessons()
+                homeStateTemp = homeStateTemp.copy(loading = false, levelsAndLessons = levelsAndLessons)
                 withContext(mainDispatcher) {
-                    _tasksListFromDb.value = tasks
+                    _homeState.value = homeStateTemp
                 }
             }
         }

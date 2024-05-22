@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.inputmethodservice.KeyboardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/customAdygeKeyboard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:keyTextColor="@color/black"
+    android:keyBackground="@color/gray_91"
+    android:background="@color/white"
+    android:keyPreviewLayout="@layout/keyboard_preview"
+    android:layout_alignParentBottom="true"
+    android:paddingBottom="16dp">
+
+</android.inputmethodservice.KeyboardView>

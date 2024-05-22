@@ -4,7 +4,7 @@
     android:id="@+id/answerBtn"
     android:text="@string/get_answer"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="wrap_content"
     android:background="@drawable/rounded_button"
     android:fontFamily="@font/pt_sans_regular"
     android:shadowColor="@color/black"

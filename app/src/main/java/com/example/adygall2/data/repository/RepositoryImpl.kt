@@ -11,6 +11,7 @@ import com.example.adygall2.data.room.gamebase.dao.SoundsDao
 import com.example.adygall2.data.room.gamebase.dao.TaskDao
 import com.example.adygall2.data.room.userbase.dao.UserDao
 import com.example.adygall2.data.toAnswer
+import com.example.adygall2.data.toDomain
 import com.example.adygall2.data.toEntity
 import com.example.adygall2.data.toOrder
 import com.example.adygall2.data.toSource
@@ -18,6 +19,7 @@ import com.example.adygall2.data.toTask
 import com.example.adygall2.data.toUser
 import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.domain.model.ComplexAnswer
+import com.example.adygall2.domain.model.LevelAndLesson
 import com.example.adygall2.domain.model.Order
 import com.example.adygall2.domain.model.Source
 import com.example.adygall2.domain.model.Task
@@ -94,5 +96,13 @@ class RepositoryImpl(
         val picture = getPictureById(answer.pictureId)
         val sound = getSourceSoundById(answer.soundId)
         return ComplexAnswer(answer, sound, picture)
+    }
+
+    override suspend fun tasksByLesson(level: Int, lesson: Int): List<Task> {
+        return taskDao.getTasksByLesson(level, lesson).map { it.toTask() }
+    }
+
+    override suspend fun allLevelsAndLessons(): List<LevelAndLesson> {
+        return taskDao.getAllLevelsAndLessons().map { it.toDomain() }
     }
 }

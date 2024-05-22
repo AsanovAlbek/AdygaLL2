@@ -3,25 +3,29 @@ package com.example.adygall2.presentation.adapters.groupieitems.questions.childs
 import android.content.Context
 import android.view.View
 import android.widget.EditText
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import com.example.adygall2.R
+import com.example.adygall2.data.delegate.AnswerFormatterImpl
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.databinding.FragmentTypeThatHeardBinding
 import com.example.adygall2.domain.model.ComplexAnswer
 import com.example.adygall2.domain.model.Source
+import com.example.adygall2.domain.model.Task
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 
 class TypeThanHeardQuestionItem(
     private val context: Context,
+    private val title: String,
     private val answers: List<ComplexAnswer>,
     private val playerSource: Source
 ) : QuestionItem<FragmentTypeThatHeardBinding>() {
     private var _userAnswer = ""
-    override val userAnswer: String get() = _userAnswer
+    override val userAnswer: String get() = _userAnswer.replace("[1iLlI|]".toRegex(), "I")
     private var textField: EditText? = null
     private var player: SoundsPlayer? = null
 
-    override val rightAnswer: String = answers.joinToString { it.answer.answer }
+    override val rightAnswer: String = answers.joinToString { it.answer.answer }.replace("[1iLlI|]".toRegex(), "I")
 
     override fun getLayout(): Int = R.layout.fragment_type_that_heard
 
@@ -32,6 +36,7 @@ class TypeThanHeardQuestionItem(
         player = SoundsPlayer(context)
         setupSoundButtons(viewBinding)
         textChangedListener(viewBinding)
+        viewBinding.taskText.text = title
     }
 
     private fun textChangedListener(viewBinding: FragmentTypeThatHeardBinding) {
@@ -42,8 +47,8 @@ class TypeThanHeardQuestionItem(
     }
 
     private fun setupSoundButtons(viewBinding: FragmentTypeThatHeardBinding) {
-        val playSoundDrawable = context.getDrawable(R.drawable.play_sound)
-        val stopSoundDrawable = context.getDrawable(R.drawable.stop_play)
+        val playSoundDrawable = ContextCompat.getDrawable(context,R.drawable.play_sound)
+        val stopSoundDrawable = ContextCompat.getDrawable(context,R.drawable.stop_play)
 
         player?.let { player ->
             viewBinding.soundButtons.apply {

@@ -86,4 +86,11 @@
         android:text="@string/save_changes"
         android:textSize="18sp" />
 
+    <include
+        android:id="@+id/keyboard"
+        layout="@layout/keyboard_view_adyge"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

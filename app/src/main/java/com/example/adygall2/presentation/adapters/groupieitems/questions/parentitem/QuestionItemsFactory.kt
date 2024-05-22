@@ -1,6 +1,7 @@
 package com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem
 
 import android.content.Context
+import android.widget.EditText
 import androidx.viewbinding.ViewBinding
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.data.room.consts.TaskType
@@ -66,6 +67,7 @@ fun Task.createQuestion(
 
     TaskType.TYPE_THAT_YOUR_HEARD -> TypeThanHeardQuestionItem(
         context = context,
+        title = title,
         answers = answers,
         playerSource = playerSource
     )

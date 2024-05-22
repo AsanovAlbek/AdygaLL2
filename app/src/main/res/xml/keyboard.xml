@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:horizontalGap="4dp"
+    android:keyWidth="7.5%p"
+    android:keyHeight="40dp"
+    android:verticalGap="4dp">
+
+    <Row>
+        <Key
+            android:codes="1049"
+            android:keyEdgeFlags="left"
+            android:keyLabel="Й" />
+        <Key
+            android:codes="1062"
+            android:keyLabel="Ц" />
+        <Key
+            android:codes="1059"
+            android:keyLabel="У" />
+        <Key
+            android:codes="1050"
+            android:keyLabel="К" />
+        <Key
+            android:codes="1045"
+            android:keyLabel="Е" />
+        <Key
+            android:codes="1053"
+            android:keyLabel="Н" />
+        <Key
+            android:codes="1043"
+            android:keyLabel="Г" />
+        <Key
+            android:codes="1064"
+            android:keyLabel="Ш" />
+        <Key
+            android:codes="1065"
+            android:keyLabel="Щ" />
+        <Key
+            android:codes="1047"
+            android:keyLabel="З" />
+        <Key
+            android:codes="1061"
+            android:keyLabel="Х" />
+        <Key
+            android:codes="1066"
+            android:keyEdgeFlags="right"
+            android:keyLabel="Ъ" />
+    </Row>
+
+    <Row>
+
+        <Key
+            android:codes="1060"
+            android:keyEdgeFlags="left"
+            android:keyLabel="Ф" />
+        <Key
+            android:codes="1067"
+            android:keyLabel="Ы" />
+        <Key
+            android:codes="1042"
+            android:keyLabel="В" />
+        <Key
+            android:codes="1040"
+            android:keyLabel="А" />
+        <Key
+            android:codes="1055"
+            android:keyLabel="П" />
+        <Key
+            android:codes="1056"
+            android:keyLabel="Р" />
+        <Key
+            android:codes="1054"
+            android:keyLabel="О" />
+        <Key
+            android:codes="1051"
+            android:keyLabel="Л" />
+        <Key
+            android:codes="1044"
+            android:keyLabel="Д" />
+        <Key
+            android:codes="1046"
+            android:keyLabel="Ж" />
+        <Key
+            android:codes="1069"
+            android:keyLabel="Э" />
+        <Key
+            android:codes="73"
+            android:keyEdgeFlags="right"
+            android:keyLabel="I" />
+    </Row>
+
+    <Row>
+        <Key
+            android:codes="-1"
+            android:keyEdgeFlags="left"
+            android:keyIcon="@drawable/baseline_keyboard_capslock_24" />
+        <Key
+            android:codes="1071"
+            android:keyLabel="Я" />
+        <Key
+            android:codes="1063"
+            android:keyLabel="Ч" />
+        <Key
+            android:codes="1057"
+            android:keyLabel="С" />
+        <Key
+            android:codes="1052"
+            android:keyLabel="М" />
+        <Key
+            android:codes="1048"
+            android:keyLabel="И" />
+        <Key
+            android:codes="1058"
+            android:keyLabel="Т" />
+        <Key
+            android:codes="1068"
+            android:keyLabel="Ь" />
+        <Key
+            android:codes="1041"
+            android:keyLabel="Б" />
+        <Key
+            android:codes="1070"
+            android:keyLabel="Ю" />
+        <Key
+            android:codes="-5"
+            android:keyEdgeFlags="right"
+            android:keyIcon="@drawable/baseline_backspace_24"
+            android:isRepeatable="true"/>
+    </Row>
+
+    <Row android:rowEdgeFlags="bottom">
+        <Key
+            android:codes="32"
+            android:isRepeatable="true"
+            android:keyLabel="Adyga"
+            android:keyWidth="70%p" />
+        <Key
+            android:codes="-4"
+            android:keyBackground="@color/persian_orange"
+            android:isRepeatable="false"
+            android:keyLabel="Ответить"
+            android:keyWidth="30%p"/>
+    </Row>
+
+</Keyboard>

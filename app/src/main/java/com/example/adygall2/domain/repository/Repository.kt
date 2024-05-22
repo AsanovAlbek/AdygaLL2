@@ -2,6 +2,7 @@ package com.example.adygall2.domain.repository
 
 import com.example.adygall2.domain.model.Answer
 import com.example.adygall2.domain.model.ComplexAnswer
+import com.example.adygall2.domain.model.LevelAndLesson
 import com.example.adygall2.domain.model.Order
 import com.example.adygall2.domain.model.Source
 import com.example.adygall2.domain.model.Task
@@ -59,4 +60,7 @@ interface Repository {
     /** Получение модели ответа с озвучкой и картинкой */
     suspend fun answerToComplexAnswer(answer : Answer) : ComplexAnswer
 
+    suspend fun tasksByLesson(level: Int, lesson: Int) : List<Task>
+
+    suspend fun allLevelsAndLessons(): List<LevelAndLesson>
 }

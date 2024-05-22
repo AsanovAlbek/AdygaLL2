@@ -15,7 +15,7 @@ class ThreeWordsQuestionItem(
 ) : QuestionItem<FragmentThreeWordsQuestionBinding>() {
 
     private var _userAnswer = ""
-    override val userAnswer get() = _userAnswer
+    override val userAnswer get() = _userAnswer.replace("[1iLlI|]".toRegex(), "I")
 
     override fun bind(viewBinding: FragmentThreeWordsQuestionBinding, position: Int) {
         viewBinding.apply {
@@ -37,7 +37,7 @@ class ThreeWordsQuestionItem(
 
 
     override val rightAnswer: String =
-        answers.map { it.answer }.first { it.correctAnswer.toBoolean() }.answer
+        answers.map { it.answer }.first { it.correctAnswer.lowercase().toBoolean() }.answer.replace("[1iLlI|]".toRegex(), "I")
 
     override fun clear() {
         _userAnswer = ""

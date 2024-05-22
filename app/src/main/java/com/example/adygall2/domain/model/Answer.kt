@@ -1,5 +1,7 @@
 package com.example.adygall2.domain.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * Модель вариантов ответов из бд
  * @param id - id варианта ответа
@@ -9,6 +11,7 @@ package com.example.adygall2.domain.model
  * @param pictureId - id картинки, соответсвующей варианту ответа (при отсутсвии картинки id = 0)
  * @param soundId - id озвучки ответа (при отсутствии озвучки id = 0)
  */
+@Serializable
 data class Answer(
     val id : Int,
     val taskId : Int,

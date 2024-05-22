@@ -1,11 +1,15 @@
 package com.example.adygall2.presentation.view_model
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +18,7 @@ import androidx.navigation.NavController
 import androidx.viewbinding.ViewBinding
 import com.example.adygall2.R
 import com.example.adygall2.data.delegate.AnswerFormatter
+import com.example.adygall2.data.local.levelsNames
 import com.example.adygall2.data.models.ResourceProvider
 import com.example.adygall2.data.models.SoundsPlayer
 import com.example.adygall2.data.room.userbase.ProgressItem
@@ -22,18 +27,17 @@ import com.example.adygall2.domain.model.User
 import com.example.adygall2.domain.usecases.AnswersByTaskIdUseCase
 import com.example.adygall2.domain.usecases.GetComplexAnswerUseCase
 import com.example.adygall2.domain.usecases.SourceInteractor
+import com.example.adygall2.domain.usecases.TasksByLessonUseCase
 import com.example.adygall2.domain.usecases.UserUseCase
+import com.example.adygall2.presentation.activities.UserChangeListener
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.QuestionItem
 import com.example.adygall2.presentation.adapters.groupieitems.questions.parentitem.createQuestion
 import com.example.adygall2.presentation.fragments.main.FragmentGamePageDirections
 import com.example.adygall2.presentation.model.DialogState
 import com.example.adygall2.presentation.model.GameState
 import com.google.android.material.snackbar.Snackbar
+import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -47,6 +51,7 @@ class GameViewModel(
     private val resourceProvider: ResourceProvider,
     private val soundsPlayer: SoundsPlayer,
     private val userUseCase: UserUseCase,
+    private val tasksByLessonUseCase: TasksByLessonUseCase,
     private val mainDispatcher: CoroutineDispatcher,
     private val ioDispatcher: CoroutineDispatcher,
     private val answerFormatterDelegate: AnswerFormatter
@@ -57,7 +62,7 @@ class GameViewModel(
             300_000L // 5 минут * 60 секунд * 1000 милисекунд. 5 минут в милисекундах
 
         /** Максимальное количество ошибок */
-        private const val MISTAKES_LIMIT = 20
+        private const val MISTAKES_LIMIT = 30
         private const val HP_DAMAGE = 5
         private const val MONEY_INCREMENT = 1
         private const val TAG = "GameFragment"
@@ -86,47 +91,47 @@ class GameViewModel(
     val dialogState: LiveData<DialogState> get() = _dialogState
     private var currentDialogState = DialogState()
 
-    /** Значение здоровья, восстанавливающегося во время сессии */
-    private var _hpHill = MutableStateFlow(0)
-    val hpHill get() = _hpHill.asStateFlow()
-
     private fun isLastQuestion() =
         currentGameState.currentQuestionPosition == currentQuestionItems.size - 1
 
     private fun isNotLastQuestion() =
         currentGameState.currentQuestionPosition < currentQuestionItems.size
 
-    private fun isRight() = currentGameState.userAnswer.compareTo(currentGameState.rightAnswer) == 0
+    private fun isRight() = transform(currentGameState.userAnswer).compareTo(transform(currentGameState.rightAnswer)) == 0
 
     /** Получение актуального Question */
     private fun currentQuestion() = currentQuestionItems[currentGameState.currentQuestionPosition]!!
     private fun canSkipCurrentQuestion() = currentQuestion().canSkipQuestion
-    private fun onNextQuestion() = currentQuestion().clear()
+    private fun onNextQuestion() = currentQuestionItems[currentGameState.currentQuestionPosition]!!.clear()
 
     /** Получение всех заданий из урока и преобразование в визуальное представление */
     fun start(
         context: Context,
-        tasks: List<Task>,
         level: Int,
         lesson: Int,
         levelName: String
     ) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val questions = tasks.map { task ->
+                currentGameState = currentGameState.copy(isLoading = true)
+                val gameTasks = tasksByLessonUseCase(level, lesson)
+                val questions = gameTasks.map { task ->
+                    val answers = getComplexAnswerUseCase(answersByTaskIdUseCase(task.id))
                     task.createQuestion(
                         context = context,
                         title = task.task,
-                        answers = getComplexAnswerUseCase(answersByTaskIdUseCase(task.id)),
+                        answers = answers,
                         soundsPlayer = soundsPlayer,
                         onClearImageCaches = ::clearGlideCache,
                         playerSource = sourceInteractor.soundSourceById(task.soundId)
                     )
                 }
+                Log.i("corr", questions.joinToString { it?.rightAnswer ?: "NULL" })
 
                 _user = userUseCase.getUser()
                 withContext(mainDispatcher) {
-                    isLessonRepeated = user.learningProgressSet.contains(ProgressItem(level, lesson))
+                    isLessonRepeated =
+                        user.learningProgressSet.contains(ProgressItem(level, lesson))
                     currentQuestionItems = questions.toMutableList()
                     questionItems.value = currentQuestionItems
                     soundsPlayer.setCompletionListener { soundsPlayer.stopPlay() }
@@ -139,15 +144,16 @@ class GameViewModel(
                         lessonProgress = lesson,
                         levelProgress = level,
                         currentQuestionPosition = 0,
-                        levelName = levelName,
-                        userName = user.name
+                        levelName = levelsNames[level - 1],
+                        userName = user.name,
+                        tasks = gameTasks,
+                        isLoading = false
                     )
                     _gameState.value = currentGameState
                     refreshLessonTitle()
                 }
             }
         }
-
     }
 
     /** Основная функция вычисления ответа пользователя и игрового процесса
@@ -163,20 +169,21 @@ class GameViewModel(
         requireView: View,
         context: Context,
         navController: NavController,
-        tasks: List<Task>,
         level: Int,
         lesson: Int,
         coinsBeforeLesson: Int,
         coins: Int,
-        hp: Int
+        hp: Int,
+        userHealthHandle: UserChangeListener
     ) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
+                requireView.clearFocus()
                 // Получение правильного ответа и ответа пользователя
                 currentQuestion().let { question ->
                     currentGameState = currentGameState.copy(
-                        userAnswer = transform(question.userAnswer),
-                        rightAnswer = transform(question.rightAnswer),
+                        userAnswer = question.userAnswer,
+                        rightAnswer = question.rightAnswer,
                         canSkipTask = canSkipCurrentQuestion()
                     )
                     Log.i(
@@ -198,7 +205,6 @@ class GameViewModel(
                                 finishLesson(
                                     level = level,
                                     lesson = lesson,
-                                    tasks = tasks,
                                     coinsBeforeLesson = coinsBeforeLesson,
                                     navController = navController,
                                     coins = coins,
@@ -223,7 +229,7 @@ class GameViewModel(
                                         nextTask()
                                     }
                                     // Получение урона за неправильный ответ
-                                    damage()
+                                    damage(userHealthHandle)
                                     // Если при этом закончилось здоровье, то выход из игры
                                     if (currentGameState.hp <= 0) {
                                         fail(
@@ -238,6 +244,7 @@ class GameViewModel(
                                 }
                             }
                         }
+
                     } else {
                         // Если пользователь не дал ответ, то показываем сообщение, что надо дать ответ
                         emptyAnswerMessage(requireView)
@@ -260,7 +267,7 @@ class GameViewModel(
                             nextTask()
                         }
                         // Урон
-                        damage()
+                        damage(userHealthHandle)
                     }
                     // Даём монетки за пройденный урок
                     giveMoney()
@@ -310,7 +317,8 @@ class GameViewModel(
                 AlertDialog.Builder(context)
                     .setMessage(R.string.exit_from_level_question)
                     .setPositiveButton(R.string.yes) { _, _ ->
-                        currentGameState = currentGameState.copy(finishTime = System.currentTimeMillis())
+                        currentGameState =
+                            currentGameState.copy(finishTime = System.currentTimeMillis())
                         _gameState.value = currentGameState
                         currentGameState.run {
                             onNextQuestion()
@@ -319,7 +327,7 @@ class GameViewModel(
                                 globalPlayingTimeInMillis = user.globalPlayingTimeInMillis + (currentGameState.finishTime - currentGameState.startTime)
                             )
                             viewModelScope.launch {
-                                    userUseCase.updateUser(user)
+                                userUseCase.updateUser(user)
                             }
                             val navigateToHome =
                                 FragmentGamePageDirections.actionTaskContainerToHomePage(
@@ -392,11 +400,10 @@ class GameViewModel(
     fun skipQuestion(
         level: Int,
         lesson: Int,
-        tasks: List<Task>,
         coinsBeforeLesson: Int,
         navController: NavController,
         coins: Int,
-        hp: Int
+        hp: Int,
     ) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
@@ -404,7 +411,6 @@ class GameViewModel(
                     finishLesson(
                         level = level,
                         lesson = lesson,
-                        tasks = tasks,
                         coinsBeforeLesson = coinsBeforeLesson,
                         navController = navController,
                         coins = coins,
@@ -423,7 +429,6 @@ class GameViewModel(
     private fun finishLesson(
         level: Int,
         lesson: Int,
-        tasks: List<Task>,
         coinsBeforeLesson: Int,
         navController: NavController,
         hp: Int,
@@ -443,10 +448,17 @@ class GameViewModel(
                     hp = hp,
                     coins = coins,
                     globalPlayingTimeInMillis = user.globalPlayingTimeInMillis + (currentGameState.finishTime - currentGameState.startTime),
-                    learningProgressSet = user.learningProgressSet.apply { add(ProgressItem(level, lesson)) }
+                    learningProgressSet = user.learningProgressSet.apply {
+                        add(
+                            ProgressItem(
+                                level,
+                                lesson
+                            )
+                        )
+                    }
                 )
                 userUseCase.updateUser(user)
-                getAllNewWords(tasks)
+                getAllNewWords(currentGameState.tasks)
                 currentGameState.apply {
                     val navigateToResults =
                         FragmentGamePageDirections.actionTaskContainerToTaskResults(
@@ -469,6 +481,11 @@ class GameViewModel(
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 nextQuestionAll()
+                val questions = currentQuestionItems.toList()
+                currentQuestionItems.clear()
+                questionItems.value = currentQuestionItems
+                currentQuestionItems.addAll(questions)
+                questionItems.value = currentQuestionItems
                 //onNextQuestion()
                 currentGameState = currentGameState.copy(
                     mistakesCounter = 0,
@@ -500,11 +517,10 @@ class GameViewModel(
     }
 
     /** Получение урона за неправильный ответ*/
-    private fun damage() {
+    private fun damage(userHealthHandle: UserChangeListener) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
-                currentGameState = currentGameState.copy(hp = currentGameState.hp - HP_DAMAGE)
-                _gameState.value = currentGameState
+                userHealthHandle.damage()
             }
         }
     }
@@ -528,38 +544,16 @@ class GameViewModel(
         currentGameState.finishTime - currentGameState.startTime
     ).toString()
 
-
-
-    /** получение последнего сохраненного значения здоровья */
-    fun initAutoHill(value: Int) {
-        viewModelScope.launch {
-            withContext(mainDispatcher) {
-                Log.i("game", "init auto hill")
-                _hpHill.value = value
-            }
-        }
-    }
-
-    /** функция процесса восстановления здоровья*/
-    fun autoHillHp() {
-        viewModelScope.launch {
-            withContext(mainDispatcher) {
-                while (isActive) {
-                    delay(3_000)
-                    if (_hpHill.value < 100) {
-                        _hpHill.value += 10
-                        Log.i("game", "hill hp")
-                    }
-                }
-            }
-        }
-    }
-
     /** Сохранение статистики пользователя после выхода */
     fun saveUserStates(hp: Int, coins: Int) {
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 currentGameState = currentGameState.copy(finishTime = System.currentTimeMillis())
+                if (Date().time - _user.lastOnlineTimeInMillis >= 300_000) {
+                    _user = _user.copy(
+                        lastOnlineTimeInMillis = Date().time
+                    )
+                }
                 _user = _user.copy(
                     hp = hp,
                     coins = coins,
@@ -569,7 +563,6 @@ class GameViewModel(
                 userUseCase.updateUser(user)
             }
         }
-
     }
 
     /** Проигрывание аудио эффекта */
@@ -606,7 +599,7 @@ class GameViewModel(
                 val answersAll = tasks.map { task ->
                     answersByTaskIdUseCase(task.id)
                 }.flatten().map { answer ->
-                    transform(answer.answer).split(", ")
+                    transform(answer.answer).split(" ")
                 }.flatten().distinct()
 
                 withContext(mainDispatcher) {
@@ -628,12 +621,15 @@ class GameViewModel(
         viewModelScope.launch {
             withContext(mainDispatcher) {
                 currentGameState = currentGameState.copy(
-                    lessonTitle = resourceProvider.getString(
+                    lessonTitle = "${currentGameState.levelName}. " +
+                            "Урок ${currentGameState.lessonProgress}. " +
+                            "Задание ${currentGameState.currentQuestionPosition + 1}."
+                    /*lessonTitle = resourceProvider.getString(
                         R.string.lesson_title_mask,
                         currentGameState.levelName,
                         currentGameState.lessonProgress,
                         currentGameState.currentQuestionPosition + 1
-                    )
+                    )*/
                 )
                 _gameState.value = currentGameState
             }
